@@ -1,0 +1,24 @@
+/* See: http://msdn.microsoft.com/library/en-us/shellcc/platform/shell/programmersguide/versions.asp */
+
+#include <windows.h>
+#include <shlwapi.h>
+
+#define xMAJ 1
+#define xMIN 13
+#define xBLD 0
+#define xFIX 0
+
+__declspec(dllexport) HRESULT DllGetVersion (DLLVERSIONINFO2 *pdvi);
+
+HRESULT DllGetVersion (DLLVERSIONINFO2 *pdvi)
+{
+  if(!pdvi || (pdvi->info1.cbSize != sizeof(*pdvi))) 
+    return(E_INVALIDARG);
+  pdvi->info1.dwMajorVersion = xMAJ;
+  pdvi->info1.dwMinorVersion = xMIN;
+  pdvi->info1.dwBuildNumber = xBLD;
+  pdvi->info1.dwPlatformID = DLLVER_PLATFORM_WINDOWS;
+  if(pdvi->info1.cbSize == sizeof(DLLVERSIONINFO2))
+    pdvi->ullVersion = MAKEDLLVERULL(xMAJ, xMIN, xBLD, xFIX);
+  return(S_OK);
+}

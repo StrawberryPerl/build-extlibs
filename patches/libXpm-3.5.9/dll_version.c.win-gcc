@@ -1,0 +1,22 @@
+#include <windows.h>
+#include <shlwapi.h>
+
+#define xMAJ 3
+#define xMIN 5
+#define xBLD 9
+#define xREV 0
+
+__declspec(dllexport) HRESULT DllGetVersion (DLLVERSIONINFO2 *pdvi);
+
+HRESULT DllGetVersion (DLLVERSIONINFO2 *pdvi)
+{
+  if(!pdvi || (pdvi->info1.cbSize != sizeof(*pdvi))) 
+    return(E_INVALIDARG);
+  pdvi->info1.dwMajorVersion = xMAJ;
+  pdvi->info1.dwMinorVersion = xMIN;
+  pdvi->info1.dwBuildNumber = xBLD;
+  pdvi->info1.dwPlatformID = DLLVER_PLATFORM_WINDOWS;
+  if(pdvi->info1.cbSize == sizeof(DLLVERSIONINFO2))
+    pdvi->ullVersion = MAKEDLLVERULL(xMAJ, xMIN, xBLD, xREV);
+  return(S_OK);
+}

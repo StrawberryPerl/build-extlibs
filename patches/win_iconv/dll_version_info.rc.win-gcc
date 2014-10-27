@@ -1,0 +1,31 @@
+#include <windows.h>
+
+// see http://msdn.microsoft.com/en-us/library/aa381058%28VS.85%29.aspx
+
+VS_VERSION_INFO		VERSIONINFO
+  FILEVERSION		2,0,1,0
+  PRODUCTVERSION	2,0,1,0
+  FILEFLAGSMASK		VS_FFI_FILEFLAGSMASK
+  FILEFLAGS		VS_FF_PRIVATEBUILD
+  FILEOS		VOS__WINDOWS32
+  FILETYPE		VFT_DLL
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    //language ID = U.S. English, char set = Windows, Multilingual
+    BEGIN
+      VALUE "ProductName",     "Expat XML parser library\0"
+      VALUE "ProductVersion",  "2.0.1\0"
+      VALUE "FileVersion",     "expat-2.0.1\0"
+      VALUE "FileDescription", "expat-2.0.1 @buildinfo@\0"
+      VALUE "Comments",        "Source code: http://downloads.sourceforge.net/expat/expat-2.0.1.tar.gz\0"
+      VALUE "PrivateBuild",    "Built by www.strawberryperl.com project\0"
+      VALUE "LegalCopyright",  "See: http://expat.sourceforge.net/\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0409, 1252
+  END
+END

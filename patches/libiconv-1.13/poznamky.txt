@@ -1,0 +1,31 @@
+builddir="`pwd`"; 
+
+1. cd libcharset && make all && make install-lib libdir="$builddir/lib" includedir="$builddir/lib"
+
+   cp ./include/libcharset.h.in include/libcharset.h
+   
+   build libcharset.dll
+   
+   mv t-charset.alias charset.alias  
+
+2. cd lib && make install prefix='/d/build/svn.ali.as/extlib-build/_wrk.graphics1.out'
+
+3. cd preload && make install prefix='/d/build/svn.ali.as/extlib-build/_wrk.graphics1.out'
+
+4. cd srclib && make install prefix='/d/build/svn.ali.as/extlib-build/_wrk.graphics1.out'
+
+5. cd src && make install prefix='/d/build/svn.ali.as/extlib-build/_wrk.graphics1.out'
+   libiconv
+   
+6. cd po && make install prefix='/d/build/svn.ali.as/extlib-build/_wrk.graphics1.out'
+
+7. cd libcharset && make install prefix='/d/build/svn.ali.as/extlib-build/_wrk.graphics1.out.libiconv-1.13'
+
+
+---
+Then "cd libiconv && make && make install-lib libdir=... includedir=...".
+   'install-lib' is a special (not GNU standardized) target which installs
+   only the include file - in $(includedir) - and the library - in $(libdir) -
+   and does not use other directory variables. After "installing" libiconv
+   in your package's build directory, building of your package can proceed.
+  

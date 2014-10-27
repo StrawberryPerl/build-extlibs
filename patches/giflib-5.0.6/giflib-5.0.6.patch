@@ -1,0 +1,12 @@
+diff -r -u -w --strip-trailing-cr giflib-5.0.6.original/util/gifinto.c giflib-5.0.6/util/gifinto.c
+--- giflib-5.0.6.original/util/gifinto.c	2014-07-27 16:58:58.847212300 +0200
++++ giflib-5.0.6/util/gifinto.c	2014-07-27 16:58:58.972169200 +0200
+@@ -127,7 +127,7 @@
+     if ( (strlen(FoutTmpName) + strlen(DEFAULT_TMP_NAME))  > STRLEN-1 ) GIF_EXIT("Filename too long.");
+     strcat(FoutTmpName, DEFAULT_TMP_NAME);
+     int FD;
+-    FD = mkstemp(FoutTmpName); /* returns filedescriptor */
++    FD = -1; /* XXX HACK */
+     if (FD == -1 )
+     {
+ 	GIF_EXIT("Failed to open output.");

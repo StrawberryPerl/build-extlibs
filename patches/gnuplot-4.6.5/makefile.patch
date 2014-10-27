@@ -1,0 +1,14 @@
+diff -r -u -w --strip-trailing-cr gnuplot-4.6.5/config/mingw/Makefile gnuplot-4.6.5/config/mingw/Makefile
+--- gnuplot-4.6.5/config/mingw/Makefile	2013-04-19 20:21:45.000000000 +0200
++++ gnuplot-4.6.5/config/mingw/Makefile	2014-04-11 13:18:16.166109700 +0200
+@@ -439,8 +439,8 @@
+ LDLIBS = -lkernel32 -lgdi32 -lwinspool -lcomdlg32 -lcomctl32 -ladvapi32 -lshell32 -lmsimg32 -lgdiplus
+ 
+ ifdef HTML_HELP
+-  LDLIBS += -lhtmlhelp
+-  LDFLAGS2 += -L$(HHWPATH)lib
++  LDLIBS += -lhtmlhelp $(LBUFFEROVERFLOWU)
++  LDFLAGS2 += -L$(HHWPATH)lib$(ARCHNICK)
+ endif
+ 
+ $(TARGET): $(OBJS) $(WINOBJS) wgplt_res.$(O) texticon.ico grpicon.ico

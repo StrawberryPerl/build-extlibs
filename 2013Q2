@@ -1,0 +1,51 @@
+###### gddm + db
+gdbm-1.8.3
+db-5.3.21
+
+###### math libs
+gmp-5.1.2
+mpfr-3.1.2
+mpc-1.0.1
+
+###### compress libs
+zlib-1.2.8
+xz-5.0.4
+
+###### misc simple
+libiconv-1.14
+expat-2.1.0
+
+###### xml libs
+libxml2-2.9.1
+libxslt-1.1.28
+
+###### crypto
+openssl-1.0.1e
+libssh2-1.4.3
+
+###### pgsql
+postgresql-9.2.4
+
+###### graphics
+freeglut-2.8.1
+giflib-5.0.4
+jpeg-9
+tiff-4.0.3
+libpng-1.6.2
+libXpm-3.5.10
+freetype-2.4.12
+t1lib-5.1.2
+
+###### extras:
+## PDL: libpthreads, libplplot, libgsl, libsz, libdf(hdf), libproj4
+## PDL::IO::Browser - libcurses? 
+fftw-2.1.5
+fftw-3.3.3
+gsl-1.15
+proj-4.8.0
+plplot-5.9.9
+szip-2.1
+
+##hdf-4.2.9
+##hdf5-1.8.11
+##pgplot-522

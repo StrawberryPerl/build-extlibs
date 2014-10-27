@@ -1,0 +1,5 @@
+Package: mysql-5.5.11
+Homepage: http://www.mysql.com/
+Sources: http://www.mysql.com/downloads/mysql/
+Comment: 32bit libmysql.dll from http://mysql.mirrors.ovh.net/ftp.mysql.com/Downloads/MySQL-5.5/mysql-5.5.11-win32.zip
+Comment: 64bit libmysql.dll from http://mysql.mirrors.ovh.net/ftp.mysql.com/Downloads/MySQL-5.5/mysql-5.5.11-winx64.zip

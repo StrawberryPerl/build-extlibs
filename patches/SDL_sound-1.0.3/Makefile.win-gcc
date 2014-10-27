@@ -1,0 +1,98 @@
+#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
+#        that can be incompatible with other make tools
+
+STATIC_LIB1=libmpglib.a
+OBJS1      =decoders/mpglib/dct64_i386.o decoders/mpglib/decode_i386.o decoders/mpglib/interface.o decoders/mpglib/layer1.o decoders/mpglib/layer2.o decoders/mpglib/layer3.o decoders/mpglib/mpglib_common.o decoders/mpglib/tabinit.o
+ 
+STATIC_LIB2=libtimidity.a
+OBJS2      =decoders/timidity/common.o decoders/timidity/instrum.o decoders/timidity/instrum_dls.o decoders/timidity/mix.o decoders/timidity/output.o decoders/timidity/playmidi.o decoders/timidity/readmidi.o decoders/timidity/resample.o decoders/timidity/tables.o decoders/timidity/testmidi.o decoders/timidity/timidity.o
+
+STATIC_LIB3=libdecoders.a
+OBJS3      =decoders/aiff.o decoders/au.o decoders/flac.o decoders/midi.o decoders/mikmod.o decoders/modplug.o decoders/mpglib.o decoders/ogg.o decoders/quicktime.o decoders/raw.o decoders/shn.o decoders/smpeg.o decoders/speex.o decoders/voc.o decoders/wav.o
+
+BASENAME =SDL_sound
+DLLBASE  =$(BASENAME)
+CFLAGS    =-I. -Idecoders -Idecoders/timidity -Idecoders/mpglib -I$(PREFIX)/include -I$(PREFIX)/include/SDL -I$(PREFIX)/include/smpeg -O2 -mms-bitfields -DHAVE_CONFIG_H -D_GNU_SOURCE=1 -Dmain=SDL_main
+LIBS     =-L$(LIBDIR) -L. -ldecoders -ltimidity -lmpglib -lSDLmain -lSDL -lmikmod -lmodplug -logg -lvorbis -lvorbisfile -lFLAC -logg -logg -lspeex -lsmpeg -mwindows
+OBJS     =SDL_sound.o alt_audio_convert.o audio_convert.o extra_rwops.o 
+CONFIG_H =config.h
+
+ifeq ($(NOPERL), 1)
+  ECHO   = @echo
+  CP     = cp
+  MV     = mv
+  RM_F   = rm -f
+  RM_RF  = rm -rf
+  MKPATH = mkdir -p
+  SED    = sed
+else
+  ECHO   = @perl -l -e "print qq{@ARGV}" --
+  CP     = perl -MExtUtils::Command -e "cp" --
+  MV     = perl -MExtUtils::Command -e "mv" --
+  RM_F   = perl -MExtUtils::Command -e "rm_f" --
+  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
+  MKPATH = perl -MExtUtils::Command -e "mkpath" --
+  SED    = perl -pe
+endif
+
+RANLIB  = ranlib
+CC      = gcc
+CXX     = g++
+STRIP   = strip
+AR      = ar
+ARFLAGS = csr
+
+PREFIX =./_output_
+BINDIR =$(PREFIX)/bin
+INCDIR =$(PREFIX)/include
+LIBDIR =$(PREFIX)/lib
+
+STATIC_LIB=$(BASENAME).a
+IMPORT_LIB=$(BASENAME).dll.a
+SHARED_LIB=$(DLLBASE)$(DLLSUFFIX).dll
+
+#BEWARE: all you put into TARGETS will be deleted by 'make clean'
+TARGETS = $(CONFIG_H) $(STATIC_LIB) $(STATIC_LIB1) $(STATIC_LIB2) $(STATIC_LIB3) $(SHARED_LIB)
+
+all: $(CONFIG_H) $(TARGETS)
+
+clean:
+	$(RM_F) $(OBJS) $(OBJS1) $(OBJS2) $(OBJS3) $(TARGETS)
+
+$(STATIC_LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(STATIC_LIB1): $(OBJS1)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(STATIC_LIB2): $(OBJS2)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(STATIC_LIB3): $(OBJS3)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(SHARED_LIB): $(OBJS)
+	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
+	$(STRIP) -S $(SHARED_LIB)
+
+decoders/mpglib/%.o : decoders/mpglib/%.c ; $(CC) -DLAYER1 -DLAYER2 -DLAYER3 -D__CRT__NO_INLINE $(CFLAGS) -c $< -o $@
+
+decoders/timidity/%.o : decoders/timidity/%.c ; $(CC) -D__CRT__NO_INLINE $(CFLAGS) -c $< -o $@
+
+decoders/%.o : decoders/%.c ; $(CC) -D__CRT__NO_INLINE $(CFLAGS) -c $< -o $@
+
+%.o : %.c ; $(CC) -DDLL_EXPORT -DPIC $(CFLAGS) -c $< -o $@
+
+%.h: %.h.win-gcc ; $(CP) $< $@
+
+install: all
+	$(MKPATH) $(BINDIR)
+	$(MKPATH) $(LIBDIR)
+	$(MKPATH) $(INCDIR)
+	$(CP) SDL_sound.h "$(INCDIR)"
+	$(CP) $(IMPORT_LIB) $(STATIC_LIB) "$(LIBDIR)"
+	$(CP) $(SHARED_LIB) "$(BINDIR)"

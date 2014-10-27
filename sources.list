@@ -1,0 +1,182 @@
+# XML2/XSLT:
+# ----------
+ftp://xmlsoft.org/libxslt/libxml2-2.9.1.tar.gz
+ftp://xmlsoft.org/libxslt/libxslt-1.1.27.tar.gz
+ftp://xmlsoft.org/libxslt/libxslt-1.1.28.tar.gz
+
+# Postgres:
+# ---------
+http://ftp.postgresql.org/pub/source/v9.3.3/postgresql-9.3.3.tar.gz
+http://ftp.postgresql.org/pub/source/v9.3.4/postgresql-9.3.4.tar.gz
+http://ftp.postgresql.org/pub/source/v9.3.5/postgresql-9.3.5.tar.gz
+
+# MySQL
+http://dev.mysql.com/get/Downloads/Connector-C/mysql-connector-c-6.1.5-src.tar.gz
+
+# Crypto:
+# -------
+http://www.openssl.org/source/openssl-1.0.1g.tar.gz
+http://www.openssl.org/source/openssl-1.0.1h.tar.gz
+http://www.openssl.org/source/openssl-1.0.1i.tar.gz
+http://www.openssl.org/source/openssl-1.0.1j.tar.gz
+https://www.openssl.org/source/openssl-fips-2.0.5.tar.gz
+https://www.openssl.org/source/openssl-fips-ecp-2.0.5.tar.gz
+http://www.libssh2.org/download/libssh2-1.4.2.tar.gz
+http://www.libssh2.org/download/libssh2-1.4.3.tar.gz
+
+# Oracle Berkeley DB:
+# -------------------
+http://download.oracle.com/berkeley-db/db-5.3.21.tar.gz
+http://download.oracle.com/berkeley-db/db-6.0.20.tar.gz
+http://download.oracle.com/berkeley-db/db-6.0.30.tar.gz
+http://download.oracle.com/berkeley-db/db-6.1.19.tar.gz
+
+
+# Graphics
+# --------
+http://mirror.lihnidos.org/GNU/savannah/freetype/freetype-2.5.3.tar.gz
+http://mirror.lihnidos.org/GNU/savannah/freetype/freetype-2.4.12.tar.gz
+https://bitbucket.org/libgd/gd-libgd/downloads/libgd-2.1.0.tar.gz
+http://downloads.sourceforge.net/giflib/giflib-4.2.0.tar.gz
+http://downloads.sourceforge.net/giflib/giflib-5.0.6.tar.gz
+# ### workaround (to keep archive name consistent with dirname inside archive)
+http://www.ijg.org/files/jpegsrc.v8d.tar.gz -O jpeg-8d.tar.gz
+http://www.ijg.org/files/jpegsrc.v9a.tar.gz -O jpeg-9a.tar.gz
+http://downloads.sourceforge.net/gnuwin32/jpeg-6b-4-src.zip -O jpeg-6b-gnuwin32_orig.zip
+http://downloads.sourceforge.net/libpng/libpng-1.6.12.tar.gz
+ftp://ftp.remotesensing.org/pub/libtiff/tiff-4.0.3.tar.gz
+http://fontconfig.org/release/fontconfig-2.8.0.tar.gz
+http://ftp.x.org/pub/individual/lib/libXpm-3.5.11.tar.gz
+ftp://sunsite.unc.edu/pub/linux/libs/graphics/t1lib-5.1.2.tar.gz
+
+#PDL related
+ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.3.1.1.tar.gz
+ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.3.2.tar.gz
+http://www.fftw.org/fftw-3.3.4.tar.gz
+http://www.fftw.org/fftw-2.1.5.tar.gz
+http://ftp.gnu.org/gnu/glpk/glpk-4.49.tar.gz
+http://ftp.gnu.org/gnu/glpk/glpk-4.52.tar.gz
+http://mirrors.nic.cz/R/src/base/R-3/R-3.1.1.tar.gz
+http://ftp.gnu.org/gnu/gsl/gsl-1.15.tar.gz
+http://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz
+http://download.osgeo.org/proj/proj-4.7.0.tar.gz
+http://download.osgeo.org/proj/proj-4.8.0.tar.gz
+#the followign has strange build system - cmake ...
+http://downloads.sourceforge.net/plplot/plplot-5.10.0.tar.gz
+ftp://ftp.astro.caltech.edu/pub/pgplot/pgplot5.2.tar.gz
+http://downloads.sourceforge.net/gnuplot/gnuplot-4.6.5.tar.gz
+http://www.hdfgroup.org/ftp/lib-external/szip/2.1/src/szip-2.1.tar.gz
+http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/src/hdf5-1.8.13.tar.gz
+http://www.hdfgroup.org/ftp//HDF/prev-releases/HDF4.2.10/src/hdf-4.2.10.tar.gz
+
+http://www.netlib.org/lapack/lapack-3.5.0.tgz
+
+
+# Others
+# ------
+http://downloads.sourceforge.net/expat/expat-2.0.1.tar.gz
+http://downloads.sourceforge.net/expat/expat-2.1.0.tar.gz
+http://ftp.gnu.org/gnu/libiconv/libiconv-1.13.1.tar.gz
+http://ftp.gnu.org/gnu/libiconv/libiconv-1.14.tar.gz
+http://www.zlib.net/zlib-1.2.8.tar.gz
+http://ftp.gnu.org/gnu/gdbm/gdbm-1.8.3.tar.gz
+http://ftp.gnu.org/gnu/gdbm/gdbm-1.10.tar.gz
+http://ftp.gnu.org/gnu/gdbm/gdbm-1.11.tar.gz
+ftp://ftp.gmplib.org/pub/gmp-5.0.5/gmp-5.0.5.tar.bz2
+ftp://ftp.gmplib.org/pub/gmp-5.1.3/gmp-5.1.3.tar.bz2
+ftp://ftp.gnu.org/gnu/mpfr/mpfr-3.1.2.tar.gz
+http://www.multiprecision.org/mpc/download/mpc-1.0.2.tar.gz
+http://downloads.sourceforge.net/freeglut/freeglut-2.8.1.tar.gz
+https://github.com/downloads/petdance/tidyp/tidyp-1.04.tar.gz
+http://tukaani.org/xz/xz-5.0.4.tar.gz
+http://tukaani.org/xz/xz-5.0.5.tar.gz
+http://strawberryperl.com/package/kmx/libs_src/uv-GIT20120930.tar.gz
+
+# SDL related packages:
+# ---------------------
+http://www.libsdl.org/release/SDL-1.2.14.tar.gz
+http://www.libsdl.org/projects/SDL_image/release/SDL_image-1.2.10.tar.gz
+http://www.libsdl.org/projects/SDL_net/release/SDL_net-1.2.7.tar.gz
+http://www.ferzkopp.net/Software/SDL_gfx-2.0/SDL_gfx-2.0.22.tar.gz
+http://www.libsdl.org/projects/SDL_mixer/release/SDL_mixer-1.2.11.tar.gz
+http://icculus.org/SDL_sound/downloads/SDL_sound-1.0.3.tar.gz
+http://www.libsdl.org/projects/SDL_ttf/release/SDL_ttf-2.0.10.tar.gz
+http://www.linuxmotors.com/SDL_svg/download/SDL_svg-1.2.0.tar.gz
+http://www.ferzkopp.net/Software/SDL_vnc/SDL_vnc-1.0.0.tar.gz
+http://downloads.sourceforge.net/sdlpango/SDL_Pango-0.1.2.tar.gz
+http://www.libsdl.org/projects/SDL_rtf/release/SDL_rtf-0.1.0.tar.gz
+
+# libs needed by SDL_sound see: http://icculus.org/SDL_sound/
+# -----------------------------------------------------------
+http://downloads.xiph.org/releases/ogg/libogg-1.3.0.tar.gz
+http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.3.tar.gz
+http://downloads.xiph.org/releases/speex/speex-1.2rc1.tar.gz
+http://downloads.sourceforge.net/modplug-xmms/libmodplug-0.8.8.4.tar.gz
+http://downloads.sourceforge.net/flac/flac-1.2.1.tar.gz
+#http://downloads.sourceforge.net/mikmod/libmikmod-3.2.2.zip
+http://icculus.org/physfs/downloads/physfs-2.0.2.tar.gz
+
+# misc libs
+# ---------
+http://www.oberhumer.com/opensource/lzo/download/lzo-2.04.tar.gz
+http://www.oberhumer.com/opensource/lzo/download/lzo-2.05.tar.gz
+http://www.oberhumer.com/opensource/lzo/download/lzo-2.06.tar.gz
+http://ftp.gnu.org/gnu/libidn/libidn-1.28.tar.gz
+http://megaui.net/fukuchi/works/qrencode/qrencode-3.1.1.tar.gz
+http://downloads.sourceforge.net/pcre/pcre-8.20.tar.gz
+#http://downloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+http://strawberryperl.com/package/kmx/libs_src/ta-lib-0.4.0.tar.gz
+
+http://ftp.gnu.org/pub/gnu/ncurses/ncurses-5.9.tar.gz
+http://web.mit.edu/kerberos/www/dist/krb5/1.12/krb5-1.12.1-signed.tar
+http://www.h5l.org/dist/src/heimdal-1.5.2.tar.gz
+http://rtmpdump.mplayerhq.hu/download/rtmpdump-2.3.tgz
+http://curl.haxx.se/download/curl-7.37.1.tar.gz
+http://www.libuv.org/dist/v0.11.25/libuv-v0.11.25.tar.gz
+
+# devel tools
+# -----------
+http://downloads.sourceforge.net/gnuwin32/patch-2.5.9-7-src.zip
+# http://downloads.sourceforge.net/mingw/make-3.81-20090914-mingw32-src.tar.gz
+#http://tools.openoffice.org/dmake/dmake_4.11.zip
+http://dmake.apache-extras.org.codespot.com/files/dmake-4.12.2.tar.bz2
+http://tml.pp.fi/pexports-0.44.zip
+http://ftp.gnu.org/gnu/patch/patch-2.6.1.tar.gz
+
+
+http://ftp.gnu.org/gnu/gettext/gettext-0.19.1.tar.xz
+http://ftp.acc.umu.se/pub/GNOME/sources/glib/2.41/glib-2.41.1.tar.xz
+http://downloads.sourceforge.net/gretl/gretl-1.9.90.tar.xz
+
+######## unused
+ftp://ftp.mars.org/pub/mpeg/libmad-0.15.1b.tar.gz
+http://ftp.gnome.org/pub/GNOME/sources/pango/1.29/pango-1.29.4.tar.bz2
+http://ftp.gnome.org/pub/GNOME/sources/glib/2.31/glib-2.31.0.tar.bz2
+ftp://sourceware.org/pub/libffi/libffi-3.0.10.tar.gz
+ftp://sourceware.org/pub/libffi/libffi-3.1.tar.gz
+http://ftp.gnu.org/gnu/gettext/gettext-0.18.1.1.tar.gz
+http://www.cairographics.org/releases/cairo-1.10.2.tar.gz
+http://cairographics.org/releases/pixman-0.24.0.tar.gz
+# http://www.graphviz.org/pub/graphviz/stable/SOURCES/graphviz-2.24.0.tar.gz
+http://win-iconv.googlecode.com/files/win-iconv-0.0.3.tar.bz2
+http://pkgconfig.freedesktop.org/releases/pkg-config-0.26.tar.gz
+http://ftp.acc.umu.se/pub/gnome/binaries/win32/dependencies/proxy-libintl-dev_20100902_win32.zip
+
+# http://downloads.sourceforge.net/wvware/libwmf-0.2.8.4.tar.gz
+http://downloads.sourceforge.net/djvu/djvulibre-3.5.24.tar.gz
+http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
+http://caesar.acc.umu.se/pub/GNOME/sources/librsvg/2.35/librsvg-2.35.0.tar.bz2
+
+http://downloads.sourceforge.net/boost/boost_1_55_0.tar.gz
+http://downloads.sourceforge.net/quantlib/QuantLib-1.4.tar.gz
+
+http://downloads.sourceforge.net/gphoto/libgphoto2-2.5.0.tar.gz
+
+
+#http://strawberryperl.com/package/kmx/sdl/src/SDL2-hg20130301.tar.gz
+#http://strawberryperl.com/package/kmx/sdl/src/SDL2_gfx-svn20130301.tar.gz
+#http://strawberryperl.com/package/kmx/sdl/src/SDL2_image-hg20130301.tar.gz
+#http://strawberryperl.com/package/kmx/sdl/src/SDL2_mixer-hg20130301.tar.gz
+#http://strawberryperl.com/package/kmx/sdl/src/SDL2_net-hg20130301.tar.gz
+#http://strawberryperl.com/package/kmx/sdl/src/SDL2_sound-hg20130301.tar.gz
+#http://strawberryperl.com/package/kmx/sdl/src/SDL2_ttf-hg20130301.tar.gz

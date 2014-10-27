@@ -1,0 +1,11 @@
+--- a_gdb/typeprint.c
++++ b_gdb/typeprint.c
+@@ -62,7 +62,7 @@ const struct type_print_options type_print_raw_options =
+ 
+ static struct type_print_options default_ptype_flags =
+ {
+-  0,				/* raw */
++  1,				/* raw */
+   1,				/* print_methods */
+   1,				/* print_typedefs */
+   NULL,				/* local_typedefs */

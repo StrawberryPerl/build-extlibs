@@ -1,0 +1,104 @@
+#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
+#        that can be incompatible with other make tools
+
+#### the following is package-specific ####
+
+BASENAME =libgd
+DLLBASE  =$(BASENAME)
+CFLAGS   =-DHAVE_CONFIG_H -DBGDWIN32 -I. -I$(INCDIR)/freetype2 -O2 -I$(INCDIR) -mms-bitfields
+LIBS     =-L$(LIBDIR) -lz -ljpeg -lpng -ltiff -lXpm -lfreetype -liconv
+CXXFLAGS =
+OBJS     =gd.o gdfx.o gd_security.o gd_gd.o gd_gd2.o gd_io.o gd_io_dp.o gd_gif_in.o gd_gif_out.o gd_io_file.o gd_io_ss.o gd_jpeg.o gd_png.o gd_ss.o gd_topal.o gd_wbmp.o gdcache.o gdfontg.o gdfontl.o gdfontmb.o gdfonts.o gdfontt.o gdft.o gdhelpers.o gdkanji.o gdtables.o gdxpm.o wbmp.o
+VEROBJ   =dll_version_res.o dll_version.o
+CONFIG_H =config.h
+PCFILE   =
+CFFILE   =gdlib-config
+
+#### end of packcage-specific ####
+
+ifeq ($(NOPERL), 1)
+  ECHO   = @echo
+  CP     = cp
+  MV     = mv
+  RM_F   = rm -f
+  RM_RF  = rm -rf
+  MKPATH = mkdir -p
+  SED    = sed
+else
+  ECHO   = @perl -l -e "print qq{@ARGV}" --
+  CP     = perl -MExtUtils::Command -e "cp" --
+  MV     = perl -MExtUtils::Command -e "mv" --
+  RM_F   = perl -MExtUtils::Command -e "rm_f" --
+  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
+  MKPATH = perl -MExtUtils::Command -e "mkpath" --
+  SED    = perl -pe
+endif
+
+RANLIB  = ranlib
+CC      = gcc
+CXX     = g++
+STRIP   = strip
+AR      = ar
+ARFLAGS = csr
+
+#by default we assume 32-bit target platform
+BITS=32
+
+PREFIX =./_output_
+BINDIR =$(PREFIX)/bin
+INCDIR =$(PREFIX)/include
+LIBDIR =$(PREFIX)/lib
+
+STATIC_LIB=$(BASENAME).a
+IMPORT_LIB=$(BASENAME).dll.a
+SHARED_LIB=$(DLLBASE)$(DLLSUFFIX).dll
+
+#BEWARE: all you put into TARGETS will be deleted by 'make clean'
+TARGETS = $(PCFILE) $(CFFILE) $(CONFIG_H) $(STATIC_LIB) $(SHARED_LIB) $(EXEOBJS) $(EXES)
+
+all: $(TARGETS)
+
+clean:
+	$(RM_F) $(OBJS) $(VEROBJ) $(TARGETS)
+
+$(STATIC_LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(SHARED_LIB): $(VEROBJ) $(OBJS)
+	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
+	$(STRIP) -S $(SHARED_LIB)
+
+%.o : %.c ; $(CC) $(CFLAGS) -c $< -o $@
+
+%.o : %.cpp ; $(CXX) $(CXXFLAGS) -c $< -o $@
+
+%.o : %.cc ; $(CXX) $(CXXFLAGS) -c $< -o $@
+
+%.o : %.rc ; windres --define GCC_WINDRES $< -o $@
+
+%.rc: %.rc.win-gcc ; $(SED) "s~\@buildinfo\@~$(BUILDINFO)~" $< > $@
+
+%.h: %.h.win-gcc$(BITS) ; $(CP) $< $@
+
+%.h: %.h.win-gcc ; $(CP) $< $@
+
+%.c: %.c.win-gcc ; $(CP) $< $@
+
+%-config: %-config.win-gcc ; $(CP) $< $@ 
+
+%-config.bat: %-config.bat.win-gcc ; $(CP) $< $@ 
+
+%.pc: %.pc.win-gcc ; $(SED) "s~\@prefix\@~$(PREFIX)~" $< > $@
+
+#### the rest of the makefile is package-specific ####
+
+install: all
+	$(MKPATH) $(BINDIE)
+	$(MKPATH) $(LIBDIR)
+	$(MKPATH) $(INCDIR)
+	$(CP) "$(STATIC_LIB)" "$(LIBDIR)"
+	$(CP) "$(IMPORT_LIB)" "$(LIBDIR)"
+	$(CP) "$(SHARED_LIB)" "$(BINDIR)"
+	$(CP) "$(CFFILE)" "$(BINDIR)"
+	$(CP) entities.h gd.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h gdfx.h $(INCDIR)	 

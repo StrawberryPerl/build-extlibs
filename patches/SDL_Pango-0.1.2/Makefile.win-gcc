@@ -1,0 +1,75 @@
+#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
+#        that can be incompatible with other make tools
+
+BASENAME =SDL_Pango
+DLLBASE  =$(BASENAME)
+CFLAGS   =-DPACKAGE_NAME=\"\" -DPACKAGE_TARNAME=\"\" -DPACKAGE_VERSION=\"\" -DPACKAGE_STRING=\"\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE=\"SDL_Pango\" -DVERSION=\"0.1.2\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DBUILD_DLL -D_GNU_SOURCE=1 -DPIC -DDLL_EXPORT -O2 -Isrc -I$(INCDIR) -I$(INCDIR)/pango-1.0 -I$(INCDIR)/glib-2.0 -I$(INCDIR)/freetype2 -I$(INCDIR)/SDL -I$(LIBDIR)/glib-2.0/include
+LIBS     =-L$(LIBDIR) -lSDL -lpango-1.0 -lglib-2.0 -lgobject-2.0 -lpangoft2-1.0
+OBJS     =src/SDL_Pango.o
+PCFILE   =SDL_Pango.pc
+
+ifeq ($(NOPERL), 1)
+  ECHO   = @echo
+  CP     = cp
+  MV     = mv
+  RM_F   = rm -f
+  RM_RF  = rm -rf
+  MKPATH = mkdir -p
+  SED    = sed
+else
+  ECHO   = @perl -l -e "print qq{@ARGV}" --
+  CP     = perl -MExtUtils::Command -e "cp" --
+  MV     = perl -MExtUtils::Command -e "mv" --
+  RM_F   = perl -MExtUtils::Command -e "rm_f" --
+  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
+  MKPATH = perl -MExtUtils::Command -e "mkpath" --
+  SED    = perl -pe
+endif
+
+RANLIB  = ranlib
+CC      = gcc
+CXX     = g++
+STRIP   = strip
+AR      = ar
+ARFLAGS = csr
+
+#by default we assume 32-bit target platform
+BITS=32
+
+PREFIX =./_output_
+BINDIR =$(PREFIX)/bin
+INCDIR =$(PREFIX)/include
+LIBDIR =$(PREFIX)/lib
+
+STATIC_LIB=$(BASENAME).a
+IMPORT_LIB=$(BASENAME).dll.a
+SHARED_LIB=$(DLLBASE)$(DLLSUFFIX).dll
+
+#BEWARE: all you put into TARGETS will be deleted by 'make clean'
+TARGETS = $(PCFILE) $(CFFILE) $(CONFIG_H) $(STATIC_LIB) $(SHARED_LIB) $(EXEOBJS) $(EXES)
+
+all: $(TARGETS)
+
+clean:
+	$(RM_F) $(OBJS) $(VEROBJ) $(TARGETS)
+
+$(STATIC_LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(SHARED_LIB): $(VEROBJ) $(OBJS)
+	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
+	$(STRIP) -S $(SHARED_LIB)
+
+%.o : %.c ; $(CC) $(CFLAGS) -c $< -o $@
+
+%.pc: %.pc.win-gcc ; $(SED) "s~\@prefix\@~$(PREFIX)~" $< > $@
+
+install: all
+	$(MKPATH) $(BINDIR)
+	$(MKPATH) $(LIBDIR)
+	$(MKPATH) $(INCDIR)
+	$(CP) "src/SDL_Pango.h" "$(INCDIR)"
+	$(CP) $(IMPORT_LIB) $(STATIC_LIB) "$(LIBDIR)"
+	$(CP) "$(PCFILE)" "$(LIBDIR)/pkgconfig"
+	$(CP) $(SHARED_LIB) "$(BINDIR)"

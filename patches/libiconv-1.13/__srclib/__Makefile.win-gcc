@@ -1,0 +1,109 @@
+#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
+#        that can be incompatible with other make tools
+
+#if you want to use UNIX like utilities (on Windows from MSYS packcage)
+#hasunixtools=1
+
+#if you want to use perl package ExtUtils::Command for emulating OS commands
+hasperl=1
+
+#if you do not set neither 'hasperl=1! nor !hasunixtools=1' we will try to use
+#standard MS Windows commands
+
+ifeq ($(hasperl), 1)
+  ECHO   = @perl -l -e "print qq{@ARGV}" --
+  CP     = perl -MExtUtils::Command -e "cp" --
+  MV     = perl -MExtUtils::Command -e "mv" --
+  RM_F   = perl -MExtUtils::Command -e "rm_f" --
+  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
+  MKPATH = perl -MExtUtils::Command -e "mkpath" --
+  SED    = perl -pe
+else ifeq ($(hasunixtools), 1)
+  ECHO   = @echo
+  CP     = cp
+  MV     = mv
+  RM_F   = rm -f
+  RM_RF  = rm -rf
+  MKPATH = mkdir -p
+  SED    = sed
+else
+  ECHO   = @echo
+  CP     = CMD.EXE /C copy
+  MV     = CMD.EXE /C ren /Y
+  RM_F   = CMD.EXE /C del /F /Q
+  RM_RF  = CMD.EXE /C rmdir /S /Q
+  MKPATH = CMD.EXE /C mkdir
+  SED    = @echo Sorry, cannot run sed
+endif
+
+AR_STATIC = ar crs
+RANLIB    = ranlib
+CC        = gcc
+STRIP     = strip
+
+#### the following is package-specific ####
+
+CFLAGS   =-DHAVE_CONFIG_H -DEXEEXT=\".exe\" -I. -I.. -I../lib -I../intl -DDEPENDS_ON_LIBICONV=1 -DDEPENDS_ON_LIBINTL=1 -I$(incdir)
+LIBS     =-L$(libdir)
+OBJS     =areadlink.o malloca.o progname.o xmalloc.o xstrdup.o xreadlink.o canonicalize-lgpl.o error.o malloc.o readlink.o sigprocmask.o stdio-write.o strerror.o uniwidth/width.o
+VEROBJ   =dll_version_info.o
+EXES     =
+CFFILE   =
+PCFILE   =
+CONFIG_H =../config.h alloca.h
+basename =libicrt
+
+#### end of packcage-specific ####
+
+prefix =./_output_
+bindir =$(prefix)/bin
+incdir =$(prefix)/include
+libdir =$(prefix)/lib
+
+STATIC_LIB=$(basename).a
+IMPORT_LIB=
+SHARED_LIB=
+
+#here you can choose if you want $(STATIC_LIB) or $(SHARED_LIB) or both
+#BEWARE: all you put into TARGETS will be deleted by 'make clean'
+TARGETS = $(CONFIG_H) $(PCFILE) $(CFFILE) $(STATIC_LIB) $(SHARED_LIB) $(EXES)
+
+all: $(TARGETS)
+
+clean:
+	$(RM_F) $(OBJS) $(VEROBJ) $(TARGETS)
+
+$(PCFILE): $(PCFILE).win-gcc
+	$(ECHO) creating '$(PCFILE)' from '$(PCFILE).win-gcc'
+	$(SED) "s,\@prefix\@,$(prefix)," $(PCFILE).win-gcc > $(PCFILE)
+
+$(STATIC_LIB): $(OBJS)
+	$(AR_STATIC) $@ $^
+	$(RANLIB) $@
+
+$(SHARED_LIB): $(VEROBJ) $(OBJS)
+	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
+	$(STRIP) -S $(SHARED_LIB)
+
+%.o : %.rc ; windres --define GCC_WINDRES $< -o $@
+
+%.h: %.h.win-gcc ; $(CP) $< $@
+
+%-config: %-config.win-gcc ; $(CP) $< $@
+
+#### install: is package-specific ####
+
+install: all
+	$(MKPATH) $(bindir)
+	$(MKPATH) $(libdir)
+	$(MKPATH) $(incdir)/freetype2/freetype/config 
+	$(CP) "$(STATIC_LIB)" "$(libdir)"
+	$(CP) "$(IMPORT_LIB)" "$(libdir)"
+	$(CP) "$(SHARED_LIB)" "$(bindir)"
+	$(CP) "include/*.h" "$(incdir)"
+	$(CP) "include/freetype/*.h" "$(incdir)/freetype2/freetype"
+	$(CP) "include/freetype/config/*.h" "$(incdir)/freetype2/freetype/config"
+
+#### rules for package-specific exes follows ####
+
+#none here

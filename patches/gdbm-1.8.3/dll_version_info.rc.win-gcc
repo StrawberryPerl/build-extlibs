@@ -1,0 +1,31 @@
+#include <windows.h>
+
+// see http://msdn.microsoft.com/en-us/library/aa381058%28VS.85%29.aspx
+
+VS_VERSION_INFO		VERSIONINFO
+  FILEVERSION		1,8,3,0
+  PRODUCTVERSION	1,8,3,0
+  FILEFLAGSMASK		VS_FFI_FILEFLAGSMASK
+  FILEFLAGS		VS_FF_PRIVATEBUILD
+  FILEOS		VOS__WINDOWS32
+  FILETYPE		VFT_DLL
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    //language ID = U.S. English, char set = Windows, Multilingual
+    BEGIN
+      VALUE "ProductName",     "GNU dbm library\0"
+      VALUE "ProductVersion",  "1.8.3\0"
+      VALUE "FileVersion",     "gdbm-1.8.3\0"
+      VALUE "FileDescription", "gdbm-1.8.3 @buildinfo@\0"
+      VALUE "Comments",        "Source code: http://ftp.sh.cvut.cz/MIRRORS/gnu/pub/gnu/gdbm/gdbm-1.8.3.tar.gz\0"
+      VALUE "PrivateBuild",    "Built by www.strawberryperl.com project\0"
+      VALUE "LegalCopyright",  "See: http://www.gnu.org/software/gdbm/gdbm.html\0"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0409, 1252
+  END
+END

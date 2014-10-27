@@ -1,0 +1,39 @@
+mingw.org-gcc3
+--------------
+ignoring nonexistent directory "D:/strawberry/c/mingw32/include"
+ignoring nonexistent directory "/mingw/include"
+ignoring nonexistent directory "/mingw/include"
+ignoring nonexistent directory "/mingw/lib/gcc/mingw32/3.4.5/include"
+ignoring nonexistent directory "/mingw/mingw32/include"
+ignoring nonexistent directory "/mingw/include"
+#include <...> search starts here:
+ D:/strawberry/c/include
+ D:/strawberry/c/lib/gcc/mingw32/3.4.5/include
+ 
+mingw.org-gcc4
+--------------
+ignoring nonexistent directory "d:\build\svn.ali.as\strawberry_packs_devel\m32gcc4\bin\../lib/gcc/mingw32/4.4.0/../../../../mingw32/include"
+ignoring nonexistent directory "/mingw/include"
+ignoring duplicate directory "d:/build/svn.ali.as/strawberry_packs_devel/m32gcc4/lib/gcc/../../include"
+ignoring duplicate directory "d:/build/svn.ali.as/strawberry_packs_devel/m32gcc4/lib/gcc/../../lib/gcc/mingw32/4.4.0/include"
+ignoring duplicate directory "d:/build/svn.ali.as/strawberry_packs_devel/m32gcc4/lib/gcc/../../lib/gcc/mingw32/4.4.0/include-fixed"
+ignoring nonexistent directory "d:/build/svn.ali.as/strawberry_packs_devel/m32gcc4/lib/gcc/../../lib/gcc/mingw32/4.4.0/../../../../mingw32/include"
+ignoring nonexistent directory "/mingw/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ d:\build\svn.ali.as\strawberry_packs_devel\m32gcc4\bin\../lib/gcc/mingw32/4.4.0/../../../../include
+ d:\build\svn.ali.as\strawberry_packs_devel\m32gcc4\bin\../lib/gcc/mingw32/4.4.0/include
+ d:\build\svn.ali.as\strawberry_packs_devel\m32gcc4\bin\../lib/gcc/mingw32/4.4.0/include-fixed 
+
+ mingw-w64-gcc4
+--------------
+ignoring nonexistent directory "/mingw64-w32/mingw64-w32/lib/gcc/i686-w64-mingw32/4.4.3/../../../../include"
+ignoring duplicate directory "d:/build/svn.ali.as/strawberry_packs_devel/w32gcc4/lib/gcc/../../lib/gcc/i686-w64-mingw32/4.4.3/include"
+ignoring duplicate directory "d:/build/svn.ali.as/strawberry_packs_devel/w32gcc4/lib/gcc/../../lib/gcc/i686-w64-mingw32/4.4.3/include-fixed"
+ignoring duplicate directory "d:/build/svn.ali.as/strawberry_packs_devel/w32gcc4/lib/gcc/../../lib/gcc/i686-w64-mingw32/4.4.3/../../../../i686-w64-mingw32/include"
+ignoring nonexistent directory "/mingw64-w32/mingw/include"
+#include "..." search starts here:
+#include <...> search starts here:
+ d:\build\svn.ali.as\strawberry_packs_devel\w32gcc4\bin\../lib/gcc/i686-w64-mingw32/4.4.3/include
+ d:\build\svn.ali.as\strawberry_packs_devel\w32gcc4\bin\../lib/gcc/i686-w64-mingw32/4.4.3/include-fixed
+ d:\build\svn.ali.as\strawberry_packs_devel\w32gcc4\bin\../lib/gcc/i686-w64-mingw32/4.4.3/../../../../i686-w64-mingw32/include

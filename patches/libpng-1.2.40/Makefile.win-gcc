@@ -1,0 +1,106 @@
+#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
+#        that can be incompatible with other make tools
+
+#### the following is package-specific ####
+
+BASENAME =libpng
+DLLBASE  =$(BASENAME)
+CFLAGS   =-DHAVE_CONFIG_H -I. -DPNG_CONFIGURE_LIBPNG -O2 -DDLL_EXPORT -DPIC -I$(INCDIR) -mms-bitfields
+LIBS     =-L$(LIBDIR) -lz
+CXXFLAGS =
+OBJS     =png.o pngset.o pngget.o pngrutil.o pngtrans.o pngwutil.o pngread.o pngrio.o pngwio.o pngwrite.o pngrtran.o pngwtran.o pngmem.o pngerror.o pngpread.o
+VEROBJ   =dll_version_res.o dll_version.o
+CONFIG_H =config.h
+PCFILE   =
+CFFILE   =
+
+#### end of packcage-specific ####
+
+ifeq ($(NOPERL), 1)
+  ECHO   = @echo
+  CP     = cp
+  MV     = mv
+  RM_F   = rm -f
+  RM_RF  = rm -rf
+  MKPATH = mkdir -p
+  SED    = sed
+else
+  ECHO   = @perl -l -e "print qq{@ARGV}" --
+  CP     = perl -MExtUtils::Command -e "cp" --
+  MV     = perl -MExtUtils::Command -e "mv" --
+  RM_F   = perl -MExtUtils::Command -e "rm_f" --
+  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
+  MKPATH = perl -MExtUtils::Command -e "mkpath" --
+  SED    = perl -pe
+endif
+
+RANLIB  = ranlib
+CC      = gcc
+CXX     = g++
+STRIP   = strip
+AR      = ar
+ARFLAGS = csr
+
+#by default we assume 32-bit target platform
+BITS=32
+
+PREFIX =./_output_
+BINDIR =$(PREFIX)/bin
+INCDIR =$(PREFIX)/include
+LIBDIR =$(PREFIX)/lib
+
+STATIC_LIB=$(BASENAME).a
+IMPORT_LIB=$(BASENAME).dll.a
+SHARED_LIB=$(DLLBASE)$(DLLSUFFIX).dll
+
+#BEWARE: all you put into TARGETS will be deleted by 'make clean'
+TARGETS = $(PCFILE) $(CFFILE) $(CONFIG_H) $(STATIC_LIB) $(SHARED_LIB) $(EXEOBJS) $(EXES)
+
+all: $(TARGETS)
+
+clean:
+	$(RM_F) $(OBJS) $(VEROBJ) $(TARGETS)
+
+$(STATIC_LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(SHARED_LIB): $(VEROBJ) $(OBJS)
+	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
+	$(STRIP) -S $(SHARED_LIB)
+
+%.o : %.c ; $(CC) $(CFLAGS) -c $< -o $@
+
+%.o : %.cpp ; $(CXX) $(CXXFLAGS) -c $< -o $@
+
+%.o : %.cc ; $(CXX) $(CXXFLAGS) -c $< -o $@
+
+%.o : %.rc ; windres --define GCC_WINDRES $< -o $@
+
+%.rc: %.rc.win-gcc ; $(SED) "s~\@buildinfo\@~$(BUILDINFO)~" $< > $@
+
+%.h: %.h.win-gcc$(BITS) ; $(CP) $< $@
+
+%.h: %.h.win-gcc ; $(CP) $< $@
+
+%.c: %.c.win-gcc ; $(CP) $< $@
+ 
+%-config: %-config.win-gcc ; $(CP) $< $@ 
+
+%-config.bat: %-config.bat.win-gcc ; $(CP) $< $@ 
+
+%.pc: %.pc.win-gcc ; $(SED) "s~\@prefix\@~$(PREFIX)~" $< > $@
+
+#### the rest of the makefile is package-specific ####
+
+install: all
+	$(MKPATH) $(BINDIR)
+	$(MKPATH) $(LIBDIR)
+	$(MKPATH) $(INCDIR)/libpng12
+	$(CP) "$(STATIC_LIB)" "$(LIBDIR)"
+	$(CP) "$(IMPORT_LIB)" "$(LIBDIR)"
+	$(CP) "$(STATIC_LIB)" "$(LIBDIR)/$(BASENAME)12.a"
+	$(CP) "$(IMPORT_LIB)" "$(LIBDIR)/$(BASENAME)12.dll.a"
+	$(CP) "$(SHARED_LIB)" "$(BINDIR)"
+	$(CP) png.h pngconf.h "$(INCDIR)"
+	$(CP) png.h pngconf.h "$(INCDIR)/libpng12"

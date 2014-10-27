@@ -1,0 +1,74 @@
+#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
+#        that can be incompatible with other make tools
+
+BASENAME =libmikmod
+DLLBASE  =$(BASENAME)
+CFLAGS   =-O3 -mms-bitfields -mthreads -g -DWIN32 -DDLL_EXPORTS -DDRV_DS -DDRV_WIN -DHAVE_FCNTL_H -DHAVE_MALLOC_H -DHAVE_LIMITS_H -Iinclude -I. -Iwin32 -I$(INCDIR)
+LIBS     =-L$(LIBDIR) -lwinmm -ldsound
+OBJS     =drivers/drv_ds.o drivers/drv_nos.o drivers/drv_raw.o drivers/drv_stdout.o drivers/drv_wav.o drivers/drv_win.o loaders/load_669.o loaders/load_amf.o loaders/load_asy.o loaders/load_dsm.o loaders/load_far.o loaders/load_gdm.o loaders/load_imf.o loaders/load_it.o loaders/load_m15.o loaders/load_med.o loaders/load_mod.o loaders/load_mtm.o loaders/load_okt.o loaders/load_s3m.o loaders/load_stm.o loaders/load_stx.o loaders/load_ult.o loaders/load_uni.o loaders/load_gt2.o loaders/load_xm.o mmio/mmalloc.o mmio/mmerror.o mmio/mmio.o playercode/mdreg.o playercode/mdriver.o playercode/mloader.o playercode/mlreg.o playercode/mlutil.o playercode/mplayer.o playercode/munitrk.o playercode/mwav.o playercode/npertab.o playercode/sloader.o playercode/virtch.o playercode/virtch2.o playercode/virtch_common.o playercode/mdulaw.o
+CFFILE   =libmikmod-config
+
+ifeq ($(NOPERL), 1)
+  ECHO   = @echo
+  CP     = cp
+  MV     = mv
+  RM_F   = rm -f
+  RM_RF  = rm -rf
+  MKPATH = mkdir -p
+  SED    = sed
+else
+  ECHO   = @perl -l -e "print qq{@ARGV}" --
+  CP     = perl -MExtUtils::Command -e "cp" --
+  MV     = perl -MExtUtils::Command -e "mv" --
+  RM_F   = perl -MExtUtils::Command -e "rm_f" --
+  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
+  MKPATH = perl -MExtUtils::Command -e "mkpath" --
+  SED    = perl -pe
+endif
+
+RANLIB  = ranlib
+CC      = gcc
+CXX     = g++
+STRIP   = strip
+AR      = ar
+ARFLAGS = csr
+
+#by default we assume 32-bit target platform
+BITS=32
+
+PREFIX =./_output_
+BINDIR =$(PREFIX)/bin
+INCDIR =$(PREFIX)/include
+LIBDIR =$(PREFIX)/lib
+
+STATIC_LIB=$(BASENAME).a
+IMPORT_LIB=$(BASENAME).dll.a
+SHARED_LIB=$(DLLBASE)$(DLLSUFFIX).dll
+
+#BEWARE: all you put into TARGETS will be deleted by 'make clean'
+TARGETS = $(PCFILE) $(CFFILE) $(CONFIG_H) $(STATIC_LIB) $(SHARED_LIB) $(EXEOBJS) $(EXES)
+
+all: $(TARGETS)
+
+clean:
+	$(RM_F) $(OBJS) $(VEROBJ) $(TARGETS)
+
+$(STATIC_LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(SHARED_LIB): $(VEROBJ) $(OBJS)
+	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
+	$(STRIP) -S $(SHARED_LIB)
+
+%.o : %.c ; $(CC) $(CFLAGS) -c $< -o $@
+
+%-config: %-config.win-gcc ; $(SED) "s~\@prefix\@~$(PREFIX)~" $< > $@
+
+install: all
+	$(MKPATH) $(BINDIR)
+	$(MKPATH) $(LIBDIR)
+	$(MKPATH) $(INCDIR)
+	$(CP) "win32/mikmod.h" "$(INCDIR)"
+	$(CP) $(IMPORT_LIB) $(STATIC_LIB) "$(LIBDIR)"
+	$(CP) $(CFFILE) $(SHARED_LIB) "$(BINDIR)"

@@ -1,0 +1,75 @@
+try to build mysql libs from sources:
+- http://www.mysql.com/products/connector/
+- http://dev.mysql.com/get/Downloads/Connector-C/mysql-connector-c-6.1.5-src.zip ( Built from MySQL 5.7.5-m15 sources )
+- http://dev.mysql.com/get/Downloads/Connector-C/mysql-connector-c-6.1.5-src.tar.gz
+
+in my_pthread.h comment out:
+//struct timespec {
+//  union ft64 tv;
+//  /* The max timeout value in millisecond for pthread_cond_timedwait */
+//  long max_timeout_msec;
+//};
+
+cp libz.dll.a libzlib.dll.a 
+cmake -G "MSYS Makefiles" -DWITH_ZLIB=system -DWITH_SSL=yes -DWITHOUT_SERVER=yes -DCMAKE_INSTALL_PREFIX=/z/extlib/build/_2014Q1_
+cmake -G "MSYS Makefiles" -DWITH_ZLIB=system -DWITH_SSL=no -DCMAKE_INSTALL_PREFIX=/z/extlib/build/_2014Q1_
+cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=/z/extlib/build/_2014Q1_
+cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=release -DWITHOUT_SERVER=yes -DCMAKE_INSTALL_PREFIX=z:\extlib\build\_2014Q1_ 
+
+cmake -G "MSYS Makefiles" -DWITH_ZLIB=no -DWITH_SSL=no -DCMAKE_INSTALL_PREFIX=/z/extlib/_2014Q1_
+
+cmake -G "MSYS Makefiles" -DWITH_ZLIB=bundled -DWITH_SSL=bundled -DWITH_LIBEVENT=bundled -DCMAKE_INSTALL_PREFIX=/z/extlib/_2014Q1_
+
+cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=/z/extlib/_2014Q1_
+make
+
+
+trouble with pthreads
+
+##########################################################
+################################################ old notes
+##########################################################
+
+    cd "${srcdir}/mingw-utils-0.4/reimp"
+    ${_arch}-gcc -g -I . reimp.c util.c ar.c -o reimp.exe
+    cd "${srcdir}/${_arch}/lib"
+    wine "${srcdir}/mingw-utils-0.4/reimp/reimp.exe" -d libmysql.lib
+    ${_arch}-dlltool -k --input-def libmysql.def --dllname libmysql.dll --output-lib libmysql.dll.a
+
+    
+    
+--- PKGBUILD.orig 2013-04-29 14:29:08.724737183 +0200
+ +++ PKGBUILD 2013-04-29 14:29:01.441097505 +0200
+ @@ -27,13 +27,16 @@
+
+ ln -s mariadb-${pkgver}-win32 i686-w64-mingw32
+ ln -s mariadb-${pkgver}-winx64 x86_64-w64-mingw32
+ +
+ + unset WINEARCH
+ + export WINEPREFIX=${srcdir}/wineprefix
+
+ for _arch in ${_architectures}; do
+ cd "${srcdir}/reimp"
+ ${_arch}-gcc -g -I . reimp.c util.c ar.c -o reimp.exe
+ cd "${srcdir}/${_arch}/lib"
+ wine ${srcdir}/reimp/reimp.exe -d libmysql.lib
+ - /usr/${_arch}/bin/dlltool -k --input-def libmysql.def --dllname libmysql.dll --output-lib libmysql.a
+ + /usr/${_arch}/bin/dlltool -k --input-def libmysql.def --dllname libmysql.dll --output-lib libmysql.dll.a
+ done
+ }
+
+ @@ -43,10 +46,9 @@
+ mkdir -p ${pkgdir}/usr/${_arch}/{bin,include,lib}
+ cp -R include ${pkgdir}/usr/${_arch}
+ install -Dm644 lib/libmysql.dll ${pkgdir}/usr/${_arch}/bin/libmysql.dll
+ - # I could not get libmysql.a to link correctly to libmysql.dll without it being in the same directory.
+ - # If someone konws the correct way of doing this please tell me.
+ - cp ${pkgdir}/usr/${_arch}/bin/libmysql.dll ${pkgdir}/usr/${_arch}/lib/libmysql.dll
+ - install -Dm644 lib/libmysql.a ${pkgdir}/usr/${_arch}/lib/libmysql.a
+ - ${_arch}-ranlib ${pkgdir}/usr/${_arch}/lib/libmysql.a
+ + install -Dm644 lib/libmysql.dll.a ${pkgdir}/usr/${_arch}/lib/libmysql.dll.a
+ + ${_arch}-ranlib ${pkgdir}/usr/${_arch}/lib/libmysql.dll.a
+ + ${_arch}-strip --strip-unneeded ${pkgdir}/usr/${_arch}/bin/*.dll
+ + ${_arch}-strip --strip-unneeded ${pkgdir}/usr/${_arch}/lib/*.dll.a
+ done
+ }

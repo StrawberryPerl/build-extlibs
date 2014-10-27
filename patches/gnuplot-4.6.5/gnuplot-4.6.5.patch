@@ -1,0 +1,408 @@
+--- a/src/internal.c.orig	2013-08-02 06:58:47.000000000 -0400
++++ b/src/internal.c	2013-08-02 06:58:57.000000000 -0400
+@@ -58,12 +58,13 @@
+ 
+ static enum DATA_TYPES sprintf_specifier __PROTO((const char *format));
+ 
+-
++#ifndef __MINGW32__
+ int
+ GP_MATHERR( STRUCT_EXCEPTION_P_X )
+ {
+     return (undefined = TRUE);	/* don't print error message */
+ }
++#endif
+ 
+ #define BAD_DEFAULT default: int_error(NO_CARET, "internal error : type neither INT or CMPLX"); return;
+ 
+--- a/src/win/wprinter.c.orig	2013-08-02 07:11:57.000000000 -0400
++++ b/src/win/wprinter.c	2013-08-02 07:14:40.000000000 -0400
+@@ -63,15 +63,17 @@
+ 
+ GP_LPPRINT prlist = NULL;
+ 
+-BOOL CALLBACK PrintSizeDlgProc(HWND hdlg, UINT wmsg, WPARAM wparam, LPARAM lparam);
+ static GP_LPPRINT PrintFind(HDC hdc);
+ 
+-
+ BOOL CALLBACK
+ PrintSizeDlgProc(HWND hdlg, UINT wmsg, WPARAM wparam, LPARAM lparam)
+ {
+     char buf[8];
++#ifdef _WIN64
++    GP_LPPRINT lpr = (GP_LPPRINT)GetWindowLongPtr(GetParent(hdlg), 4);
++#else
+     GP_LPPRINT lpr = (GP_LPPRINT)GetWindowLong(GetParent(hdlg), 4);
++#endif
+ 
+     switch (wmsg) {
+     case WM_INITDIALOG:
+@@ -146,7 +148,11 @@
+     BOOL status = FALSE;
+     GP_PRINT pr;
+ 
++#ifdef _WIN64
++    SetWindowLongPtr(hwnd, 4, (LONG_PTR)&pr);
++#else
+     SetWindowLong(hwnd, 4, (LONG)&pr);
++#endif
+     pr.poff.x = 0;
+     pr.poff.y = 0;
+     pr.psize.x = GetDeviceCaps(printer, HORZSIZE);
+@@ -213,13 +219,16 @@
+     }
+ }
+ 
+-
+ /* GetWindowLong(GetParent(hDlg), 4) must be available for use */
+ BOOL CALLBACK
+ PrintDlgProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
+ {
+     GP_LPPRINT lpr;
++#ifdef _WIN64
++    lpr = (GP_LPPRINT)GetWindowLongPtr(GetParent(hDlg), 4);
++#else
+     lpr = (GP_LPPRINT)GetWindowLong(GetParent(hDlg), 4);
++#endif
+ 	/* FIXME: cause of crash in bug #3544949. No idea yet as to why this could happen, though. */
+ 	if (lpr == NULL)
+ 	return FALSE;
+@@ -240,7 +249,6 @@
+     return FALSE;
+ }
+ 
+-
+ BOOL CALLBACK
+ PrintAbortProc(HDC hdcPrn, int code)
+ {
+@@ -319,7 +327,11 @@
+ 	printer = pd.hDC;
+ 	if (printer != (HDC)NULL) {
+ 	    pr.hdcPrn = printer;
++#ifdef _WIN64
++		SetWindowLongPtr(hwnd, 4, (LONG_PTR)((GP_LPPRINT)&pr));
++#else
+ 	    SetWindowLong(hwnd, 4, (LONG)((GP_LPPRINT)&pr));
++#endif
+ 	    PrintRegister((GP_LPPRINT)&pr);
+ 	    if ( (buf = malloc(4096+2)) != (char *)NULL ) {
+ 	    	bufcount = (WORD *)buf;
+--- a/src/win/winmain.c.orig	2013-08-02 07:00:04.000000000 -0400
++++ b/src/win/winmain.c	2013-08-02 07:18:53.000000000 -0400
+@@ -526,7 +526,11 @@
+         if (TextInit(&textwin))
+                 exit(1);
+         textwin.hIcon = LoadIcon(hInstance, "TEXTICON");
++#ifdef _WIN64
++        SetClassLongPtr(textwin.hWndParent, GCLP_HICON, (LONG_PTR)textwin.hIcon);
++#else
+         SetClassLong(textwin.hWndParent, GCL_HICON, (DWORD)textwin.hIcon);
++#endif
+ 	/* Note: we want to know whether this is an interactive session so that we can
+ 	 * decide whether or not to write status information to stderr.  The old test
+ 	 * for this was to see if (argc > 1) but the addition of optional command line
+--- a/src/win/wtext.c.orig	2013-08-02 07:05:49.000000000 -0400
++++ b/src/win/wtext.c	2013-08-02 07:05:59.000000000 -0400
+@@ -280,7 +280,11 @@
+ 
+     sysmenu = GetSystemMenu(lptw->hWndParent,0);	/* get the sysmenu */
+     AppendMenu(sysmenu, MF_SEPARATOR, 0, NULL);
++#ifdef _WIN64
++    AppendMenu(sysmenu, MF_POPUP, (UINT_PTR)lptw->hPopMenu, "&Options");
++#else
+     AppendMenu(sysmenu, MF_POPUP, (UINT)lptw->hPopMenu, "&Options");
++#endif
+     AppendMenu(sysmenu, MF_STRING, M_ABOUT, "&About");
+ 
+     if (lptw->lpmw)
+@@ -1013,7 +1017,11 @@
+     HDC hdc;
+     LPTW lptw;
+ 
++#ifdef _WIN64
++    lptw = (LPTW)GetWindowLongPtr(hwnd, 0);
++#else
+     lptw = (LPTW)GetWindowLong(hwnd, 0);
++#endif
+ 
+     switch(message) {
+     case WM_SYSCOMMAND:
+@@ -1091,7 +1099,11 @@
+ 	TEXTMETRIC tm;
+ 
+ 	lptw = ((CREATESTRUCT *)lParam)->lpCreateParams;
++#ifdef _WIN64
++	SetWindowLongPtr(hwnd, 0, (LONG_PTR)lptw);
++#else
+ 	SetWindowLong(hwnd, 0, (LONG)lptw);
++#endif
+ 	lptw->hWndParent = hwnd;
+ 	/* get character size */
+ 	TextMakeFont(lptw);
+@@ -1188,7 +1200,11 @@
+     int nYinc, nXinc;
+     LPTW lptw;
+ 
++#ifdef _WIN64
++    lptw = (LPTW)GetWindowLongPtr(hwnd, 0);
++#else
+     lptw = (LPTW)GetWindowLong(hwnd, 0);
++#endif
+ 
+     switch(message) {
+     case WM_SETFOCUS:
+@@ -1857,7 +1873,11 @@
+     }
+     case WM_CREATE:
+ 	lptw = ((CREATESTRUCT *)lParam)->lpCreateParams;
++#ifdef _WIN64
++	SetWindowLongPtr(hwnd, 0, (LONG_PTR)lptw);
++#else
+ 	SetWindowLong(hwnd, 0, (LONG)lptw);
++#endif
+ 	lptw->hWndText = hwnd;
+ 	break;
+     case WM_DESTROY:
+@@ -2142,7 +2162,11 @@
+     case WM_DRAWITEM:
+     {
+ 	LPDRAWITEMSTRUCT lpdis = (LPDRAWITEMSTRUCT)lParam;
++#ifdef _WIN64
++	DrawIcon(lpdis->hDC, 0, 0, (HICON)GetClassLongPtr(GetParent(hDlg), GCLP_HICON));
++#else
+ 	DrawIcon(lpdis->hDC, 0, 0, (HICON)GetClassLong(GetParent(hDlg), GCL_HICON));
++#endif
+ 	return FALSE;
+     }
+     case WM_COMMAND:
+--- a/src/win/wmenu.c.orig	2013-08-02 07:09:35.000000000 -0400
++++ b/src/win/wmenu.c	2013-08-02 07:11:28.000000000 -0400
+@@ -824,8 +824,13 @@
+ 			goto errorcleanup;
+ 		}
+ 		hMenu[nMenuLevel] = CreateMenu();
++#ifdef _WIN64
++		AppendMenu(hMenu[nMenuLevel > 0 ? nMenuLevel-1 : 0],
++			MF_STRING | MF_POPUP, (UINT_PTR)hMenu[nMenuLevel], (LPCSTR)buf);
++#else
+ 		AppendMenu(hMenu[nMenuLevel > 0 ? nMenuLevel-1 : 0],
+ 			MF_STRING | MF_POPUP, (UINT)hMenu[nMenuLevel], (LPCSTR)buf);
++#endif
+ 	  }
+ 	  else if (!lstrcmpi(buf,"[EndMenu]")) {
+ 		if (nMenuLevel > 0)
+@@ -1043,7 +1048,11 @@
+ {
+ LPTW lptw;
+ LPMW lpmw;
++#ifdef _WIN64
++    lptw = (LPTW)GetWindowLongPtr(GetParent(hDlg), 0);
++#else
+     lptw = (LPTW)GetWindowLong(GetParent(hDlg), 0);
++#endif
+     lpmw = lptw->lpmw;
+ 
+     switch( message) {
+--- a/src/win/wpause.c.orig	2013-08-02 07:02:38.000000000 -0400
++++ b/src/win/wpause.c	2013-08-02 07:02:46.000000000 -0400
+@@ -207,7 +207,11 @@
+ 	LPPW lppw;
+ 	int cxChar, cyChar, middle;
+ 
++#ifdef _WIN64
++	lppw = (LPPW)GetWindowLongPtr(hwnd, 0);
++#else
+ 	lppw = (LPPW)GetWindowLong(hwnd, 0);
++#endif
+ 
+ 	switch(message) {
+ 		case WM_KEYDOWN:
+@@ -245,7 +249,11 @@
+ 			if (!paused_for_mouse) /* don't show buttons during pausing for mouse or key */
+ 				ws_opts |= WS_VISIBLE;
+ 			lppw = ((CREATESTRUCT *)lParam)->lpCreateParams;
++#ifdef _WIN64
++			SetWindowLongPtr(hwnd, 0, (LONG_PTR)lppw);
++#else
+ 			SetWindowLong(hwnd, 0, (LONG)lppw);
++#endif
+ 			lppw->hWndPause = hwnd;
+ 			hdc = GetDC(hwnd);
+ 			SelectObject(hdc, GetStockObject(SYSTEM_FONT));
+@@ -267,10 +275,17 @@
+ 					8 * cxChar, 7 * cyChar / 4,
+ 					hwnd, (HMENU)IDCANCEL,
+ 					((LPCREATESTRUCT) lParam)->hInstance, NULL);
++#ifdef _WIN64
++			lppw->lpfnOK = (WNDPROC) GetWindowLongPtr(lppw->hOK, GWLP_WNDPROC);
++			SetWindowLongPtr(lppw->hOK, GWLP_WNDPROC, (LONG_PTR)PauseButtonProc);
++			lppw->lpfnCancel = (WNDPROC) GetWindowLongPtr(lppw->hCancel, GWLP_WNDPROC);
++			SetWindowLongPtr(lppw->hCancel, GWLP_WNDPROC, (LONG_PTR)PauseButtonProc);
++#else
+ 			lppw->lpfnOK = (WNDPROC) GetWindowLong(lppw->hOK, GWL_WNDPROC);
+ 			SetWindowLong(lppw->hOK, GWL_WNDPROC, (LONG)PauseButtonProc);
+ 			lppw->lpfnCancel = (WNDPROC) GetWindowLong(lppw->hCancel, GWL_WNDPROC);
+ 			SetWindowLong(lppw->hCancel, GWL_WNDPROC, (LONG)PauseButtonProc);
++#endif
+ 			if (GetParent(hwnd))
+ 				EnableWindow(GetParent(hwnd), FALSE);
+ 			return 0;
+@@ -293,7 +308,11 @@
+ {
+ 	LPPW lppw;
+ 	LONG n = GetWindowLong(hwnd, GWL_ID);
++#ifdef _WIN64
++	lppw = (LPPW)GetWindowLongPtr(GetParent(hwnd), 0);
++#else
+ 	lppw = (LPPW)GetWindowLong(GetParent(hwnd), 0);
++#endif
+ 	switch(message) {
+ 		case WM_KEYDOWN:
+ 			switch(wParam) {
+--- a/src/win/wgnuplot.rc.orig	2013-08-15 08:12:30.136025743 -0400
++++ b/src/win/wgnuplot.rc	2013-08-15 08:13:50.721026585 -0400
+@@ -3,8 +3,12 @@
+ #include "wgnuplib.rc"
+ 
+ #ifndef NO_MANIFEST
++#ifdef _WIN64
++CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "wgnuplot.exe.manifest64"
++#else
+ CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "wgnuplot.exe.manifest"
+ #endif
++#endif
+ 
+ GRPICON ICON "grpicon.ico"
+ TEXTICON ICON "texticon.ico"
+--- a/src/win/wgraph.c.orig	2013-08-02 07:08:26.000000000 -0400
++++ b/src/win/wgraph.c	2013-08-02 07:08:55.000000000 -0400
+@@ -435,8 +435,13 @@
+ 		NULL, NULL, lpgw->hInstance, lpgw);
+ 
+ 	if (lpgw->hWndGraph)
++#ifdef _WIN64
++		SetClassLongPtr(lpgw->hWndGraph, GCLP_HICON,
++			(LONG_PTR) LoadIcon(lpgw->hInstance, "GRPICON"));
++#else
+ 		SetClassLong(lpgw->hWndGraph, GCL_HICON,
+ 			(LONG) LoadIcon(lpgw->hInstance, "GRPICON"));
++#endif
+ 
+ 	lpgw->hStatusbar = CreateWindowEx(0, STATUSCLASSNAME, (LPSTR)NULL,
+ 				  WS_CHILD | SBARS_SIZEGRIP,
+@@ -575,7 +580,11 @@
+ 	/* modify the system menu to have the new items we want */
+ 	sysmenu = GetSystemMenu(lpgw->hWndGraph,0);
+ 	AppendMenu(sysmenu, MF_SEPARATOR, 0, NULL);
++#ifdef _WIN64
++	AppendMenu(sysmenu, MF_POPUP, (UINT_PTR)lpgw->hPopMenu, "&Options");
++#else
+ 	AppendMenu(sysmenu, MF_POPUP, (UINT)lpgw->hPopMenu, "&Options");
++#endif
+ 	AppendMenu(sysmenu, MF_STRING, M_ABOUT, "&About");
+ 
+ #ifndef WGP_CONSOLE
+@@ -2972,13 +2981,17 @@
+ 	}
+ 
+ 	pr.hdcPrn = printer;
++#ifdef _WIN64
++	SetWindowLongPtr(hwnd, 4, (LONG_PTR)((GP_LPPRINT)&pr));
++#else
+ 	SetWindowLong(hwnd, 4, (LONG)((GP_LPPRINT)&pr));
++#endif
+ 	PrintRegister((GP_LPPRINT)&pr);
+ 
+ 	EnableWindow(hwnd, FALSE);
+ 	pr.bUserAbort = FALSE;
+ 	pr.hDlgPrint = CreateDialogParam(hdllInstance, "CancelDlgBox",
+-									hwnd, PrintDlgProc, (LPARAM)lpgw->Title);
++					 hwnd, PrintDlgProc, (LPARAM)lpgw->Title);
+ 	SetAbortProc(printer, PrintAbortProc);
+ 
+ 	memset(&docInfo, 0, sizeof(DOCINFO));
+@@ -3326,7 +3339,11 @@
+ 
+ #define LS_DEFLINE 2
+ typedef struct tagLS {
++#ifdef _WIN64
++	LONG_PTR widtype;
++#else
+ 	int	widtype;
++#endif
+ 	int	wid;
+ 	HWND	hwnd;
+ 	int	pen;			/* current pen number */
+@@ -3388,7 +3405,11 @@
+ 	int i;
+ 	UINT pen;
+ 	LPLOGPEN plpm, plpc;
++#ifdef _WIN64
++	lpls = (LPLS)GetWindowLongPtr(GetParent(hdlg), 4);
++#else
+ 	lpls = (LPLS)GetWindowLong(GetParent(hdlg), 4);
++#endif
+ 
+ 	switch (wmsg) {
+ 		case WM_INITDIALOG:
+@@ -3567,7 +3588,11 @@
+ 	BOOL status = FALSE;
+ 	LS ls;
+ 
++#ifdef _WIN64
++	SetWindowLongPtr(lpgw->hWndGraph, 4, (LONG_PTR)((LPLS)&ls));
++#else
+ 	SetWindowLong(lpgw->hWndGraph, 4, (LONG)((LPLS)&ls));
++#endif
+ 	_fmemcpy(&ls.colorpen, &lpgw->colorpen, (WGNUMPENS + 2) * sizeof(LOGPEN));
+ 	_fmemcpy(&ls.monopen, &lpgw->monopen, (WGNUMPENS + 2) * sizeof(LOGPEN));
+ 
+@@ -3651,7 +3676,11 @@
+ 	static unsigned int last_modifier_mask = -99;
+ #endif
+ 
++#ifdef _WIN64
++	lpgw = (LPGW)GetWindowLongPtr(hwnd, 0);
++#else
+ 	lpgw = (LPGW)GetWindowLong(hwnd, 0);
++#endif
+ 
+ #ifdef USE_MOUSE
+ 	/*  mouse events first */
+@@ -4176,7 +4205,11 @@
+ 			return FALSE;
+ 		case WM_CREATE:
+ 			lpgw = ((CREATESTRUCT *)lParam)->lpCreateParams;
++#ifdef _WIN64
++			SetWindowLongPtr(hwnd, 0, (LONG_PTR)lpgw);
++#else
+ 			SetWindowLong(hwnd, 0, (LONG)lpgw);
++#endif
+ 			lpgw->hWndGraph = hwnd;
+ 			hdc = GetDC(hwnd);
+ 			MakePens(lpgw, hdc);
+--- a/src//dev/null	2013-08-15 03:30:14.608021877 -0400
++++ b/src/win/wgnuplot.exe.manifest64	2013-08-15 08:14:22.412026916 -0400
+@@ -0,0 +1,22 @@
++<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
++<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
++<assemblyIdentity
++    version="4.5.0.0"
++    processorArchitecture="amd64"
++    name="gnuplot development team.gnuplot.wgnuplot"
++    type="win32"
++/>
++<description>Famous scientific plotting package.</description>
++<dependency>
++    <dependentAssembly>
++        <assemblyIdentity
++            type="win32"
++            name="Microsoft.Windows.Common-Controls"
++            version="6.0.0.0"
++            processorArchitecture="amd64"
++            publicKeyToken="6595b64144ccf1df"
++            language="*"
++        />
++    </dependentAssembly>
++</dependency>
++</assembly>

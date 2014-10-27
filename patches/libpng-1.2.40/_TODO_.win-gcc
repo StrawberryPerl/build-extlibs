@@ -1,0 +1,3 @@
+libpng-config.in
+libpng.pc.in 
+pregenerovat config.h

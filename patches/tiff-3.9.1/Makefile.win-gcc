@@ -1,0 +1,103 @@
+#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
+#        that can be incompatible with other make tools
+
+#### the following is package-specific ####
+
+BASENAME =libtiff
+DLLBASE  =$(BASENAME)
+CFLAGS   =-std=gnu99 -DHAVE_CONFIG_H -I. -I./libtiff -O2 -I$(INCDIR) -mms-bitfields
+LIBS     =-ljpeg -lz -L$(LIBDIR)
+CXXFLAGS =
+OBJS     =libtiff/tif_aux.o libtiff/tif_close.o libtiff/tif_codec.o libtiff/tif_color.o libtiff/tif_compress.o libtiff/tif_dir.o libtiff/tif_dirinfo.o libtiff/tif_dirread.o libtiff/tif_dirwrite.o libtiff/tif_dumpmode.o libtiff/tif_error.o libtiff/tif_extension.o libtiff/tif_fax3.o libtiff/tif_fax3sm.o libtiff/tif_flush.o libtiff/tif_getimage.o libtiff/tif_jbig.o libtiff/tif_jpeg.o libtiff/tif_luv.o libtiff/tif_lzw.o libtiff/tif_next.o libtiff/tif_ojpeg.o libtiff/tif_open.o libtiff/tif_packbits.o libtiff/tif_pixarlog.o libtiff/tif_predict.o libtiff/tif_print.o libtiff/tif_read.o libtiff/tif_strip.o libtiff/tif_swab.o libtiff/tif_thunder.o libtiff/tif_tile.o libtiff/tif_unix.o libtiff/tif_version.o libtiff/tif_warning.o libtiff/tif_write.o libtiff/tif_zip.o
+VEROBJ   =dll_version_res.o dll_version.o
+CONFIG_H =tiffconf.h tif_config.h
+PCFILE   =
+CFFILE   =
+
+#### end of packcage-specific ####
+
+ifeq ($(NOPERL), 1)
+  ECHO   = @echo
+  CP     = cp
+  MV     = mv
+  RM_F   = rm -f
+  RM_RF  = rm -rf
+  MKPATH = mkdir -p
+  SED    = sed
+else
+  ECHO   = @perl -l -e "print qq{@ARGV}" --
+  CP     = perl -MExtUtils::Command -e "cp" --
+  MV     = perl -MExtUtils::Command -e "mv" --
+  RM_F   = perl -MExtUtils::Command -e "rm_f" --
+  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
+  MKPATH = perl -MExtUtils::Command -e "mkpath" --
+  SED    = perl -pe
+endif
+
+RANLIB  = ranlib
+CC      = gcc
+CXX     = g++
+STRIP   = strip
+AR      = ar
+ARFLAGS = csr
+
+#by default we assume 32-bit target platform
+BITS=32
+
+PREFIX =./_output_
+BINDIR =$(PREFIX)/bin
+INCDIR =$(PREFIX)/include
+LIBDIR =$(PREFIX)/lib
+
+STATIC_LIB=$(BASENAME).a
+IMPORT_LIB=$(BASENAME).dll.a
+SHARED_LIB=$(DLLBASE)$(DLLSUFFIX).dll
+
+#BEWARE: all you put into TARGETS will be deleted by 'make clean'
+TARGETS = $(PCFILE) $(CFFILE) $(CONFIG_H) $(STATIC_LIB) $(SHARED_LIB) $(EXEOBJS) $(EXES)
+
+all: $(TARGETS)
+
+clean:
+	$(RM_F) $(OBJS) $(VEROBJ) $(TARGETS)
+
+$(STATIC_LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(SHARED_LIB): $(VEROBJ) $(OBJS)
+	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
+	$(STRIP) -S $(SHARED_LIB)
+
+%.o : %.c ; $(CC) $(CFLAGS) -c $< -o $@
+
+%.o : %.cpp ; $(CXX) $(CXXFLAGS) -c $< -o $@
+
+%.o : %.cc ; $(CXX) $(CXXFLAGS) -c $< -o $@
+
+%.o : %.rc ; windres --define GCC_WINDRES $< -o $@
+
+%.rc: %.rc.win-gcc ; $(SED) "s~\@buildinfo\@~$(BUILDINFO)~" $< > $@
+
+%.h: %.h.win-gcc$(BITS) ; $(CP) $< $@
+
+%.h: %.h.win-gcc ; $(CP) $< $@
+
+%.c: %.c.win-gcc ; $(CP) $< $@
+ 
+%-config: %-config.win-gcc ; $(CP) $< $@ 
+
+%-config.bat: %-config.bat.win-gcc ; $(CP) $< $@ 
+
+%.pc: %.pc.win-gcc ; $(SED) "s~\@prefix\@~$(PREFIX)~" $< > $@
+
+#### the rest of the makefile is package-specific ####
+
+install: all
+	$(MKPATH) $(BINDIR)
+	$(MKPATH) $(LIBDIR)
+	$(MKPATH) $(INCDIR)
+	$(CP) "$(STATIC_LIB)" "$(LIBDIR)"
+	$(CP) "$(IMPORT_LIB)" "$(LIBDIR)"
+	$(CP) "$(SHARED_LIB)" "$(BINDIR)"
+	$(CP) libtiff/tiff.h tiffconf.h libtiff/tiffio.h libtiff/tiffvers.h libtiff/tiffio.hxx $(INCDIR)	 

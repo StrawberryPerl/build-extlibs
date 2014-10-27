@@ -1,0 +1,45 @@
+##basic libs
+zlib-1.2.5
+libiconv-1.14
+freeglut-2.6.0
+expat-2.0.1
+libxml2-2.7.8
+
+##graphics related
+jpeg-8c
+libpng-1.5.6
+tiff-3.9.5
+freetype-2.4.7
+fontconfig-2.8.0
+
+##sound related
+libogg-1.3.0
+libvorbis-1.3.2
+speex-1.2rc1
+libmodplug-0.8.7
+flac-1.2.1
+libmikmod-3.2.2
+
+##SDL libs
+SDL-1.2.14
+#SDL_image-1.2.10
+SDL_image-HG20111202
+SDL_net-1.2.7
+SDL_gfx-2.0.22
+SDL_ttf-2.0.10
+#libsmpeg-SVN20090831
+libsmpeg-SVN20111202
+SDL_mixer-1.2.11
+SDL_rtf-0.1.0
+SDL_svg-1.2.0
+SDL_sound-1.0.3
+SDL_vnc-1.0.0
+
+##pango related
+gettext-0.18.1.1
+libffi-3.0.10
+glib-2.31.0
+pixman-0.24.0
+cairo-1.10.2
+pango-1.29.4
+SDL_Pango-0.1.2

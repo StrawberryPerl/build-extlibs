@@ -1,0 +1,84 @@
+diff -r -u -w --strip-trailing-cr netcdf-4.3.2.original/configure netcdf-4.3.2/configure
+--- netcdf-4.3.2.original/configure	2014-07-27 17:00:36.035511300 +0200
++++ netcdf-4.3.2/configure	2014-07-27 17:00:38.315957600 +0200
+@@ -16820,7 +16820,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ldf  $LIBS"
++LIBS="-lhdf  $LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -16855,7 +16855,7 @@
+ #define HAVE_LIBDF 1
+ _ACEOF
+ 
+-  LIBS="-ldf $LIBS"
++  LIBS="-lhdf $LIBS"
+ 
+ else
+   as_fn_error $? "Can't find or link to the hdf4 df library. See config.log for errors." "$LINENO" 5
+diff -r -u -w --strip-trailing-cr netcdf-4.3.2.original/liblib/Makefile.in netcdf-4.3.2/liblib/Makefile.in
+--- netcdf-4.3.2.original/liblib/Makefile.in	2014-07-27 17:00:36.503566600 +0200
++++ netcdf-4.3.2/liblib/Makefile.in	2014-07-27 17:00:38.410565200 +0200
+@@ -386,7 +386,7 @@
+ 
+ # These linker flags specify libtool version info.
+ # Note: version-info of "9:0:2" results in soname of libnetcdf.so.7 -> libnetcdf.so.7.2.0
+-libnetcdf_la_LDFLAGS = -version-info 9:0:2 $(am__append_3)
++libnetcdf_la_LDFLAGS = -no-undefined -version-info 9:0:2 $(am__append_3)
+ libnetcdf_la_CPPFLAGS = ${AM_CPPFLAGS} $(am__append_4)
+ 
+ # The output library will always include netcdf3 and dispatch
+diff -r -u -w --strip-trailing-cr netcdf-4.3.2.original/libsrc4/nc4type.c netcdf-4.3.2/libsrc4/nc4type.c
+--- netcdf-4.3.2.original/libsrc4/nc4type.c	2014-07-27 17:00:36.550224000 +0200
++++ netcdf-4.3.2/libsrc4/nc4type.c	2014-07-27 17:00:38.253221100 +0200
+@@ -26,7 +26,7 @@
+ NC4_inq_type_equal(int ncid1, nc_type typeid1, int ncid2, 
+ 		  nc_type typeid2, int *equalp)
+ {
+-   NC_GRP_INFO_T *grp1, *grp2;
++   NC_GRP_INFO_T *grp_1, *grp_2;
+    NC_TYPE_INFO_T *type1, *type2;
+    int retval;
+    
+@@ -62,14 +62,14 @@
+    }
+ 
+    /* Not atomic types - so find type1 and type2 information. */
+-   if ((retval = nc4_find_nc4_grp(ncid1, &grp1)))
++   if ((retval = nc4_find_nc4_grp(ncid1, &grp_1)))
+       return retval;
+-   if (!(type1 = nc4_rec_find_nc_type(grp1->nc4_info->root_grp, 
++   if (!(type1 = nc4_rec_find_nc_type(grp_1->nc4_info->root_grp, 
+ 				      typeid1)))
+       return NC_EBADTYPE;
+-   if ((retval = nc4_find_nc4_grp(ncid2, &grp2)))
++   if ((retval = nc4_find_nc4_grp(ncid2, &grp_2)))
+       return retval;
+-   if (!(type2 = nc4_rec_find_nc_type(grp2->nc4_info->root_grp, 
++   if (!(type2 = nc4_rec_find_nc_type(grp_2->nc4_info->root_grp, 
+ 				      typeid2)))
+       return NC_EBADTYPE;
+ 
+@@ -84,7 +84,7 @@
+ EXTERNL int
+ NC4_inq_typeid(int ncid, const char *name, nc_type *typeidp)
+ {
+-   NC_GRP_INFO_T *grp, *grp2;
++   NC_GRP_INFO_T *grp, *grp_2;
+    NC_HDF5_FILE_INFO_T *h5;
+    NC_TYPE_INFO_T *type = NULL;
+    char *norm_name;
+@@ -120,8 +120,8 @@
+      return retval;
+    }
+    /* Is the type in this group? If not, search parents. */
+-   for (grp2 = grp; grp2; grp2 = grp2->parent)
+-      for (type = grp2->type; type; type = type->l.next)
++   for (grp_2 = grp; grp_2; grp_2 = grp_2->parent)
++      for (type = grp_2->type; type; type = type->l.next)
+ 	 if (!strcmp(norm_name, type->name))
+ 	 {
+ 	    if (typeidp)

@@ -1,0 +1,44 @@
+###### gddm + db
+gdbm-1.8.3
+db-5.3.21
+
+###### math libs
+gmp-5.0.5
+mpfr-3.1.1
+mpc-1.0.1
+
+###### compress libs
+zlib-1.2.7
+xz-5.0.4
+
+###### misc simple
+libiconv-1.14
+expat-2.1.0
+
+###### xml libs
+libxml2-2.9.0
+libxslt-1.1.27
+
+###### crypto
+openssl-1.0.1c
+libssh2-1.4.2
+
+###### pgsql
+postgresql-9.2.1
+
+###### graphics
+freeglut-2.8.0
+giflib-4.2.0
+jpeg-8d
+tiff-4.0.3
+libpng-1.5.13
+libXpm-3.5.10
+freetype-2.4.10
+gd-2.0.35
+t1lib-5.1.2
+
+###### extras
+#fftw-2.1.5
+#fftw-3.3.2
+#gsl-1.15
+#lzo-2.06

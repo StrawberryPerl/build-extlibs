@@ -1,0 +1,15 @@
+diff -ru libxslt-1.1.28/configure.in libxslt-1.1.28.patched/configure.in
+--- libxslt-1.1.28/configure.in	2012-11-21 07:10:58.000000000 +0100
++++ libxslt-1.1.28.patched/configure.in	2014-04-10 14:28:04.022094700 +0200
+@@ -146,11 +146,6 @@
+   *-mingw*) ;;
+   *)
+ THREAD_LIBS=""
+-AC_CHECK_HEADER(pthread.h,
+-    AC_CHECK_LIB(pthread, pthread_join,[
+-       AC_DEFINE([HAVE_LIBPTHREAD], [], [Define if pthread library is there (-lpthread)])
+-       AC_DEFINE([HAVE_PTHREAD_H], [], [Define if <pthread.h> is there])
+-       THREAD_LIBS="-lpthread"]))
+   ;;
+ esac
+ 

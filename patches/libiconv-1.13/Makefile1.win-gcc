@@ -1,0 +1,117 @@
+#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
+#        that can be incompatible with other make tools
+
+#### the following is package-specific ####
+
+BASENAME =libiconv
+DLLBASE  =$(BASENAME)
+CFLAGS   =-I./lib -I. -I./include -O2 -DLIBDIR=\"$(LIBDIR)\" -DBUILDING_LIBCHARSET -DBUILDING_DLL -DENABLE_RELOCATABLE=1 -DIN_LIBRARY -DINSTALLDIR=\"$(LIBDIR)\" -DNO_XMALLOC -Dset_relocation_prefix=libcharset_set_relocation_prefix -Drelocate=libcharset_relocate -DHAVE_CONFIG_H -DDLL_EXPORT -DPIC -I$(INCDIR)
+LIBS     =-L$(LIBDIR)
+CXXFLAGS =
+OBJS     =lib/iconv.o libcharset/lib/localcharset.o lib/relocatable.o woe32dll/iconv-exports.o
+VEROBJ   =dll_version_res.o dll_version.o
+CONFIG_H =config.h include/iconv.h libcharset/config.h libcharset/include/localcharset.h 
+PCFILE   =
+CFFILE   =
+EXES     =$(EXE1) $(EXE2) $(EXE3)
+EXEOBJS  =$(EXE1OBJS) $(EXE2OBJS) $(EXE3OBJS)
+#EXE1     =iconv.exe
+#EXE1OBJS =src/iconv_no_i18n.o
+EXE2     =iconv_no_i18n.exe
+EXE2OBJS =
+EXE3     =
+EXE3OBJS =
+
+#### end of packcage-specific ####
+
+ifeq ($(NOPERL), 1)
+  ECHO   = @echo
+  CP     = cp
+  MV     = mv
+  RM_F   = rm -f
+  RM_RF  = rm -rf
+  MKPATH = mkdir -p
+  SED    = sed
+else
+  ECHO   = @perl -l -e "print qq{@ARGV}" --
+  CP     = perl -MExtUtils::Command -e "cp" --
+  MV     = perl -MExtUtils::Command -e "mv" --
+  RM_F   = perl -MExtUtils::Command -e "rm_f" --
+  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
+  MKPATH = perl -MExtUtils::Command -e "mkpath" --
+  SED    = perl -pe
+endif
+
+RANLIB  = ranlib
+CC      = gcc
+CXX     = g++
+STRIP   = strip
+AR      = ar
+ARFLAGS = csr
+
+#by default we assume 32-bit target platform
+BITS=32
+
+PREFIX =./_output_
+BINDIR =$(PREFIX)/bin
+INCDIR =$(PREFIX)/include
+LIBDIR =$(PREFIX)/lib
+
+STATIC_LIB=$(BASENAME).a
+IMPORT_LIB=$(BASENAME).dll.a
+SHARED_LIB=$(DLLBASE)$(DLLSUFFIX).dll
+
+#BEWARE: all you put into TARGETS will be deleted by 'make clean'
+TARGETS = $(PCFILE) $(CFFILE) $(CONFIG_H) $(STATIC_LIB) $(SHARED_LIB) $(EXEOBJS) $(EXES)
+
+all: $(TARGETS)
+
+clean:
+	$(RM_F) $(OBJS) $(VEROBJ) $(TARGETS)
+
+$(STATIC_LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(SHARED_LIB): $(VEROBJ) $(OBJS)
+	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
+	$(STRIP) -S $(SHARED_LIB)
+
+%.o : %.c ; $(CC) $(CFLAGS) -c $< -o $@
+
+%.o : %.cpp ; $(CXX) $(CXXFLAGS) -c $< -o $@
+
+%.o : %.cc ; $(CXX) $(CXXFLAGS) -c $< -o $@
+
+%.o : %.rc ; windres --define GCC_WINDRES $< -o $@
+
+%.rc: %.rc.win-gcc ; $(SED) "s~\@buildinfo\@~$(BUILDINFO)~" $< > $@
+
+%.h: %.h.win-gcc$(BITS) ; $(CP) $< $@
+
+%.h: %.h.win-gcc ; $(CP) $< $@
+
+%-config: %-config.win-gcc ; $(CP) $< $@ 
+
+%-config.bat: %-config.bat.win-gcc ; $(CP) $< $@ 
+
+%.pc: %.pc.win-gcc ; $(SED) "s~\@prefix\@~$(PREFIX)~" $< > $@
+
+#### the rest of the makefile is package-specific ####
+
+install: all
+	$(MKPATH) $(BINDIR)
+	$(MKPATH) $(LIBDIR)
+	$(MKPATH) $(INCDIR)
+	$(STRIP) -S $(EXES) $(SHARED_LIB) 
+	$(CP) $(STATIC_LIB) "$(LIBDIR)"
+	$(CP) $(IMPORT_LIB) "$(LIBDIR)"
+	$(CP) $(SHARED_LIB) "$(BINDIR)"
+	$(CP) $(EXES) "$(BINDIR)"
+	$(CP) lib/expat_external.h lib/expat.h "$(INCDIR)"
+
+$(EXE1): $(EXE1OBJS) $(IMPORT_LIB) ; $(CC) -o $@ $^
+
+$(EXE2): $(EXE2OBJS) $(IMPORT_LIB) ; $(CC) src/iconv_no_i18n.c srclib/progname.c srclib/uniwidth/width.c -o $@ -I./lib -I. -I./include -I./srclib -O2 -L. -liconv
+
+$(EXE3): $(EXE3OBJS) $(IMPORT_LIB) ; $(CC) -o $@ $^ 

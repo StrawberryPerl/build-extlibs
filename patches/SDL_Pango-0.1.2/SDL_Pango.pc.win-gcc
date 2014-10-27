@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: SDL_Pango
+Description: SDL library for internationalized text rendering
+Version: 0.1.2
+Requires: pango
+Libs: -L${libdir} -lSDL_Pango
+Cflags: -I${includedir}

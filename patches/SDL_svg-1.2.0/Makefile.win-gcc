@@ -1,0 +1,81 @@
+#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
+#        that can be incompatible with other make tools
+
+STATIC_LIB1=libsvg.a
+OBJS1      = libsvg/svg.o libsvg/svg_ascii.o libsvg/svg_attribute.o libsvg/svg_color.o libsvg/svg_element.o libsvg/svg_gradient.o libsvg/svg_group.o libsvg/svg_image.o libsvg/svg_length.o libsvg/svg_paint.o libsvg/svg_parser.o libsvg/svg_path.o libsvg/svg_pattern.o libsvg/svg_str.o libsvg/svg_style.o libsvg/svg_text.o libsvg/svg_transform.o
+
+BASENAME =SDL_svg
+DLLBASE  =$(BASENAME)
+CFLAGS   =-I. -Ilibsvg -I$(PREFIX)/include -I$(PREFIX)/include/SDL -I$(PREFIX)/include/libxml2 -O2 -mms-bitfields -D_GNU_SOURCE=1 -Dmain=SDL_main -DPACKAGE=\"SDL_svg\" -DVERSION=\"1.1.9\"
+LIBS     =-L$(LIBDIR) -L. -lsvg -lxml2 -lSDLmain -lSDL -mwindows
+OBJS     =ftgrays.o matrix.o render.o SDL_svg.o
+
+ifeq ($(NOPERL), 1)
+  ECHO   = @echo
+  CP     = cp
+  MV     = mv
+  RM_F   = rm -f
+  RM_RF  = rm -rf
+  MKPATH = mkdir -p
+  SED    = sed
+else
+  ECHO   = @perl -l -e "print qq{@ARGV}" --
+  CP     = perl -MExtUtils::Command -e "cp" --
+  MV     = perl -MExtUtils::Command -e "mv" --
+  RM_F   = perl -MExtUtils::Command -e "rm_f" --
+  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
+  MKPATH = perl -MExtUtils::Command -e "mkpath" --
+  SED    = perl -pe
+endif
+
+RANLIB  = ranlib
+CC      = gcc
+CXX     = g++
+STRIP   = strip
+AR      = ar
+ARFLAGS = csr
+
+PREFIX =./_output_
+BINDIR =$(PREFIX)/bin
+INCDIR =$(PREFIX)/include
+LIBDIR =$(PREFIX)/lib
+
+STATIC_LIB=$(BASENAME).a
+IMPORT_LIB=$(BASENAME).dll.a
+SHARED_LIB=$(DLLBASE)$(DLLSUFFIX).dll
+
+#BEWARE: all you put into TARGETS will be deleted by 'make clean'
+TARGETS = $(STATIC_LIB) $(STATIC_LIB1) $(SHARED_LIB)
+
+all: $(TARGETS)
+
+clean:
+	$(RM_F) $(OBJS) $(OBJS1) $(OBJS2) $(OBJS3) $(TARGETS)
+
+$(STATIC_LIB): $(OBJS)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(STATIC_LIB1): $(OBJS1)
+	$(AR) $(ARFLAGS) $@ $^
+	$(RANLIB) $@
+
+$(SHARED_LIB): $(OBJS)
+	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
+	$(STRIP) -S $(SHARED_LIB)
+
+libsvg/%.o : libsvg/%.c ; $(CC) $(CFLAGS) -c $< -o $@
+
+%.o : %.c ; $(CC) -DPIC $(CFLAGS) -c $< -o $@
+
+#does not work
+svgtest: svgtest.c $(SHARED_LIB)
+	$(CC) svgtest.c $(IMPORT_LIB) -I$(PREFIX)/include/SDL -L$(LIBDIR) -lxml2 -lSDLmain -lSDL -mwindows -o svgtest
+
+install: all
+	$(MKPATH) $(BINDIR)
+	$(MKPATH) $(LIBDIR)
+	$(MKPATH) $(INCDIR)
+	$(CP) SDL_svg.h "$(INCDIR)"
+	$(CP) $(IMPORT_LIB) $(STATIC_LIB) "$(LIBDIR)"
+	$(CP) $(SHARED_LIB) "$(BINDIR)"

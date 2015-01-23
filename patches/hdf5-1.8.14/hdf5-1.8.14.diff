@@ -1,0 +1,50 @@
+diff -r -u -w --strip-trailing-cr hdf5-1.8.14.original/config/cmake_ext_mod/ConfigureChecks.cmake hdf5-1.8.14/config/cmake_ext_mod/ConfigureChecks.cmake
+--- hdf5-1.8.14.original/config/cmake_ext_mod/ConfigureChecks.cmake	2015-01-18 19:45:01.487214800 +0100
++++ hdf5-1.8.14/config/cmake_ext_mod/ConfigureChecks.cmake	2015-01-18 19:45:04.846649600 +0100
+@@ -62,7 +62,7 @@
+     set (CMAKE_REQUIRED_FLAGS "-DWIN32_LEAN_AND_MEAN=1 -DNOGDI=1")
+   endif (MINGW)
+   set (${HDF_PREFIX}_HAVE_WIN32_API 1)
+-  set (CMAKE_REQUIRED_LIBRARIES "ws2_32.lib;wsock32.lib")
++  set (CMAKE_REQUIRED_LIBRARIES "ws2_32.lib")
+   if (NOT UNIX AND NOT MINGW)
+     set (WINDOWS 1)
+     set (CMAKE_REQUIRED_FLAGS "/DWIN32_LEAN_AND_MEAN=1 /DNOGDI=1")
+diff -r -u -w --strip-trailing-cr hdf5-1.8.14.original/config/cmake_ext_mod/HDFMacros.cmake hdf5-1.8.14/config/cmake_ext_mod/HDFMacros.cmake
+--- hdf5-1.8.14.original/config/cmake_ext_mod/HDFMacros.cmake	2015-01-18 19:45:01.502829000 +0100
++++ hdf5-1.8.14/config/cmake_ext_mod/HDFMacros.cmake	2015-01-18 19:45:04.909091300 +0100
+@@ -102,14 +102,14 @@
+   )
+   
+   #----- Use MSVC Naming conventions for Shared Libraries
+-  if (MINGW AND ${libtype} MATCHES "SHARED")
+-    set_target_properties (${libtarget}
+-        PROPERTIES
+-        IMPORT_SUFFIX ".lib"
+-        IMPORT_PREFIX ""
+-        PREFIX ""
+-    )
+-  endif (MINGW AND ${libtype} MATCHES "SHARED")
++  #if (MINGW AND ${libtype} MATCHES "SHARED")
++  #  set_target_properties (${libtarget}
++  #      PROPERTIES
++  #      IMPORT_SUFFIX ".lib"
++  #      IMPORT_PREFIX ""
++  #      PREFIX ""
++  #  )
++  #endif (MINGW AND ${libtype} MATCHES "SHARED")
+ 
+ ENDMACRO (HDF_SET_LIB_OPTIONS)
+ 
+diff -r -u -w --strip-trailing-cr hdf5-1.8.14.original/test/CMakeLists.txt hdf5-1.8.14/test/CMakeLists.txt
+--- hdf5-1.8.14.original/test/CMakeLists.txt	2015-01-18 19:45:02.721643700 +0100
++++ hdf5-1.8.14/test/CMakeLists.txt	2015-01-18 19:45:04.940395000 +0100
+@@ -32,7 +32,7 @@
+   target_link_libraries (${HDF5_TEST_LIB_TARGET} "ws2_32.lib")
+ endif (MSVC)
+ if (MINGW)
+-  target_link_libraries (${HDF5_TEST_LIB_TARGET} "wsock32.lib")
++  target_link_libraries (${HDF5_TEST_LIB_TARGET} "ws2_32.lib")
+ endif (MINGW)
+ target_link_libraries (${HDF5_TEST_LIB_TARGET} ${HDF5_LIB_TARGET})
+ H5_SET_LIB_OPTIONS (${HDF5_TEST_LIB_TARGET} ${HDF5_TEST_LIB_NAME} ${LIB_TYPE})

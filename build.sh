@@ -250,7 +250,7 @@ for PACK in $PKGLIST; do
   cp -r $PATCHDIR/$PACK/* . 2>/dev/null
   echo "###$OUT/$PACK.patch.log###" > $OUT/$PACK.patch.log
   ls $PATCHDIR/$PACK/*.patch $PATCHDIR/$PACK/*.diff 2>/dev/null | while read P; do
-    ###echo "GONNA Apply: $P : $OUT/$PACK.patch.log"
+    echo "GONNA Apply: $P : $OUT/$PACK.patch.log"
     echo "GONNA Apply: $P" >> $OUT/$PACK.patch.log
     patch -i $P -p 1 >> $OUT/$PACK.patch.log 2>&1
   done
@@ -590,7 +590,9 @@ cd $WRKDIR/$PACK
 ### sed "s,^[[:blank:]]*shlib[[:blank:]]*=[[:blank:]]*lib.(NAME).(DLSUFFIX)$,shlib = lib\$(NAME)x$DLLSUFFIX\$(DLSUFFIX)," src/Makefile.shlib.old > src/Makefile.shlib
 #hack1: changing DLL suffix
 cp src/Makefile.shlib src/Makefile.shlib.old
-sed "s,^[[:blank:]]*shlib[[:blank:]]*=[[:blank:]]*lib.(NAME).(DLSUFFIX)$,shlib = lib\$(NAME)$DLLSUFFIX\$(DLSUFFIX)," src/Makefile.shlib.old > src/Makefile.shlib
+sed "s,.(NAME).(DLSUFFIX),\$(NAME)$DLLSUFFIX\$(DLSUFFIX)," src/Makefile.shlib.old > src/Makefile.shlib
+cp src/interfaces/libpq/libpqdll.def src/interfaces/libpq/libpqdll.def.old
+sed "s,LIBRARY LIBPQ\.dll,LIBRARY LIBPQ$DLLSUFFIX.dll," src/interfaces/libpq/libpqdll.def.old > src/interfaces/libpq/libpqdll.def
 #hack2: pg uses linker option -lssleay32
 test -e $OUT/lib/libcrypto.dll.a && cp $OUT/lib/libcrypto.dll.a $OUT/lib/libeay32.a
 test -e $OUT/lib/libssl.dll.a && cp $OUT/lib/libssl.dll.a $OUT/lib/libssl32.a
@@ -1310,7 +1312,25 @@ install_bats
 ;;
 
 # ----------------------------------------------------------------------------
-gnuplot-*)
+ffmpeg-*)
+cd $WRKDIR/$PACK
+save_configure_help
+xxrun ./configure --prefix=$OUT --target-os=mingw32 --arch=${XTARGET%%-*} \
+                  --enable-gpl \
+                  --enable-version3 \
+                  --enable-runtime-cpudetect \
+                  --enable-shared \
+                  --enable-pic \
+                  --disable-debug \
+                  --disable-static \
+                  --disable-doc
+patch_libtool
+xxrun make
+xxrun make install
+;;
+
+# ----------------------------------------------------------------------------
+gnuplot-4*)
 cd $WRKDIR/$PACK
 cd config/mingw
 CFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun make console windows pipes support NEWGD=1 FREETYPE=1 PNG=1 JPEG=1 ICONV=1 HELPFILEJA= LUA= HHWPATH=/z/sw/help-workshop/ ARCHNICK=$ARCHNICK LBUFFEROVERFLOWU=$LBUFFEROVERFLOWU
@@ -1318,6 +1338,14 @@ xxrun make install DESTDIR=$OUT HELPFILEJA= LUA=
 #builtin: emf svg postscript
 #GD based: jpeg gif png
 #platform-specific: windows
+;;
+
+# ---------------------------------------------------------------------------- XXX-FIXME-BROKEN
+gnuplot-5*)
+cd $WRKDIR/$PACK
+cd config/mingw
+CFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun make console windows pipes support CACA=0 CERF=0 NEWGD=1 FREETYPE=1 PNG=1 JPEG=1 ICONV=1 HELPFILEJA= LUA= HHWPATH=/z/sw/help-workshop/ ARCHNICK=$ARCHNICK LBUFFEROVERFLOWU=$LBUFFEROVERFLOWU
+xxrun make install DESTDIR=$OUT HELPFILEJA= LUA=
 ;;
 
 # ----------------------------------------------------------------------------

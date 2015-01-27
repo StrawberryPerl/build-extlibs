@@ -21,7 +21,7 @@ libxml2-2.9.2
 libxslt-1.1.28
 
 ###### crypto
-openssl-1.0.1l
+openssl-1.0.2
 libssh2-1.4.3
  
 ###### pgsql
@@ -47,6 +47,7 @@ libidn-1.29
 curl-7.40.0
 
 ###### PDL related
+cfitsio-3.37
 ta-lib-0.4.0
 lapack-3.5.0
 fftw-3.3.4

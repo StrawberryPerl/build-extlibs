@@ -9,6 +9,7 @@ use Data::Dumper;
 use File::Temp;
 use File::Spec;
 use File::Find;
+use File::Basename;
 
 my $desc = {
   'dmake-' => {
@@ -790,14 +791,45 @@ my $desc = {
       ['Homepage', 'https://github.com/joyent/libuv'],
     ],
   },
+  'ffmpeg-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['bin', 'c\bin', '\.exe$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => [qw/COPYING.GPLv2 COPYING.GPLv3 COPYING.LGPLv3 COPYING.LGPLv2.1 CREDITS LICENSE.md README.md /],
+    'licdir' => 'licenses\libffmpeg',
+    'urls' => [
+      ['Homepage', 'https://www.ffmpeg.org'],
+    ],
+  }, 
+  'cfitsio-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['bin', 'c\bin', '(fitscopy|fpack|funpack|imcopy)\.exe$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => [qw/License.txt README/],
+    'licdir' => 'licenses\libcfitsio',
+    'urls' => [
+      ['Homepage', 'http://heasarc.gsfc.nasa.gov/fitsio/'],
+    ],
+  }, 
   '_default_' => {
     'files' => [],
     'trees' => [
       ['bin', 'c\bin', '-config(\.bat)?$'],
       ['bin', 'c\bin', '\.dll$'],
+	  ['bin', 'c\bin', '\.exe$'],
       ['lib', 'c\lib', '\.a$'],
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
-      ['include', 'c\include', '\.h$'],
+      ['include', 'c\include', '\.(h|hxx|inc)$'],
     ],
   }, 
 
@@ -821,8 +853,8 @@ sub prepare_pack {
   $jobname = 'libuv-' if $sihash->{pack} =~ /^libuv-v/i;   #hack
   my $pkghash = $deschash->{$jobname};
   if (! defined $pkghash) {
-    warn "###warning### Missing definition for '$jobname'\n\n";
-    return;
+    warn "###warning### Missing definition for '$jobname' (using default)\n";
+    $pkghash = $deschash->{_default_};
   }
   
   my $tmpsrcdir = File::Temp->newdir( "tmp".$sihash->{pack}."_src_XXXX", DIR => '.', CLEANUP => 1 );
@@ -838,7 +870,7 @@ sub prepare_pack {
       if ($a =~ /^(.*?)\.dll\.a$/) {
         my $newa = "$1.a";
         if (-f $a && -f $newa) {
-          warn "###error### '$newa' already exists (OVERWRITTING!!!)\n";
+          warn "###warning### REPLACING '$newa' with '$a' !!!\n";
 	  unlink $newa;
 	  rename $a, $newa;
         }
@@ -916,6 +948,20 @@ sub prepare_pack {
       warn "  ###error###: cannot add(license) '$src'!\n";
     }
   };
+  
+  my $diff = "$binroot/$sihash->{pack}.diff";
+  my $custom_patch;
+  if (-f $diff && -s $diff > 0) {
+    $custom_patch = basename($diff);
+    my $dst = $deschash->{$jobname}->{'licdir'} . '/' . $custom_patch;
+    my $f = eval { $zip->addFile($diff, $dst) };
+    if($f) {    
+      $f->desiredCompressionLevel(9);
+    }
+    else {
+      warn "  ###error###: cannot add(patch) '$diff'!\n";
+    }
+  }
 
   # Process 'urls'
   open my $html_log, ">>", "pack_links_log.html";
@@ -927,15 +973,24 @@ sub prepare_pack {
   else {
     warn "###error### URL for srctarball not defined\n";
   }
+  if ($custom_patch) {
+    $urlinfo .= "Patch: $custom_patch\n";
+  }
   my $pu = $pkghash->{'urls'};
   warn "[debug] >>>>>>> urls not defined\n" unless defined $pu;
   foreach my $i (@$pu) {
     $urlinfo .= "$i->[0]: $i->[1]\n";
     print $html_log "$sihash->{pack} - $i->[0]: <a href=\"$i->[1]\">$i->[1]</a><p>\n"
   };
-  my $dst = $deschash->{$jobname}->{'licdir'}.'/_INFO_';
-  $dst =~ s/\\/\//g;
-  $zip->addString( $urlinfo, $dst );
+  
+  if ($deschash->{$jobname}->{'licdir'}) {
+    my $dst = $deschash->{$jobname}->{'licdir'}.'/_INFO_';
+    $dst =~ s/\\/\//g;
+    $zip->addString( $urlinfo, $dst );
+  }
+  else {
+    warn "[debug] >>>>>>> no INFO created\n";
+  }
 
   # Save the Zip file
   die 'ZIP write error' unless ( $zip->writeToFileNamed($zipname) == AZ_OK );
@@ -951,11 +1006,14 @@ warn "ARGS: 0=$ARGV[0]\n" if defined $ARGV[0];
 warn "ARGS: 1=$ARGV[1]\n" if defined $ARGV[1];
 
 my $srcprefix = $ARGV[0] || '_wrk_buildtest_';
-my $outprefix = $ARGV[1];
-$srcprefix =~ s|/$||;
-if (!$outprefix && $srcprefix =~ /\.src$/) {
- $outprefix = $srcprefix;
- $outprefix =~ s/\.src$/.patched/;
+my $outprefix;
+$srcprefix =~ s|/+$||; # strip trailing /
+if ($srcprefix =~ /^(.*?)\.src$/) {
+  $outprefix = "$1.patched";
+}
+else {
+  $outprefix = "$srcprefix.patched";
+  $srcprefix = "$srcprefix.src";
 }
 
 die "###error### directory '$srcprefix' does not exists\n" unless -d $srcprefix;
@@ -965,7 +1023,7 @@ my @pkglist = glob("$outprefix/out_*.zip");
 warn "###error###: No files matching '$outprefix/out_*.zip'\n" unless @pkglist;
 
 unlink "pack_links_log.html";
-	
+
 foreach my $pzip (@pkglist) {
   warn "\n";
   warn "Processing '$pzip'\n";
@@ -974,10 +1032,7 @@ foreach my $pzip (@pkglist) {
     my ($sinfo) = $zip->membersMatching( '.*\.srcinfo\.json$' );
     my $sihash = decode_json($zip->contents($sinfo));
     my $p = $sihash->{pack};
-    #some test
-
     if (-d "$srcprefix/$p/") {
-      #prepare_pack ( $p, $date, $desc, "$binprefix", "$srcprefix/$p/", $pkgprefix );
       prepare_pack ( $zip, "$srcprefix/$p/", $date, $desc );
     }
     else {

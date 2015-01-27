@@ -1,175 +1,184 @@
 #### XML2/XSLT
-#### ftp://xmlsoft.org/libxslt/
+#URL ftp://xmlsoft.org/libxslt/
 ftp://xmlsoft.org/libxslt/libxml2-2.9.2.tar.gz
 ftp://xmlsoft.org/libxslt/libxslt-1.1.28.tar.gz
 
 #### Postgres
-#### http://ftp.postgresql.org/pub/source/
+#URL http://ftp.postgresql.org/pub/source/
 http://ftp.postgresql.org/pub/source/v9.4.0/postgresql-9.4.0.tar.gz
 
 #### MySQL Connector-C
-#### http://dev.mysql.com/downloads/connector/c/
+#URL http://dev.mysql.com/downloads/connector/c/
 http://dev.mysql.com/get/Downloads/Connector-C/mysql-connector-c-6.1.5-src.tar.gz
 
 #### OpenSSL
-#### http://www.openssl.org/source/
+#URL http://www.openssl.org/source/
 http://www.openssl.org/source/openssl-1.0.1l.tar.gz
+http://www.openssl.org/source/openssl-1.0.2.tar.gz
 
 #### LibSSH2
-#### http://www.libssh2.org/
+#URL http://www.libssh2.org/
 http://www.libssh2.org/download/libssh2-1.4.3.tar.gz
 
 #### Oracle Berkeley DB:
-#### http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/downloads/index.html
+#URL http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/downloads/index.html
 http://download.oracle.com/berkeley-db/db-6.1.19.tar.gz
 
-
 #### Freetype
-#### http://mirror.lihnidos.org/GNU/savannah/freetype/
+#URL http://mirror.lihnidos.org/GNU/savannah/freetype/
 http://mirror.lihnidos.org/GNU/savannah/freetype/freetype-2.5.5.tar.gz
 
 #### GD
-#### http://libgd.bitbucket.org/
+#URL http://libgd.bitbucket.org/
 https://bitbucket.org/libgd/gd-libgd/downloads/libgd-2.1.1.tar.gz
 
 #### giflib
-#### http://sourceforge.net/projects/giflib/files/
+#URL http://sourceforge.net/projects/giflib/files/
 http://downloads.sourceforge.net/giflib/giflib-5.1.1.tar.gz
 
 #### jpeg
-#### http://www.ijg.org/
+#URL http://www.ijg.org/
 # workaround (to keep archive name consistent with dirname inside archive)
 http://www.ijg.org/files/jpegsrc.v9a.tar.gz -O jpeg-9a.tar.gz
 
 #### libpng
-#### http://downloads.sourceforge.net/libpng/
+#URL http://downloads.sourceforge.net/libpng/
 http://downloads.sourceforge.net/libpng/libpng-1.6.16.tar.gz
 
 #### libtiff
-#### ftp://ftp.remotesensing.org/pub/libtiff/
+#URL ftp://ftp.remotesensing.org/pub/libtiff/
 ftp://ftp.remotesensing.org/pub/libtiff/tiff-4.0.3.tar.gz
 
 #### fontconfig
-#### http://fontconfig.org/release/
+#URL http://fontconfig.org/release/
 http://www.freedesktop.org/software/fontconfig/release/fontconfig-2.11.92.tar.gz
 
 #### xpm
-#### http://ftp.x.org/pub/individual/lib/
+#URL http://ftp.x.org/pub/individual/lib/
 http://ftp.x.org/pub/individual/lib/libXpm-3.5.11.tar.gz
 
 #### T1lib
-#### ftp://sunsite.unc.edu/pub/linux/libs/graphics/
+#URL ftp://sunsite.unc.edu/pub/linux/libs/graphics/
 ftp://sunsite.unc.edu/pub/linux/libs/graphics/t1lib-5.1.2.tar.gz
 
 #### expat
-#### http://sourceforge.net/projects/expat/files/expat/
+#URL http://sourceforge.net/projects/expat/files/expat/
 http://downloads.sourceforge.net/expat/expat-2.1.0.tar.gz
 
 #### libiconv
-#### http://ftp.gnu.org/gnu/libiconv/
+#URL http://ftp.gnu.org/gnu/libiconv/
 http://ftp.gnu.org/gnu/libiconv/libiconv-1.14.tar.gz
 
 #### zlib
-#### http://www.zlib.net/
+#URL http://www.zlib.net/
 http://www.zlib.net/zlib-1.2.8.tar.gz
 
+#URL http://www.bzip.org/
+http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
+
 #### gdbm
-#### http://ftp.gnu.org/gnu/gdbm/
+#URL http://ftp.gnu.org/gnu/gdbm/
 http://ftp.gnu.org/gnu/gdbm/gdbm-1.11.tar.gz
 
 #### gmp
-#### ftp://ftp.gmplib.org/pub/
+#URL ftp://ftp.gmplib.org/pub/
 ftp://ftp.gmplib.org/pub/gmp-5.1.3/gmp-5.1.3.tar.bz2
 
 #### mpfr
-#### ftp://ftp.gnu.org/gnu/mpfr/
+#URL ftp://ftp.gnu.org/gnu/mpfr/
 ftp://ftp.gnu.org/gnu/mpfr/mpfr-3.1.2.tar.gz
 
 #### mpc
-#### http://www.multiprecision.org/index.php?prog=mpc
+#URL http://www.multiprecision.org/index.php?prog=mpc
 http://www.multiprecision.org/mpc/download/mpc-1.0.2.tar.gz
 
 #### freeglut
-#### http://sourceforge.net/projects/freeglut/files/freeglut/
+#URL http://sourceforge.net/projects/freeglut/files/freeglut/
 http://downloads.sourceforge.net/freeglut/freeglut-2.8.1.tar.gz
 
 #### xz
-#### http://tukaani.org/xz/
+#URL http://tukaani.org/xz/
 http://tukaani.org/xz/xz-5.2.0.tar.gz
 
-#### ftp://ftp.unidata.ucar.edu/pub/netcdf/
+#URL ftp://ftp.unidata.ucar.edu/pub/netcdf/
 ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.3.2.tar.gz
 ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.3.1.1.tar.gz
 
-#### http://www.fftw.org/
+#URL http://www.fftw.org/
 http://www.fftw.org/fftw-3.3.4.tar.gz
 http://www.fftw.org/fftw-2.1.5.tar.gz
 
-#### http://ftp.gnu.org/gnu/glpk/
+#URL http://ftp.gnu.org/gnu/glpk/
 http://ftp.gnu.org/gnu/glpk/glpk-4.55.tar.gz
 
-#### http://ftp.gnu.org/gnu/gsl/
+#URL http://ftp.gnu.org/gnu/gsl/
 http://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz
 
-#### http://download.osgeo.org/proj/
+#URL http://download.osgeo.org/proj/
 http://download.osgeo.org/proj/proj-4.8.0.tar.gz
 
-#### http://sourceforge.net/projects/plplot/files/plplot/
+#URL http://sourceforge.net/projects/plplot/files/plplot/
 http://downloads.sourceforge.net/plplot/plplot-5.10.0.tar.gz
 
-#### http://sourceforge.net/projects/gnuplot/files/gnuplot/
+#URL http://sourceforge.net/projects/gnuplot/files/gnuplot/
 http://downloads.sourceforge.net/gnuplot/gnuplot-4.6.5.tar.gz
 http://downloads.sourceforge.net/gnuplot/gnuplot-4.6.6.tar.gz
 http://downloads.sourceforge.net/gnuplot/gnuplot-5.0.0.tar.gz
 
-#### http://caca.zoy.org/wiki/libcaca
+#URL http://caca.zoy.org/wiki/libcaca
 http://caca.zoy.org/files/libcaca/libcaca-0.99.beta19.tar.gz
 
-#### http://sourceforge.net/projects/libcerf/files/
+#URL http://sourceforge.net/projects/libcerf/files/
 http://downloads.sourceforge.net/project/libcerf/libcerf-1.3.tgz -O libcerf-1.3.tar.gz
 
-#### http://www.hdfgroup.org/doc_resource/SZIP/
+#URL http://www.hdfgroup.org/doc_resource/SZIP/
 http://www.hdfgroup.org/ftp/lib-external/szip/2.1/src/szip-2.1.tar.gz
 
-#### http://www.hdfgroup.org/HDF5/
+#URL http://www.hdfgroup.org/HDF5/
 http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/src/hdf5-1.8.13.tar.gz
 http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.14/src/hdf5-1.8.14.tar.gz
 
-#### http://www.hdfgroup.org/products/hdf4/
+#URL http://www.hdfgroup.org/products/hdf4/
 http://www.hdfgroup.org/ftp//HDF/prev-releases/HDF4.2.10/src/hdf-4.2.10.tar.gz
 
-#### http://www.netlib.org/lapack/
+#URL http://www.netlib.org/lapack/
 http://www.netlib.org/lapack/lapack-3.5.0.tgz
 
-#### http://sourceforge.net/projects/ta-lib/files/ta-lib/
+#URL http://sourceforge.net/projects/ta-lib/files/ta-lib/
 #http://downloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
 http://strawberryperl.com/package/kmx/libs_src/ta-lib-0.4.0.tar.gz
 
-#### http://ftp.gnu.org/gnu/libidn/
+#URL http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/
+http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfit3370.zip -O cfitsio-3.37.zip
+
+#URL http://ftp.gnu.org/gnu/libidn/
 http://ftp.gnu.org/gnu/libidn/libidn-1.29.tar.gz
 
-#### http://curl.haxx.se/download/
+#URL http://curl.haxx.se/download/
 http://curl.haxx.se/download/curl-7.40.0.tar.gz
 
-#### ftp://sourceware.org/pub/libffi/
+#URL ftp://sourceware.org/pub/libffi/
 ftp://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz
 
-#### http://www.libuv.org/dist/
+#URL http://www.libuv.org/dist/
 http://www.libuv.org/dist/v1.2.1/libuv-v1.2.1.tar.gz
 
-#### http://ffmpeg.org/download.html
+#URL http://ffmpeg.org/download.html
 http://ffmpeg.org/releases/ffmpeg-2.5.3.tar.bz2
 
 # ---------------------
 
+#URL http://opencv.org/
+https://github.com/Itseez/opencv/archive/3.0.0-beta.tar.gz -O opencv-3.0.0-beta.tar.gz
 
-#### ftp://ftp.archlinux.org/other/pacman/
+
+#URL ftp://ftp.archlinux.org/other/pacman/
 ftp://ftp.archlinux.org/other/pacman/pacman-4.2.0.tar.gz
 
-#### http://pcre.org/
+#URL http://pcre.org/
 ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.36.tar.gz
 
-#### http://libarchive.org/
+#URL http://libarchive.org/
 http://libarchive.org/downloads/libarchive-3.1.2.tar.gz
 
 ftp://ftp.astro.caltech.edu/pub/pgplot/pgplot5.2.tar.gz
@@ -239,12 +248,12 @@ http://ftp.acc.umu.se/pub/gnome/binaries/win32/dependencies/proxy-libintl-dev_20
 
 # http://downloads.sourceforge.net/wvware/libwmf-0.2.8.4.tar.gz
 http://downloads.sourceforge.net/djvu/djvulibre-3.5.24.tar.gz
-http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
 http://caesar.acc.umu.se/pub/GNOME/sources/librsvg/2.35/librsvg-2.35.0.tar.bz2
 
 http://downloads.sourceforge.net/boost/boost_1_55_0.tar.gz
 http://downloads.sourceforge.net/quantlib/QuantLib-1.4.tar.gz
 
+#### http://downloads.sourceforge.net/gphoto/
 http://downloads.sourceforge.net/gphoto/libgphoto2-2.5.0.tar.gz
 
 

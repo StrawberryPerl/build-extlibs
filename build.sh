@@ -255,6 +255,7 @@ for PACK in $PKGLIST; do
     patch -i $P -p 1 >> $OUT/$PACK.patch.log 2>&1
   done
   
+  ( cd "$WRKDIR/$PACK" && find . -type f | grep -v -e "\.diff$" -e "\.patch$" | while read XF; do touch "../$PACK.original/$XF"; done )
   ( cd $WRKDIR && diff -r -u -w --strip-trailing-cr $PACK.original $PACK 2>/dev/null ) | grep -v "^Only in " > $OUT/$PACK.diff
   rm -rf $WRKDIR/$PACK.original
 
@@ -329,7 +330,7 @@ xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enabl
             CFLAGS="-O2 -I$OUTINC -D__USE_MINGW_ANSI_STDIO=1" LDFLAGS="-L$OUTLIB" 
 patch_libtool
 xxrun make
-xxrun make check
+##xxrun make check
 xxrun make install
 ## ugly hack (historical reasons) - see pack.pl
 sed -i 's,\${includedir}/libxml2,${includedir},' $OUT/lib/pkgconfig/libxml-2.0.pc
@@ -1346,6 +1347,12 @@ cd $WRKDIR/$PACK
 cd config/mingw
 CFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun make console windows pipes support CACA=0 CERF=0 NEWGD=1 FREETYPE=1 PNG=1 JPEG=1 ICONV=1 HELPFILEJA= LUA= HHWPATH=/z/sw/help-workshop/ ARCHNICK=$ARCHNICK LBUFFEROVERFLOWU=$LBUFFEROVERFLOWU
 xxrun make install DESTDIR=$OUT HELPFILEJA= LUA=
+;;
+
+# ----------------------------------------------------------------------------
+cfitsio-*)
+cd $WRKDIR/$PACK
+xxrun make DLLSUFFIX=$DLLSUFFIX PREFIX=$OUT install
 ;;
 
 # ----------------------------------------------------------------------------

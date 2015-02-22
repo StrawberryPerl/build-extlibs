@@ -6,6 +6,7 @@ ftp://xmlsoft.org/libxslt/libxslt-1.1.28.tar.gz
 #### Postgres
 #URL http://ftp.postgresql.org/pub/source/
 http://ftp.postgresql.org/pub/source/v9.4.0/postgresql-9.4.0.tar.gz
+http://ftp.postgresql.org/pub/source/v9.4.1/postgresql-9.4.1.tar.gz
 
 #### MySQL Connector-C
 #URL http://dev.mysql.com/downloads/connector/c/

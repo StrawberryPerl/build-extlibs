@@ -410,7 +410,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
       ['include', 'c\include', '\.h$'],
     ],
-    'licenses' => [qw/AUTHORS COPYING/],
+    'licenses' => [qw/COPYING/],
     'licdir' => 'licenses\libssh2',
     'urls' => [
       ['Homepage', 'http://www.libssh2.org'],

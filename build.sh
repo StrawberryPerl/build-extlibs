@@ -904,6 +904,19 @@ install_bats
 ;;
 
 # ----------------------------------------------------------------------------
+libcaca-*)
+cd $WRKDIR/$PACK
+xxrun ./bootstrap
+save_configure_help
+xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
+patch_libtool
+xxrun make
+xxrun make check
+xxrun make install
+install_bats
+;;
+
+# ----------------------------------------------------------------------------
 R-*)
 cd $WRKDIR/$PACK
 save_configure_help

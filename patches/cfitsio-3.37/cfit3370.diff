@@ -132,3 +132,4 @@ diff -ru pc.orig/putkey.c pc/putkey.c
      /* Microsoft Visual C++ 6.0 uses '%I64d' syntax  for 8-byte integers */
      if (sprintf(cval, "%I64d", ival) < 0)
  
+ 

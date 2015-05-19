@@ -1,0 +1,275 @@
+diff -r -u -w --strip-trailing-cr hdf-4.2.11.original/config/cmake_ext_mod/HDFMacros.cmake hdf-4.2.11/config/cmake_ext_mod/HDFMacros.cmake
+--- hdf-4.2.11.original/config/cmake_ext_mod/HDFMacros.cmake	2015-05-19 07:47:42.269561100 +0200
++++ hdf-4.2.11/config/cmake_ext_mod/HDFMacros.cmake	2015-05-19 07:47:40.399048900 +0200
+@@ -101,16 +101,6 @@
+       OUTPUT_NAME_RELWITHDEBINFO ${LIB_RELEASE_NAME}
+   )
+   
+-  #----- Use MSVC Naming conventions for Shared Libraries
+-  if (MINGW AND ${libtype} MATCHES "SHARED")
+-    set_target_properties (${libtarget}
+-        PROPERTIES
+-        IMPORT_SUFFIX ".lib"
+-        IMPORT_PREFIX ""
+-        PREFIX ""
+-    )
+-  endif (MINGW AND ${libtype} MATCHES "SHARED")
+-
+ ENDMACRO (HDF_SET_LIB_OPTIONS)
+ 
+ #------------------------------------------------------------------------------- 
+diff -r -u -w --strip-trailing-cr hdf-4.2.10.original/configure hdf-4.2.10/configure
+--- hdf-4.2.10.original/configure	2014-07-27 22:27:17.097002900 +0200
++++ hdf-4.2.10/configure	2014-07-27 22:27:18.425237100 +0200
+@@ -23426,6 +23426,7 @@
+   *-*-solaris2*)        BAR="solaris"     ;;
+   *-apple*)             BAR="apple"       ;;
+   *-pc-cygwin*)         BAR="linux"       ;;
++  *-*-mingw*)           BAR="windows"     ;;
+   *)                    echo "*** unknown host $host!"; exit 1 ;;
+ esac
+ src_files=""
+diff -r -u -w --strip-trailing-cr hdf-4.2.10.original/hdf/src/herr.h hdf-4.2.10/hdf/src/herr.h
+--- hdf-4.2.10.original/hdf/src/herr.h	2014-07-27 22:27:17.237604900 +0200
++++ hdf-4.2.10/hdf/src/herr.h	2014-07-27 22:27:18.425237100 +0200
+@@ -97,7 +97,8 @@
+ __declspec(dllexport)
+ #endif
+ #else
+-HDFERRPUBLIC
++//HDFERRPUBLIC
++__declspec(dllexport) extern
+ #endif /* _H_ERR_MASTER_ */
+ int32       error_top
+ #ifdef _H_ERR_MASTER_
+diff -r -u -w --strip-trailing-cr hdf-4.2.10.original/hdf/src/hlimits.h hdf-4.2.10/hdf/src/hlimits.h
+--- hdf-4.2.10.original/hdf/src/hlimits.h	2014-07-27 22:27:17.257082800 +0200
++++ hdf-4.2.10/hdf/src/hlimits.h	2014-07-27 22:27:18.425237100 +0200
+@@ -22,9 +22,8 @@
+ #ifndef _HLIMITS_H
+ #define _HLIMITS_H
+ 
+-#ifndef _WIN32
+ #define HDsetvbuf(F,S,M,Z)	setvbuf(F,S,M,Z)
+-#endif
++
+ /**************************************************************************
+ *  Generally useful macro definitions
+ *   (These are copied from hdfi.h and shoudl remain included in both files
+diff -r -u -w --strip-trailing-cr hdf-4.2.10.original/mfhdf/dumper/CMakeLists.txt hdf-4.2.10/mfhdf/dumper/CMakeLists.txt
+--- hdf-4.2.10.original/mfhdf/dumper/CMakeLists.txt	2014-07-27 22:27:17.706318900 +0200
++++ hdf-4.2.10/mfhdf/dumper/CMakeLists.txt	2014-07-27 22:27:18.425237100 +0200
+@@ -33,9 +33,9 @@
+ TARGET_C_PROPERTIES (hdp " " " ")
+ target_link_libraries (hdp ${HDF4_MF_LIB_TARGET} ${HDF4_SRC_LIB_TARGET} ${LINK_LIBS})
+ TARGET_NAMING (hdp ${LIB_TYPE})
+-if (WIN32)
+-  set_target_properties (hdp PROPERTIES LINK_FLAGS "/STACK:10000000")
+-endif (WIN32)
++#if (WIN32)
++#  set_target_properties (hdp PROPERTIES LINK_FLAGS "/STACK:10000000")
++#endif (WIN32)
+ 
+ if (BUILD_TESTING)
+   include (CMakeTests.cmake) 
+diff -r -u -w --strip-trailing-cr hdf-4.2.10.original/mfhdf/fortran/mfsdf.c hdf-4.2.10/mfhdf/fortran/mfsdf.c
+--- hdf-4.2.10.original/mfhdf/fortran/mfsdf.c	2014-07-27 22:27:17.878756800 +0200
++++ hdf-4.2.10/mfhdf/fortran/mfsdf.c	2014-07-27 22:27:18.425237100 +0200
+@@ -262,90 +262,93 @@
+     return(SDgetdimscale(*id, values));
+ }
+ 
+-/*----------------------------------------------------------
+- * Name:    scscfill
+- * Purpose: Call nsfsnfill to set the char fill value
++/*---------------------------------------------------------
++ * Name:    scsfill
++ * Purpose: Call SDsetfillvalue to set the numeric fill value
+  * Inputs:  id: handle to a dimension
+  *          val: the fill value
+  * Returns: 0 on success, FAIL on failure with error set
+  * Users:   HDF Fortran programmers
+- *----------------------------------------------------------*/
++ *------------------------------------------------------------*/
+ 
+     FRETVAL(intf)
+ #ifdef PROTOTYPE
+-nscscfill(intf *id, _fcd val)
++nscsfill(intf *id, VOIDP val)
+ #else
+-nscscfill(id, val)
++nscsfill(id, val)
+      intf *id;
+-     _fcd val;
++     VOIDP val;
+ #endif /* PROTOTYPE */
+ {
+-    return(nscsfill(id, (VOIDP) _fcdtocp(val)));
++    return(SDsetfillvalue(*id, val));
+ }
+ 
+-/*------------------------------------------------------------
+- * Name:    scgcfill
+- * Purpose: Call sfgfill to get the char fill value
++
++/*----------------------------------------------------------
++ * Name:    scscfill
++ * Purpose: Call nsfsnfill to set the char fill value
+  * Inputs:  id: handle to a dimension
+- * Output:  val: the fill value
++ *          val: the fill value
+  * Returns: 0 on success, FAIL on failure with error set
+  * Users:   HDF Fortran programmers
+- *-----------------------------------------------------------*/
++ *----------------------------------------------------------*/
+ 
+     FRETVAL(intf)
+ #ifdef PROTOTYPE
+-nscgcfill(intf *id, _fcd val)
++nscscfill(intf *id, _fcd val)
+ #else
+-nscgcfill(id, val)
++nscscfill(id, val)
+      intf *id;
+      _fcd val;
+ #endif /* PROTOTYPE */
+ {
+-    return(nscgfill(id, (VOIDP) _fcdtocp(val)));
++    return(nscsfill(id, (VOIDP) _fcdtocp(val)));
+ }
+ 
+-/*---------------------------------------------------------
+- * Name:    scsfill
+- * Purpose: Call SDsetfillvalue to set the numeric fill value
++
++/*----------------------------------------------------------
++ * Name:    scgfill
++ * Purpose: Call SDgetfillvalue to get the fill value. 
+  * Inputs:  id: handle to a dimension
+- *          val: the fill value
++ * Output:  val: the fill value
+  * Returns: 0 on success, FAIL on failure with error set
+  * Users:   HDF Fortran programmers
+- *------------------------------------------------------------*/
++ *------------------------------------------------------*/
+ 
+     FRETVAL(intf)
+ #ifdef PROTOTYPE
+-nscsfill(intf *id, VOIDP val)
++nscgfill(intf *id, VOIDP val)
+ #else
+-nscsfill(id, val)
++nscgfill(id, val)
+      intf *id;
+      VOIDP val;
+ #endif /* PROTOTYPE */
+ {
+-    return(SDsetfillvalue(*id, val));
++    return(SDgetfillvalue(*id, val));
+ }
+ 
+-/*----------------------------------------------------------
+- * Name:    scgfill
+- * Purpose: Call SDgetfillvalue to get the fill value. 
++/*------------------------------------------------------------
++ * Name:    scgcfill
++ * Purpose: Call sfgfill to get the char fill value
+  * Inputs:  id: handle to a dimension
+  * Output:  val: the fill value
+  * Returns: 0 on success, FAIL on failure with error set
+  * Users:   HDF Fortran programmers
+- *------------------------------------------------------*/
++ *-----------------------------------------------------------*/
+ 
+     FRETVAL(intf)
+ #ifdef PROTOTYPE
+-nscgfill(intf *id, VOIDP val)
++nscgcfill(intf *id, _fcd val)
+ #else
+-nscgfill(id, val)
++nscgcfill(id, val)
+      intf *id;
+-     VOIDP val;
++     _fcd val;
+ #endif /* PROTOTYPE */
+ {
+-    return(SDgetfillvalue(*id, val));
++    return(nscgfill(id, (VOIDP) _fcdtocp(val)));
+ }
+ 
++
+ /*------------------------------------------------------------
+  * Name:    scgrange
+  * Purpose: Call SDgetrange to get the valid range info
+@@ -393,8 +396,8 @@
+ }
+ 
+ /*-----------------------------------------------------------------------------
+- * Name:    scrcatt
+- * Purpose: Call sfrnatt to get the contents of a char attribute
++ * Name:    scrnatt
++ * Purpose: Call SDreadattr to get the contents of a numeric attribute
+  * Inputs:  id: handle to a dataset
+  *          index: index of the attribute to read
+  *          buf: space to hold info
+@@ -404,20 +407,20 @@
+ 
+     FRETVAL(intf)
+ #ifdef PROTOTYPE
+-nscrcatt(intf *id, intf *index, _fcd buf)
++nscrnatt(intf *id, intf *index, VOIDP buf)
+ #else
+-nscrcatt(id, index, buf)
++nscrnatt(id, index, buf)
+      intf *id;
+      intf *index;
+-     _fcd buf;
++     VOIDP buf;
+ #endif /* PROTOTYPE */
+ {
+-    return(nscrnatt(id, index, (VOIDP) _fcdtocp(buf)));
++    return(SDreadattr(*id, *index, buf));
+ }
+ 
+ /*-----------------------------------------------------------------------------
+- * Name:    scrnatt
+- * Purpose: Call SDreadattr to get the contents of a numeric attribute
++ * Name:    scrcatt
++ * Purpose: Call sfrnatt to get the contents of a char attribute
+  * Inputs:  id: handle to a dataset
+  *          index: index of the attribute to read
+  *          buf: space to hold info
+@@ -427,17 +430,18 @@
+ 
+     FRETVAL(intf)
+ #ifdef PROTOTYPE
+-nscrnatt(intf *id, intf *index, VOIDP buf)
++nscrcatt(intf *id, intf *index, _fcd buf)
+ #else
+-nscrnatt(id, index, buf)
++nscrcatt(id, index, buf)
+      intf *id;
+      intf *index;
+-     VOIDP buf;
++     _fcd buf;
+ #endif /* PROTOTYPE */
+ {
+-    return(SDreadattr(*id, *index, buf));
++    return(nscrnatt(id, index, (VOIDP) _fcdtocp(buf)));
+ }
+ 
++
+ /*-----------------------------------------------------------------------------
+  * Name:    scrattr
+  * Purpose: Call SDreadattr to get the contents of an attribute
+diff -r -u -w --strip-trailing-cr hdf-4.2.10.original/mfhdf/libsrc/xdrposix.c hdf-4.2.10/mfhdf/libsrc/xdrposix.c
+--- hdf-4.2.10.original/mfhdf/libsrc/xdrposix.c	2014-07-27 22:27:18.113009200 +0200
++++ hdf-4.2.10/mfhdf/libsrc/xdrposix.c	2014-07-27 22:27:18.425237100 +0200
+@@ -28,6 +28,7 @@
+ 
+ #   if defined MSDOS || defined WINNT || defined _WIN32
+ #       include <io.h>
++#       include <stdint.h>
+ #   else
+ #       include <unistd.h>
+ #   endif

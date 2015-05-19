@@ -248,13 +248,13 @@ for PACK in $PKGLIST; do
   cd $WRKDIR/$PACK
   cmd.exe /c 'attrib -R *.* /S /D' # removing R/O attribute - berkeley-db hack
   cp -r $PATCHDIR/$PACK/* . 2>/dev/null
-  echo "###$OUT/$PACK.patch.log###" > $OUT/$PACK.patch.log
+  echo -n '' > $OUT/$PACK.patch.log
   ls $PATCHDIR/$PACK/*.patch $PATCHDIR/$PACK/*.diff 2>/dev/null | while read P; do
     echo "GONNA Apply: $P : $OUT/$PACK.patch.log"
     echo "GONNA Apply: $P" >> $OUT/$PACK.patch.log
-    patch -i $P -p 1 >> $OUT/$PACK.patch.log 2>&1
+    patch --no-backup-if-mismatch -i $P -p 1 >> $OUT/$PACK.patch.log 2>&1
   done
-  
+ 
   ( cd "$WRKDIR/$PACK" && find . -type f | grep -v -e "\.diff$" -e "\.patch$" | while read XF; do touch "../$PACK.original/$XF"; done )
   ( cd $WRKDIR && diff -r -u -w --strip-trailing-cr $PACK.original $PACK 2>/dev/null ) | grep -v "^Only in " > $OUT/$PACK.diff
   rm -rf $WRKDIR/$PACK.original
@@ -268,7 +268,7 @@ for PACK in $PKGLIST; do
 echo "### BUILDING $PACK"
 test -d $WRKDIR/$PACK || continue
 reset_timestamps
-rm -f $OUT/$PACK.*.log
+rm -f $OUT/$PACK.build.log
 
 case $PACK in
 
@@ -376,8 +376,8 @@ xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enabl
 patch_libtool
 
 # HACK
-xxrun make pnglibconf.dfn
-sed -i "s,^ *\(# *include *<zlib\.h>\),/* XXX-HACK \1 */," pnglibconf.dfn
+#xxrun make pnglibconf.dfn
+#sed -i "s,^ *\(# *include *<zlib\.h>\),/* XXX-HACK \1 */," pnglibconf.dfn
 
 xxrun make
 xxrun make check
@@ -578,9 +578,16 @@ cp *.dll $OUT/bin/
 # ----------------------------------------------------------------------------
 mysql-connector-c-*)
 cd $WRKDIR/$PACK
-cmake -G "MSYS Makefiles" -DWITH_ZLIB=system -DWITH_SSL=system -DCMAKE_INSTALL_PREFIX=$OUT
-make
-make install
+#hack2: pg uses linker option -lssleay32
+test -e $OUT/lib/libcrypto.dll.a && cp $OUT/lib/libcrypto.dll.a $OUT/lib/libeay32.a
+test -e $OUT/lib/libssl.dll.a && cp $OUT/lib/libssl.dll.a $OUT/lib/libssl32.a
+test -e $OUT/lib/libssl.dll.a && cp $OUT/lib/libssl.dll.a $OUT/lib/libssleay32.a
+#hacks: done
+#xxrun cmake -G "MSYS Makefiles" -DWITH_ZLIB=system -DWITH_SSL=$OUT -DCMAKE_INSTALL_PREFIX=$OUT
+#xxrun cmake -G "MSYS Makefiles" -DWITH_ZLIB=system -DWITH_SSL=bundled -DCMAKE_INSTALL_PREFIX=$OUT
+xxrun cmake -G "MinGW Makefiles" -DWITH_ZLIB=system -DWITH_SSL=bundled -DCMAKE_INSTALL_PREFIX=$OUT -DCMAKE_MAKE_PROGRAM=gmake
+xxrun gmake
+xxrun gmake install
 ;;
 
 # ----------------------------------------------------------------------------
@@ -1051,6 +1058,8 @@ if [ ! -e src/Makefile.bakup ] ; then cp -p src/Makefile src/Makefile.bakup; fi
 sed -e "s/-DMUTEX_[a-z]*//g" src/Makefile.bakup > src/Makefile
 xxrun make
 xxrun make install
+#XXX ugly hack
+sed -i "s/PVALUE/PROJVALUE/" $OUT/include/projects.h
 ;;
 
 # ----------------------------------------------------------------------------
@@ -1135,8 +1144,8 @@ MSYSTEM=MINGW xxrun ./configure $HOSTBUILDTARGET --prefix=$OUT --disable-depende
 SHELL=$OLD_SHELL
 xxrun make
 xxrun make install
-mv $OUT/share/startup $OUT/bin
-echo -n "MAXLINELENGTH := 800000" > $OUT/bin/startup/local.mk
+#mv $OUT/share/startup $OUT/bin
+#echo -n "MAXLINELENGTH := 800000" > $OUT/bin/startup/local.mk
 ;;
 
 # ----------------------------------------------------------------------------
@@ -1183,6 +1192,15 @@ patch_libtool
 xxrun make install
 ;;
 
+freeglut-3*)
+cd $WRKDIR/$PACK
+echo "IF (FREEGLUT_BUILD_SHARED_LIBS)" >> CMakeLists.txt
+echo "SET_TARGET_PROPERTIES (freeglut PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
+echo "ENDIF ()" >> CMakeLists.txt
+xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DFREEGLUT_BUILD_SHARED_LIBS=ON -DFREEGLUT_BUILD_STATIC_LIBS=OFF
+xxrun make
+xxrun make install
+;;
 
 # ----------------------------------------------------------------------------
 tiff-* | giflib-* | freeglut-*)

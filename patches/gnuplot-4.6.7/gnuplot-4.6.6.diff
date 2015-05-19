@@ -1,0 +1,26 @@
+diff -r -u -w --strip-trailing-cr gnuplot-4.6.6.original/config/mingw/Makefile gnuplot-4.6.6/config/mingw/Makefile
+--- gnuplot-4.6.6.original/config/mingw/Makefile	2015-01-19 13:46:18.596642800 +0100
++++ gnuplot-4.6.6/config/mingw/Makefile	2015-01-19 13:46:20.284103100 +0100
+@@ -439,8 +439,8 @@
+ LDLIBS = -lkernel32 -lgdi32 -lwinspool -lcomdlg32 -lcomctl32 -ladvapi32 -lshell32 -lmsimg32 -lgdiplus
+ 
+ ifdef HTML_HELP
+-  LDLIBS += -lhtmlhelp
+-  LDFLAGS2 += -L$(HHWPATH)lib
++  LDLIBS += -lhtmlhelp $(LBUFFEROVERFLOWU)
++  LDFLAGS2 += -L$(HHWPATH)lib$(ARCHNICK)
+ endif
+ 
+ $(TARGET): $(OBJS) $(WINOBJS) wgplt_res.$(O) texticon.ico grpicon.ico
+diff -r -u -w --strip-trailing-cr gnuplot-4.6.6.original/src/internal.c gnuplot-4.6.6/src/internal.c
+--- gnuplot-4.6.6.original/src/internal.c	2015-01-19 13:46:19.346580900 +0100
++++ gnuplot-4.6.6/src/internal.c	2015-01-19 13:46:20.299786700 +0100
+@@ -58,7 +58,7 @@
+ 
+ static enum DATA_TYPES sprintf_specifier __PROTO((const char *format));
+ 
+-#ifndef _WIN64
++#ifndef __MINGW32__
+ int
+ GP_MATHERR( STRUCT_EXCEPTION_P_X )
+ {

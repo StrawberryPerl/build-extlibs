@@ -1,83 +1,81 @@
-### #########
-### #patch-2.7.5
-### 
-### ###### gddm + db
-### gdbm-1.11
-### db-6.1.23
-### 
-### ###### math libs
-### gmp-6.0.0
-### mpfr-3.1.2
-### mpc-1.0.3
-### 
-### ###### compress libs
-### bzip2-1.0.6
-### zlib-1.2.8
-### xz-5.2.1
-### 
-### ###### misc simple
-### libiconv-1.14
-### expat-2.1.0
-### 
-### ###### xml libs
-### libxml2-2.9.2
-### libxslt-1.1.28
-### 
-### ###### crypto
-### openssl-1.0.2a
-### libssh2-1.5.0
-###  
-### ###### pgsql
-### postgresql-9.4.1
-### #XXX#mysql-connector-c-6.1.6-src
-### 
-### ###### graphics
-### #freeglut-3.0.0
-### freeglut-2.8.1
-### giflib-5.1.1
-### jpeg-9a
-### tiff-4.0.3
-### libpng-1.6.17
-### libXpm-3.5.11
-### freetype-2.5.5
-### libgd-2.1.1
-### t1lib-5.1.2
-### 
-### ###### extras
-### libffi-3.2.1
-### libuv-v1.5.0
-### 
-### ###### curl + relalated
-### libidn-1.30
-### curl-7.42.1
-### 
-### ###### PDL related
-### cfitsio-3.37
-### ta-lib-0.4.0
-### lapack-3.5.0
-### fftw-3.3.4
-### gsl-1.16
-### proj-4.9.1
-### #? http://sourceforge.net/projects/libharu/files/libharu2/2.0.8/
-### plplot-5.11.0
-### 
-### szip-2.1
-### hdf-4.2.11
-### hdf5-1.8.14
-### netcdf-4.3.2
-### 
-### gnuplot-4.6.5
-### #gnuplot-4.6.7
-### ffmpeg-2.6.2
+#########
+#patch-2.7.5
 
-#########################################
+###### gddm + db
+gdbm-1.11
+db-6.1.23
+
+###### math libs
+gmp-6.0.0
+mpfr-3.1.2
+mpc-1.0.3
+
+###### compress libs
+bzip2-1.0.6
+zlib-1.2.8
+xz-5.2.1
+
+###### misc simple
+libiconv-1.14
+expat-2.1.0
+
+###### xml libs
+libxml2-2.9.2
+libxslt-1.1.28
+
+###### crypto
+openssl-1.0.2a
+libssh2-1.5.0
+ 
+###### pgsql
+postgresql-9.4.1
+#XXX#mysql-connector-c-6.1.6-src
+
+###### graphics
+#freeglut-3.0.0
+freeglut-2.8.1
+giflib-5.1.1
+jpeg-9a
+tiff-4.0.3
+libpng-1.6.17
+libXpm-3.5.11
+freetype-2.5.5
+libgd-2.1.1
+t1lib-5.1.2
+
+###### extras
+libffi-3.2.1
+libuv-v1.5.0
+
+###### curl + relalated
+libidn-1.30
+curl-7.42.1
+
+###### PDL related
+cfitsio-3.37
+ta-lib-0.4.0
+lapack-3.5.0
+fftw-3.3.4
+gsl-1.16
+proj-4.9.1
+#? http://sourceforge.net/projects/libharu/files/libharu2/2.0.8/
+plplot-5.11.0
+
+szip-2.1
+hdf-4.2.11
+hdf5-1.8.14
+netcdf-4.3.2
+
+gnuplot-4.6.5
+#gnuplot-4.6.7
 libcaca-0.99.beta19
 libcerf-1.3
-gnuplot-5.0.0
-#
-#
+#gnuplot-5.0.0
+
+ffmpeg-2.6.2
+
 ######################################################
-### fftw 2          removed
+### fftw 2          removed/obsolete
 ### ncurses-5.9     unused
 
 ### glib unused

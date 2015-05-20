@@ -821,12 +821,40 @@ my $desc = {
       ['Homepage', 'http://heasarc.gsfc.nasa.gov/fitsio/'],
     ],
   }, 
+  'libcaca-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '-config(\.bat)?$'],
+      #['bin', 'c\bin', '\.exe$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.(h|hxx|inc)$'],
+    ],
+    'licenses' => [qw/AUTHORS COPYING COPYING.GPL COPYING.ISC COPYING.LGPL/],
+    'licdir' => 'licenses\libcaca',
+    'urls' => [
+      ['Homepage', 'http://caca.zoy.org/wiki/libcaca'],
+    ],
+  }, 
+  'libcerf-' => {
+    'files' => [],
+    'trees' => [
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.(h|hxx|inc)$'],
+    ],
+    'licenses' => [qw/COPYING README/],
+    'licdir' => 'licenses\libcerf',
+    'urls' => [
+      ['Homepage', 'http://apps.jcns.fz-juelich.de/libcerf'],
+    ],
+  }, 
   '_default_' => {
     'files' => [],
     'trees' => [
       ['bin', 'c\bin', '-config(\.bat)?$'],
       ['bin', 'c\bin', '\.dll$'],
-	  ['bin', 'c\bin', '\.exe$'],
+      ['bin', 'c\bin', '\.exe$'],
       ['lib', 'c\lib', '\.a$'],
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
       ['include', 'c\include', '\.(h|hxx|inc)$'],

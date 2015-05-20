@@ -948,8 +948,8 @@ xxrun make
 xxrun make install
 
 ###hack needed for static build
-sed -i 's,-lblas,-lblas -lgfortran,' $OUT/lib/pkgconfig/blas.pc
-sed -i 's,-llapack,-llapack -lblas -lgfortran,' $OUT/lib/pkgconfig/lapack.pc
+sed -i 's,-lblas,-lblas -lgfortran -lquadmath,' $OUT/lib/pkgconfig/blas.pc
+sed -i 's,-llapack,-llapack -lblas -lgfortran -lquadmath,' $OUT/lib/pkgconfig/lapack.pc
 ;;
 
 # ----------------------------------------------------------------------------

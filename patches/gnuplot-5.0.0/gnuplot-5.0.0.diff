@@ -1,0 +1,35 @@
+diff -r -u -w --strip-trailing-cr gnuplot-5.0.0.original/config/mingw/Makefile gnuplot-5.0.0/config/mingw/Makefile
+--- gnuplot-5.0.0.original/config/mingw/Makefile	2015-05-20 09:39:49.680260400 +0200
++++ gnuplot-5.0.0/config/mingw/Makefile	2015-05-20 09:39:48.586563400 +0200
+@@ -399,7 +399,7 @@
+ 
+ ifdef CACA
+ 	CFLAGS += -DHAVE_LIBCACA
+-	TERMLIBS += -lcaca
++	TERMLIBS += -lcaca -lz
+ endif
+ 
+ ifdef ICONV
+@@ -487,8 +487,8 @@
+ 	$(CC) -c $(CFLAGS) $(CFLAGSEXTRA) -MMD -MT '$*.$$(O)' -MF $*.d -o $@ $<
+ 
+ LDLIBS = -lkernel32 -lgdi32 -lwinspool -lcomdlg32 -lcomctl32 -ladvapi32 -lshell32 -lmsimg32 -lgdiplus
+-LDLIBS += -lhtmlhelp
+-LDFLAGS2 += -L$(HHWPATH)lib
++LDLIBS += -lhtmlhelp $(LBUFFEROVERFLOWU)
++LDFLAGS2 += -L$(HHWPATH)lib$(ARCHNICK)
+ 
+ $(TARGET): $(VERSIONING) $(OBJS) $(WINOBJS) wgplt_res.$(O) Makefile
+ 	$(LDX) $(LDFLAGS) $(LDFLAGS2) -o $@ $(OBJS) $(WINOBJS) wgplt_res.$(O) $(LDLIBS)\
+diff -r -u -w --strip-trailing-cr gnuplot-5.0.0.original/src/internal.c gnuplot-5.0.0/src/internal.c
+--- gnuplot-5.0.0.original/src/internal.c	2015-05-20 09:39:58.390861400 +0200
++++ gnuplot-5.0.0/src/internal.c	2015-05-20 09:39:48.649008700 +0200
+@@ -47,7 +47,7 @@
+ 
+ #include <math.h>
+ 
+-#ifndef _WIN64
++#ifndef _WIN32
+ /*
+  * FIXME: This is almost certainly out of date on linux, since the matherr
+  * mechanism has been replaced by math_error() and supposedly is only 

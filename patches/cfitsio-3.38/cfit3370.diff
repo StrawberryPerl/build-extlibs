@@ -1,0 +1,135 @@
+diff -ru pc.orig/GNUmakefile pc/GNUmakefile
+--- pc.orig/GNUmakefile	2015-01-26 11:37:26.009019900 +0100
++++ pc/GNUmakefile	2015-01-26 11:35:54.029019900 +0100
+@@ -0,0 +1,94 @@
++#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
++#        that can be incompatible with other make tools
++
++BASENAME      =cfitsio
++CFITSIO_MAJOR =3
++CFITSIO_MINOR =37
++
++CC       =gcc
++CFLAGS   =-O2 -Wall -Wno-unused -Dg77Fortran -DHAVE_UNISTD_H=1 -DHAVE_FTRUNCATE=1 -DSTDC_HEADERS=1 -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64
++OBJS     =buffers.o cfileio.o checksum.o drvrfile.o drvrmem.o drvrnet.o drvrsmem.o drvrgsiftp.o editcol.o edithdu.o eval_l.o eval_y.o eval_f.o fitscore.o getcol.o getcolb.o getcold.o getcole.o getcoli.o getcolj.o getcolk.o getcoll.o getcols.o getcolsb.o getcoluk.o getcolui.o getcoluj.o getkey.o group.o grparser.o histo.o iraffits.o modkey.o putcol.o putcolb.o putcold.o putcole.o putcoli.o putcolj.o putcolk.o putcoluk.o putcoll.o putcols.o putcolsb.o putcolu.o putcolui.o putcoluj.o putkey.o region.o scalnull.o swapproc.o wcssub.o wcsutil.o imcompress.o quantize.o ricecomp.o pliocomp.o fits_hcompress.o fits_hdecompress.o simplerng.o f77_wrap1.o f77_wrap2.o f77_wrap3.o f77_wrap4.o zlib/adler32.o zlib/crc32.o zlib/deflate.o zlib/infback.o zlib/inffast.o zlib/inflate.o zlib/inftrees.o zlib/trees.o zlib/uncompr.o zlib/zcompress.o zlib/zuncompress.o zlib/zutil.o
++EXES     =testprog.exe fpack.exe funpack.exe fitscopy.exe speed.exe imcopy.exe cookbook.exe
++
++#### end of packcage-specific ####
++
++ifeq ($(NOPERL), 1)
++  ECHO   = @echo
++  CP     = cp
++  MV     = mv
++  RM_F   = rm -f
++  RM_RF  = rm -rf
++  MKPATH = mkdir -p
++  SED    = sed
++else
++  ECHO   = @perl -l -e "print qq{@ARGV}" --
++  CP     = perl -MExtUtils::Command -e "cp" --
++  MV     = perl -MExtUtils::Command -e "mv" --
++  RM_F   = perl -MExtUtils::Command -e "rm_f" --
++  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
++  MKPATH = perl -MExtUtils::Command -e "mkpath" --
++  SED    = perl -pe
++endif
++
++PREFIX =./_output_
++BINDIR =$(PREFIX)/bin
++INCDIR =$(PREFIX)/include
++LIBDIR =$(PREFIX)/lib
++
++IMPORT_LIB=lib$(BASENAME).a
++SHARED_LIB=lib$(BASENAME)$(DLLSUFFIX).dll
++PC_FILE=$(BASENAME).pc
++
++TARGETS = $(SHARED_LIB) $(PC_FILE) $(EXES)
++
++all: $(TARGETS)
++
++clean:
++	$(RM_F) *.o zlib/*.o *.dll *.pc *.exe *.a
++
++$(SHARED_LIB): $(OBJS)
++	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
++
++$(PC_FILE):
++	@echo prefix=$${pcfiledir}/../.. >$@
++	@echo libdir=$${prefix}/lib >>$@
++	@echo includedir=$${prefix}/include >>$@
++	@echo Name: cfitsio >>$@
++	@echo Description: FITS File Subroutine Library >>$@
++	@echo Version: $(CFITSIO_MAJOR).$(CFITSIO_MINOR) >>$@
++	@echo Libs: -L$${libdir} -lcfitsio >>$@
++	@echo Libs.private: -lm >>$@
++	@echo Cflags: -I$${includedir} >>$@
++
++%.o : %.c ; $(CC) $(CFLAGS) -c $< -o $@
++
++fpack.exe:	fpack.o fpackutil.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o fpack fpack.o fpackutil.o -L. -lcfitsio
++
++funpack.exe:	funpack.o fpackutil.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o funpack funpack.o fpackutil.o -L. -lcfitsio
++
++fitscopy.exe:	fitscopy.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o fitscopy fitscopy.o -L. -lcfitsio
++
++imcopy.exe:	imcopy.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o imcopy imcopy.o -L. -lcfitsio
++
++testprog.exe:	testprog.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o testprog testprog.o -L. -lcfitsio
++
++speed.exe:	speed.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o speed speed.o -L. -lcfitsio
++
++cookbook.exe:	cookbook.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o cookbook cookbook.o -L. -lcfitsio
++
++install: all
++	$(MKPATH) "$(BINDIR)"
++	$(MKPATH) "$(LIBDIR)/pkgconfig"
++	$(MKPATH) "$(INCDIR)"
++	$(CP) fitsio.h fitsio2.h longnam.h drvrsmem.h "$(INCDIR)"
++	$(CP) $(IMPORT_LIB) "$(LIBDIR)"
++	$(CP) $(PC_FILE) "$(LIBDIR)/pkgconfig"
++	$(CP) $(SHARED_LIB) "$(BINDIR)"
++	$(CP) $(EXES) "$(BINDIR)"
+diff -ru pc.orig/fpackutil.c pc/fpackutil.c
+--- pc.orig/fpackutil.c	2014-08-19 18:24:02.000000000 +0200
++++ pc/fpackutil.c	2015-01-26 10:36:20.494332400 +0100
+@@ -230,7 +230,7 @@
+ 
+             sprintf (msg, "# %s (", infits); fp_msg (msg);
+ 
+-#if defined(_MSC_VER)
++#if defined(_MSC_VER) || defined(__MINGW32__)
+     /* Microsoft Visual C++ 6.0 uses '%I64d' syntax  for 8-byte integers */
+         sprintf(msg, "%I64d bytes)\n", sizell); fp_msg (msg);
+ #elif (USE_LL_SUFFIX == 1)
+diff -ru pc.orig/getcols.c pc/getcols.c
+--- pc.orig/getcols.c	2012-08-08 14:18:44.000000000 +0200
++++ pc/getcols.c	2015-01-26 10:36:16.214332400 +0100
+@@ -314,7 +314,7 @@
+            else
+            {	   
+ 
+-#if defined(_MSC_VER)
++#if defined(_MSC_VER) || defined(__MINGW32__)
+     /* Microsoft Visual C++ 6.0 uses '%I64d' syntax  for 8-byte integers */
+         sprintf(tmpstr, "%20I64d", llarray[ii]);
+ #elif (USE_LL_SUFFIX == 1)
+diff -ru pc.orig/putkey.c pc/putkey.c
+--- pc.orig/putkey.c	2013-11-20 17:05:16.000000000 +0100
++++ pc/putkey.c	2015-01-26 10:36:26.154332400 +0100
+@@ -2772,7 +2772,7 @@
+ 
+     cval[0] = '\0';
+ 
+-#if defined(_MSC_VER)
++#if defined(_MSC_VER) || defined(__MINGW32__)
+     /* Microsoft Visual C++ 6.0 uses '%I64d' syntax  for 8-byte integers */
+     if (sprintf(cval, "%I64d", ival) < 0)
+ 
+ 

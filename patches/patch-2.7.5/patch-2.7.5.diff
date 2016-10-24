@@ -1,0 +1,75 @@
+diff -ru patch-2.7.5/lib/euidaccess.c patch-2.7.5-new/lib/euidaccess.c
+--- patch-2.7.5/lib/euidaccess.c	2015-01-29 19:19:27.000000000 +0100
++++ patch-2.7.5-new/lib/euidaccess.c	2015-05-12 19:31:39.379390700 +0200
+@@ -84,6 +84,8 @@
+   return accessx (file, mode, ACC_SELF);
+ #elif HAVE_EACCESS                      /* FreeBSD */
+   return eaccess (file, mode);
++#elif defined __WIN32__
++  return 0;
+ #else       /* Mac OS X, NetBSD, OpenBSD, HP-UX, Solaris, Cygwin, mingw, BeOS */
+ 
+   uid_t uid = getuid ();
+diff -ru patch-2.7.5/lib/signal.in.h patch-2.7.5-new/lib/signal.in.h
+--- patch-2.7.5/lib/signal.in.h	2015-03-07 01:31:45.000000000 +0100
++++ patch-2.7.5-new/lib/signal.in.h	2015-05-12 19:41:36.551285400 +0200
+@@ -66,6 +66,11 @@
+ # include <pthread.h>
+ #endif
+ 
++/* xxx hack */
++#ifdef __MINGW32__
++#include <pthread.h>
++#endif
++
+ /* The definitions of _GL_FUNCDECL_RPL etc. are copied here.  */
+ 
+ /* The definition of _GL_ARG_NONNULL is copied here.  */
+diff -ru patch-2.7.5/src/safe.c patch-2.7.5-new/src/safe.c
+--- patch-2.7.5/src/safe.c	2015-03-07 01:34:20.000000000 +0100
++++ patch-2.7.5-new/src/safe.c	2015-05-12 19:24:14.051284200 +0200
+@@ -21,7 +21,9 @@
+ #include <config.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#ifndef __WIN32__
+ #include <sys/resource.h>
++#endif
+ #include <sys/time.h>
+ #include <fcntl.h>
+ #include <stdio.h>
+@@ -92,11 +94,15 @@
+ 
+ static void init_dirfd_cache (void)
+ {
++#ifndef __WIN32__
+   struct rlimit nofile;
++#endif
+ 
+   max_cached_fds = 8;
++#ifndef __WIN32__
+   if (getrlimit (RLIMIT_NOFILE, &nofile) == 0)
+     max_cached_fds = MAX (nofile.rlim_cur / 4, max_cached_fds);
++#endif
+ 
+   cached_dirfds = hash_initialize (max_cached_fds,
+ 				   NULL,
+diff -ru patch-2.7.5/src/util.c patch-2.7.5-new/src/util.c
+--- patch-2.7.5/src/util.c	2015-03-07 01:34:20.000000000 +0100
++++ patch-2.7.5-new/src/util.c	2015-05-12 19:28:57.270069200 +0200
+@@ -254,6 +254,7 @@
+ 		S_ISLNK (mode) ? "symbolic link" : "file",
+ 		quotearg (to));
+     }
++#ifndef __WIN32__
+   if (attr & FA_IDS)
+     {
+       static uid_t euid = -1;
+@@ -282,6 +283,7 @@
+ 		S_ISLNK (mode) ? "symbolic link" : "file",
+ 		quotearg (to));
+     }
++#endif
+   if (attr & FA_XATTRS)
+     if (copy_attr (from, to) != 0
+ 	&& errno != ENOSYS && errno != ENOTSUP && errno != EPERM)

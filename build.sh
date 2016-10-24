@@ -542,7 +542,32 @@ xxrun make PERL=perl install_sw
 ;;
 
 # ----------------------------------------------------------------------------
-openssl-1.*)
+openssl-1.1.*)
+cd $WRKDIR/$PACK
+
+sed -i "s|SHLIB_SOVER=-\$\$sover\$\$arch;|SHLIB_SOVER=-\$\$sover\$\$arch\\\\${DLLSUFFIX};|" Makefile.shared
+sed -i "s/\"ZLIB1\"/\"ZLIB1$DLLSUFFIX\"/" crypto/comp/c_zlib.c
+if [ $IS64BIT ] ; then
+  OPENSSLTARGET=mingw64
+else
+  OPENSSLTARGET=mingw
+fi
+xxrun ./Configure shared zlib enable-static-engine enable-rfc3779 --with-zlib-lib=$OUTLIB --with-zlib-include=$OUTINC --prefix=$OUT $OPENSSLTARGET
+sed -i "s/lib\(crypto\|ssl\)-\([^.]\+\).dll/lib\1-\2${DLLSUFFIX}.dll/g" Makefile
+
+xxrun make depend all
+#xxrun make tests
+xxrun make install_sw
+### #hack: patch pkg-config related files
+### sed -i -e 's/-lcrypto/-leay32/' -e 's/-lssl/-lssl32/' $OUT/lib/pkgconfig/libcrypto.pc
+### sed -i -e 's/-lcrypto/-leay32/' -e 's/-lssl/-lssl32/' $OUT/lib/pkgconfig/libssl.pc
+### sed -i -e 's/-lcrypto/-leay32/' -e 's/-lssl/-lssl32/' $OUT/lib/pkgconfig/openssl.pc
+### #hack: renamed DLLs are not installed
+### cp *.dll $OUT/bin/
+;;
+
+# ----------------------------------------------------------------------------
+openssl-1.0.*)
 cd $WRKDIR/$PACK
 
 #hack: changing DLL suffix
@@ -995,7 +1020,9 @@ cd $WRKDIR/$PACK
 ### xxrun make install
 
 save_configure_help
-CPPFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --enable-netcdf4 --enable-hdf4 --disable-dap
+CPPFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --enable-dll --enable-netcdf4 --enable-hdf4 --disable-dap
+### good
+#CPPFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --enable-dll --enable-netcdf4 --enable-hdf4 --disable-dap --disable-dynamic-loading --disable-netcdf-4
 ### --enable-dap => depends on curl
 ### CPPFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --enable-netcdf4 --enable-hdf4 --enable-dap
 patch_libtool
@@ -1011,8 +1038,12 @@ echo "IF (BUILD_SHARED_LIBS)" >> CMakeLists.txt
 echo "SET_TARGET_PROPERTIES (\${HDF5_LIB_TARGET} PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "SET_TARGET_PROPERTIES (\${HDF5_HL_LIB_TARGET} PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "ENDIF ()" >> CMakeLists.txt
+mkdir _BUILD
+cd _BUILD
 #INFO: https://aur.archlinux.org/packages/mi/mingw-w64-hdf5/PKGBUILD
 xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT \
+                                -DCMAKE_BUILD_TYPE:STRING=Release \
+                                -DHDF5_BUILD_TOOLS:BOOL=ON \
                                 -DBUILD_SHARED_LIBS=ON \
                                 -DHDF5_BUILD_HL_LIB=ON \
                                 -DHAVE_IOEO_EXITCODE=1 \
@@ -1026,7 +1057,9 @@ xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT \
                                 -DH5_LLONG_TO_LDOUBLE_CORRECT=1 \
                                 -DH5_NO_ALIGNMENT_RESTRICTIONS=1 \
                                 -DHDF5_ENABLE_SZIP_SUPPORT=ON \
-                                -DHDF5_ENABLE_Z_LIB_SUPPORT=ON
+                                -DHDF5_ENABLE_SZIP_ENCODING=ON \
+                                -DHDF5_ENABLE_Z_LIB_SUPPORT=ON \
+                                ../
 xxrun make
 xxrun make install
 ;;

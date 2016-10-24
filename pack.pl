@@ -29,7 +29,7 @@ my $desc = {
     'files' => [
       ['include\db.h', 'c\include\db.h'],
       ['include\db_cxx.h', 'c\include\db_cxx.h'],
-      ['lib\libdb-6.1.a', 'c\lib\libdb.a'], #XXX_FIXME hack!!!
+      ['lib\libdb-6.2.a', 'c\lib\libdb.a'], #XXX_FIXME hack!!!
     ],
     'trees' => [
       ['bin', 'c\bin', '\.dll$'],
@@ -350,6 +350,23 @@ my $desc = {
     'licdir' => 'licenses\libjpeg',
     'urls' => [
       ['Homepage', 'http://www.ijg.org/'],
+    ],
+  },
+  'openssl11-' => {
+    'files' => [
+      ['bin\openssl.exe', 'c\bin\openssl.exe'],
+      ['lib\libcrypto.dll.a', 'c\lib\libcrypto.a'],
+      ['lib\libssl.dll.a', 'c\lib\libssl.a'],
+    ],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => ['LICENSE'],
+    'licdir' => 'licenses\openssl',
+    'urls' => [
+      ['Homepage', 'http://www.openssl.org/'],
     ],
   },
   'openssl-' => {
@@ -879,6 +896,7 @@ sub prepare_pack {
   $jobname = 'fftw2-' if $sihash->{pack} =~ /^fftw-2/; #hack
   $jobname = 'gd-' if $sihash->{pack} =~ /^gd-HG/i;    #hack
   $jobname = 'libuv-' if $sihash->{pack} =~ /^libuv-v/i;   #hack
+  $jobname = 'openssl11-' if $sihash->{pack} =~ /^openssl-1.1/i;   #hack
   my $pkghash = $deschash->{$jobname};
   if (! defined $pkghash) {
     warn "###warning### Missing definition for '$jobname' (using default)\n";

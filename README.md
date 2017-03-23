@@ -9,14 +9,17 @@ The binaries are available at:
 # Initial Setup
 
 1. install base MSYS2 environment into e.g. `z:\msys2`
-   see http://sourceforge.net/p/msys2/wiki/MSYS2%20installation/
-   run: `z:\msys2\msys2_shell.bat` 
+   see https://sourceforge.net/projects/msys2/
+   run: `z:\msys2\msys2_shell.cmd` 
 
 1. install additional MSYS2 packages (no GCC!)
    from MSYS2 shell:
 ```
-pacman -S svn git make patch autoconf libtool tar xz p7zip zip unzip nano automake man flex bison pkg-config wget ca-certificates
-pacman -S perl-libwww perl-IPC-Run3 perl-IO-Socket-SSL perl-Archive-Zip perl-LWP-Protocol-https perl-Digest-SHA
+pacman -Sy --noconfirm curl wget ca-certificates openssh openssl nano tar xz p7zip zip unzip bzip2
+pacman -Sy --noconfirm svn git make patch autoconf libtool nano automake man flex bison pkg-config 
+pacman -Sy --noconfirm perl-libwww perl-IPC-Run3 perl-IO-Socket-SSL perl-Archive-Zip perl-LWP-Protocol-https perl-Digest-SHA
+pacman -Sy --noconfirm python2
+pacman -Syu --noconfirm
 ```
    
 1. unpack gcc-4.8.3 toolchains into e.g. `z:\mingw32bit.483` and `z:\mingw64bit.483`

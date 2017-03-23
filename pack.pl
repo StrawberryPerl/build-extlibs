@@ -12,6 +12,20 @@ use File::Find;
 use File::Basename;
 
 my $desc = {
+  'fribidi-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => ['COPYING','AUTHORS','README'],
+    'licdir' => 'licenses\fribidi',
+    'urls' => [
+      ['Homepage', 'http://fribidi.org'],
+    ],
+  }, 
   'dmake-' => {
     'files' => [
       ['bin\dmake.exe', 'c\bin\dmake.exe'],

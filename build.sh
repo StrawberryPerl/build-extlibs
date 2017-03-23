@@ -966,6 +966,14 @@ install_bats
 ;;
 
 # ----------------------------------------------------------------------------
+graphite2-*)
+cd $WRKDIR/$PACK
+xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF
+xxrun make
+xxrun make install
+;;
+
+# ----------------------------------------------------------------------------
 lapack-*)
 cd $WRKDIR/$PACK
 xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON
@@ -1374,6 +1382,28 @@ patch_libtool
 xxrun make
 xxrun make install
 install_bats
+;;
+
+# ----------------------------------------------------------------------------
+pcre-*)
+cd $WRKDIR/$PACK
+save_configure_help
+xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-utf --enable-unicode-properties --disable-dependency-tracking --enable-static=no --enable-shared=yes
+patch_libtool
+xxrun make
+xxrun make install
+;;
+
+# ----------------------------------------------------------------------------
+fribidi-*)
+cd $WRKDIR/$PACK
+save_configure_help
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes
+patch_libtool
+xxrun make
+xxrun make install
+mkdir -p $OUT/lib/pkgconfig/
+[ -f $OUT/lib/pkgconfig/fribidi.pc ] || cp -f fribidi.pc $OUT/lib/pkgconfig/fribidi.pc
 ;;
 
 # ----------------------------------------------------------------------------

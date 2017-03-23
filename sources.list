@@ -76,6 +76,7 @@ ftp://ftp.remotesensing.org/pub/libtiff/tiff-4.0.6.tar.gz
 http://www.freedesktop.org/software/fontconfig/release/fontconfig-2.11.94.tar.gz
 http://www.freedesktop.org/software/fontconfig/release/fontconfig-2.11.93.tar.gz
 http://www.freedesktop.org/software/fontconfig/release/fontconfig-2.11.95.tar.gz
+http://www.freedesktop.org/software/fontconfig/release/fontconfig-2.12.1.tar.gz
 
 #### xpm
 #URL http://ftp.x.org/pub/individual/lib/
@@ -94,10 +95,12 @@ http://downloads.sourceforge.net/expat/expat-2.1.1.tar.bz2
 #### libiconv
 #URL http://ftp.gnu.org/gnu/libiconv/
 http://ftp.gnu.org/gnu/libiconv/libiconv-1.14.tar.gz
+http://ftp.gnu.org/gnu/libiconv/libiconv-1.15.tar.gz
 
 #### zlib
 #URL http://www.zlib.net/
 http://www.zlib.net/zlib-1.2.8.tar.gz
+http://www.zlib.net/zlib-1.2.11.tar.gz
 
 #URL http://www.bzip.org/
 http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
@@ -290,9 +293,26 @@ https://github.com/mohawk2/dmake/archive/DMAKE_4_12_2_2.tar.gz
 https://github.com/mohawk2/dmake/archive/dmake-4.12.2.2.tar.gz
 http://strawberryperl.com/package/kmx/testing/dmake-4.12bulk88.tar.gz
 
+# http://ftp.gnu.org/gnu/gettext/
 http://ftp.gnu.org/gnu/gettext/gettext-0.19.1.tar.xz
+http://ftp.gnu.org/gnu/gettext/gettext-0.19.8.tar.xz
+# http://ftp.acc.umu.se/pub/GNOME/sources/glib/
+http://ftp.acc.umu.se/pub/GNOME/sources/glib/2.51/glib-2.51.4.tar.xz
 http://ftp.acc.umu.se/pub/GNOME/sources/glib/2.41/glib-2.41.1.tar.xz
 http://downloads.sourceforge.net/gretl/gretl-1.9.90.tar.xz
+
+# https://ftp.pcre.org/pub/pcre/
+https://ftp.pcre.org/pub/pcre/pcre-8.40.tar.gz
+
+# https://github.com/silnrsi/graphite/releases/
+https://github.com/silnrsi/graphite/releases/download/1.3.9/graphite2-1.3.9.tgz
+
+# http://fribidi.org
+http://fribidi.org/download/fribidi-0.19.7.tar.bz2
+
+# https://www.freedesktop.org/software/harfbuzz/release/
+https://www.freedesktop.org/software/harfbuzz/release/harfbuzz-1.4.5.tar.bz2
+https://www.freedesktop.org/software/harfbuzz/release/harfbuzz-1.4.5.tar.bz2
 
 ######## unused
 ftp://ftp.mars.org/pub/mpeg/libmad-0.15.1b.tar.gz
@@ -300,6 +320,9 @@ http://ftp.gnome.org/pub/GNOME/sources/pango/1.29/pango-1.29.4.tar.bz2
 http://ftp.gnome.org/pub/GNOME/sources/glib/2.31/glib-2.31.0.tar.bz2
 http://ftp.gnu.org/gnu/gettext/gettext-0.18.1.1.tar.gz
 http://www.cairographics.org/releases/cairo-1.10.2.tar.gz
+# http://cairographics.org/releases/
+https://www.cairographics.org/releases/cairo-1.14.8.tar.xz
+https://www.cairographics.org/releases/pixman-0.34.0.tar.gz
 http://cairographics.org/releases/pixman-0.24.0.tar.gz
 # http://www.graphviz.org/pub/graphviz/stable/SOURCES/graphviz-2.24.0.tar.gz
 http://win-iconv.googlecode.com/files/win-iconv-0.0.3.tar.bz2

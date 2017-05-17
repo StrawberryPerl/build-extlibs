@@ -1,0 +1,12 @@
+diff -r -u -w --strip-trailing-cr szip-2.1.1.original/configure szip-2.1.1/configure
+--- szip-2.1.1.original/configure	2017-05-12 17:07:18.915776000 +0200
++++ szip-2.1.1/configure	2017-05-12 17:07:17.020096000 +0200
+@@ -9213,7 +9213,7 @@
+       # as there is no search path for DLLs.
+       hardcode_libdir_flag_spec='-L$libdir'
+       export_dynamic_flag_spec='$wl--export-all-symbols'
+-      allow_undefined_flag=unsupported
++      allow_undefined_flag=supported
+       always_export_symbols=no
+       enable_shared_with_static_runtimes=yes
+       export_symbols_cmds='$NM $libobjs $convenience | $global_symbol_pipe | $SED -e '\''/^[BCDGRS][ ]/s/.*[ ]\([^ ]*\)/\1 DATA/;s/^.*[ ]__nm__\([^ ]*\)[ ][^ ]*/\1 DATA/;/^I[ ]/d;/^[AITW][ ]/s/.* //'\'' | sort | uniq > $export_symbols'

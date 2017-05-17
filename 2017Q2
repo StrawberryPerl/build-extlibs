@@ -1,0 +1,90 @@
+#########
+patch-2.7.5
+pexports-0.47
+
+###### gddm + db
+gdbm-1.10
+##gdbm-1.13
+db-6.2.32
+
+###### math libs
+gmp-6.1.2
+mpfr-3.1.5
+mpc-1.0.3
+
+###### compress libs
+bzip2-1.0.6
+zlib-1.2.11
+xz-5.2.3
+
+###### misc simple
+libiconv-1.15
+expat-2.2.0
+
+###### xml libs
+libxml2-2.9.4
+libxslt-1.1.29
+
+###### crypto
+openssl-1.1.0e
+libssh2-1.8.0
+
+###### pgsql
+postgresql-9.6.3
+#mysql-connector-c-6.1.10-src
+
+###### graphics
+##freeglut-2.8.1
+freeglut-3.0.0
+giflib-5.1.4
+jpeg-9b
+tiff-4.0.7
+libpng-1.6.29
+libXpm-3.5.12
+freetype-2.7.1
+fontconfig-2.12.1
+libgd-2.2.4
+t1lib-5.1.2
+
+###### extras
+libffi-3.2.1
+libuv-v1.11.0
+pcre-8.40
+
+###### glib/cairo
+gettext-0.19.8
+glib-2.51.4
+pixman-0.34.0
+cairo-1.14.8
+fribidi-0.19.7
+
+###### curl + relalated
+##libidn-1.33
+libidn2-2.0.2
+curl-7.54.0
+
+###### PDL related
+cfitsio-3.41
+ta-lib-0.4.0
+lapack-3.7.0
+fftw-3.3.6-pl2
+gsl-2.3
+proj-4.9.3
+#? http://sourceforge.net/projects/libharu/files/libharu2/2.0.8/
+plplot-5.12.0
+
+#TEST: zlib-1.2.11 jpeg-9b szip-2.1.1 hdf-4.2.12 hdf5-1.10.1 netcdf-4.4.1.1
+szip-2.1.1
+hdf-4.2.12
+hdf5-1.10.1
+netcdf-4.4.1.1
+
+libcaca-0.99.beta19
+libcerf-1.3
+gnuplot-5.0.6
+
+ffmpeg-3.3
+# 
+# ######################################################
+# ### ncurses-5.9     unused
+# ### gretl-1.9.90    unused

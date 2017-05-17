@@ -1,0 +1,34 @@
+diff -r -u -w --strip-trailing-cr gnuplot-5.0.6.original/config/mingw/Makefile gnuplot-5.0.6/config/mingw/Makefile
+--- gnuplot-5.0.6.original/config/mingw/Makefile	2017-05-16 17:27:34.408990100 +0200
++++ gnuplot-5.0.6/config/mingw/Makefile	2017-05-16 17:27:33.481893900 +0200
+@@ -491,7 +491,7 @@
+ 
+ ifdef CACA
+ 	CFLAGS += -DHAVE_LIBCACA
+-	TERMLIBS += -lcaca
++	TERMLIBS += -lcaca -lz
+ endif
+ 
+ ifdef ICONV
+@@ -579,8 +579,8 @@
+ 	$(CC) -c $(CFLAGS) $(CFLAGSEXTRA) -MMD -MT '$*.$$(O)' -MF $*.d -o $@ $<
+ 
+ LDLIBS = -lkernel32 -lgdi32 -lwinspool -lcomdlg32 -lcomctl32 -ladvapi32 -lshell32 -lmsimg32 -lgdiplus
+-LDLIBS += -lhtmlhelp
+-LDFLAGS2 += -L$(HHWPATH)lib
++LDLIBS += -lhtmlhelp $(LBUFFEROVERFLOWU)
++LDFLAGS2 += -L$(HHWPATH)lib$(ARCHNICK)
+ ifdef MINGW64
+ LDFLAGS2 += -L.
+ endif
+--- gnuplot-5.0.6.original/src/internal.c	2017-05-16 17:27:43.171172700 +0200
++++ gnuplot-5.0.6/src/internal.c	2017-05-16 17:27:33.497501400 +0200
+@@ -47,7 +47,7 @@
+ 
+ #include <math.h>
+ 
+-#ifndef _WIN64
++#ifndef _WIN32
+ /*
+  * FIXME: This is almost certainly out of date on linux, since the matherr
+  * mechanism has been replaced by math_error() and supposedly is only 

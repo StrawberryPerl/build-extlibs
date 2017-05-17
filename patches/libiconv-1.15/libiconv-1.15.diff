@@ -1,0 +1,45 @@
+diff -r -u -w --strip-trailing-cr libiconv-1.15.original/configure libiconv-1.15/configure
+--- libiconv-1.15.original/configure	2017-04-26 12:03:12.345854800 +0200
++++ libiconv-1.15/configure	2017-04-26 12:03:11.456886900 +0200
+@@ -23142,7 +23142,7 @@
+ 
+ 
+ 
+-  gl_LIBOBJS="$gl_LIBOBJS progreloc.$ac_objext"
++  gl_LIBOBJS="$gl_LIBOBJS progreloc.$ac_objext relocatable.$ac_objext"
+ 
+ 
+ 
+@@ -25947,7 +25947,7 @@
+ fi
+ ac_cs_awk_cr=`$AWK 'BEGIN { print "a\rb" }' </dev/null 2>/dev/null`
+ if test "$ac_cs_awk_cr" = "a${ac_cr}b"; then
+-  ac_cs_awk_cr='\\r'
++  ac_cs_awk_cr='\r'
+ else
+   ac_cs_awk_cr=$ac_cr
+ fi
+diff -r -u -w --strip-trailing-cr libiconv-1.15.original/libcharset/configure libiconv-1.15/libcharset/configure
+--- libiconv-1.15.original/libcharset/configure	2017-04-26 12:03:20.138534600 +0200
++++ libiconv-1.15/libcharset/configure	2017-04-26 12:03:11.504554400 +0200
+@@ -13042,7 +13042,7 @@
+ fi
+ ac_cs_awk_cr=`$AWK 'BEGIN { print "a\rb" }' </dev/null 2>/dev/null`
+ if test "$ac_cs_awk_cr" = "a${ac_cr}b"; then
+-  ac_cs_awk_cr='\\r'
++  ac_cs_awk_cr='\r'
+ else
+   ac_cs_awk_cr=$ac_cr
+ fi
+diff -r -u -w --strip-trailing-cr libiconv-1.15.original/preload/configure libiconv-1.15/preload/configure
+--- libiconv-1.15.original/preload/configure	2017-04-26 12:03:25.294641900 +0200
++++ libiconv-1.15/preload/configure	2017-04-26 12:03:11.551024000 +0200
+@@ -12854,7 +12854,7 @@
+ fi
+ ac_cs_awk_cr=`$AWK 'BEGIN { print "a\rb" }' </dev/null 2>/dev/null`
+ if test "$ac_cs_awk_cr" = "a${ac_cr}b"; then
+-  ac_cs_awk_cr='\\r'
++  ac_cs_awk_cr='\r'
+ else
+   ac_cs_awk_cr=$ac_cr
+ fi

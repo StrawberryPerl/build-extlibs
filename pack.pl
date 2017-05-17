@@ -26,6 +26,28 @@ my $desc = {
       ['Homepage', 'http://fribidi.org'],
     ],
   }, 
+  'patch-' => {
+    'files' => [
+      ['bin\patch.exe', 'c\bin\patch.exe'],
+    ],
+    'trees' => [],
+    'licenses' => ['COPYING','AUTHORS','README'],
+    'licdir' => 'licenses\patch',
+    'urls' => [
+      ['Homepage', 'http://savannah.gnu.org/projects/patch/'],
+    ],
+  }, 
+  'pexports-' => {
+    'files' => [
+      ['bin\pexports.exe', 'c\bin\pexports.exe'],
+    ],
+    'trees' => [],
+    'licenses' => ['COPYING','AUTHORS','README'],
+    'licdir' => 'licenses\pexports',
+    'urls' => [
+      ['Homepage', 'https://sourceforge.net/projects/mingw/files/MinGW/Extension/pexports/'],
+    ],
+  }, 
   'dmake-' => {
     'files' => [
       ['bin\dmake.exe', 'c\bin\dmake.exe'],

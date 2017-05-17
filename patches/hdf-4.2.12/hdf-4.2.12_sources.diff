@@ -1,0 +1,196 @@
+diff -ru hdf-4.2.12_orig/hdf/src/herr.h hdf-4.2.12/hdf/src/herr.h
+--- hdf-4.2.12_orig/hdf/src/herr.h	2016-06-29 15:23:20.000000000 +0200
++++ hdf-4.2.12/hdf/src/herr.h	2017-05-16 09:39:10.013292400 +0200
+@@ -97,7 +97,7 @@
+ __declspec(dllexport)
+ #  endif
+ # else
+-HDFERRPUBLIC
++__declspec(dllexport) extern
+ # endif /* _H_ERR_MASTER_ */
+ int32       error_top
+ # ifdef _H_ERR_MASTER_
+diff -ru hdf-4.2.12_orig/hdf/test/tusejpegfuncs.c hdf-4.2.12/hdf/test/tusejpegfuncs.c
+--- hdf-4.2.12_orig/hdf/test/tusejpegfuncs.c	2016-06-29 15:23:20.000000000 +0200
++++ hdf-4.2.12/hdf/test/tusejpegfuncs.c	2017-05-16 09:39:09.934784400 +0200
+@@ -3,6 +3,7 @@
+  * the JPEG package by The Independent JPEG Group                            *
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+ #include <stdio.h>
++#include "hdf.h"
+ #include "jpeglib.h"
+ #include "tproto.h"
+ 
+Only in hdf-4.2.12: hdf-4.2.12.diff
+diff -ru hdf-4.2.12_orig/mfhdf/fortran/mfsdf.c hdf-4.2.12/mfhdf/fortran/mfsdf.c
+--- hdf-4.2.12_orig/mfhdf/fortran/mfsdf.c	2016-06-29 15:23:18.000000000 +0200
++++ hdf-4.2.12/mfhdf/fortran/mfsdf.c	2017-05-16 09:39:09.950449500 +0200
+@@ -259,6 +259,29 @@
+     return(SDgetdimscale(*id, values));
+ }
+ 
++/*MOVED UP*/
++  /*---------------------------------------------------------
++   * Name:    scsfill
++   * Purpose: Call SDsetfillvalue to set the numeric fill value
++   * Inputs:  id: handle to a dimension
++   *          val: the fill value
++   * Returns: 0 on success, FAIL on failure with error set
++   * Users:   HDF Fortran programmers
++   *------------------------------------------------------------*/
++  
++      FRETVAL(intf)
++  #ifdef PROTOTYPE
++  nscsfill(intf *id, VOIDP val)
++  #else
++  nscsfill(id, val)
++       intf *id;
++       VOIDP val;
++  #endif /* PROTOTYPE */
++  {
++      return(SDsetfillvalue(*id, val));
++  }
++
++
+ /*----------------------------------------------------------
+  * Name:    scscfill
+  * Purpose: Call nsfsnfill to set the char fill value
+@@ -280,6 +303,28 @@
+     return(nscsfill(id, (VOIDP) _fcdtocp(val)));
+ }
+ 
++/*MOVED UP*/
++  /*----------------------------------------------------------
++   * Name:    scgfill
++   * Purpose: Call SDgetfillvalue to get the fill value. 
++   * Inputs:  id: handle to a dimension
++   * Output:  val: the fill value
++   * Returns: 0 on success, FAIL on failure with error set
++   * Users:   HDF Fortran programmers
++   *------------------------------------------------------*/
++  
++      FRETVAL(intf)
++  #ifdef PROTOTYPE
++  nscgfill(intf *id, VOIDP val)
++  #else
++  nscgfill(id, val)
++       intf *id;
++       VOIDP val;
++  #endif /* PROTOTYPE */
++  {
++      return(SDgetfillvalue(*id, val));
++  }
++
+ /*------------------------------------------------------------
+  * Name:    scgcfill
+  * Purpose: Call sfgfill to get the char fill value
+@@ -301,48 +346,6 @@
+     return(nscgfill(id, (VOIDP) _fcdtocp(val)));
+ }
+ 
+-/*---------------------------------------------------------
+- * Name:    scsfill
+- * Purpose: Call SDsetfillvalue to set the numeric fill value
+- * Inputs:  id: handle to a dimension
+- *          val: the fill value
+- * Returns: 0 on success, FAIL on failure with error set
+- * Users:   HDF Fortran programmers
+- *------------------------------------------------------------*/
+-
+-    FRETVAL(intf)
+-#ifdef PROTOTYPE
+-nscsfill(intf *id, VOIDP val)
+-#else
+-nscsfill(id, val)
+-     intf *id;
+-     VOIDP val;
+-#endif /* PROTOTYPE */
+-{
+-    return(SDsetfillvalue(*id, val));
+-}
+-
+-/*----------------------------------------------------------
+- * Name:    scgfill
+- * Purpose: Call SDgetfillvalue to get the fill value. 
+- * Inputs:  id: handle to a dimension
+- * Output:  val: the fill value
+- * Returns: 0 on success, FAIL on failure with error set
+- * Users:   HDF Fortran programmers
+- *------------------------------------------------------*/
+-
+-    FRETVAL(intf)
+-#ifdef PROTOTYPE
+-nscgfill(intf *id, VOIDP val)
+-#else
+-nscgfill(id, val)
+-     intf *id;
+-     VOIDP val;
+-#endif /* PROTOTYPE */
+-{
+-    return(SDgetfillvalue(*id, val));
+-}
+-
+ /*------------------------------------------------------------
+  * Name:    scgrange
+  * Purpose: Call SDgetrange to get the valid range info
+@@ -389,6 +392,30 @@
+     return(SDsetrange(*id, max, min));
+ }
+ 
++/*MOVED UP*/
++  /* -----------------------------------------------------------------------------
++   *  Name:    scrnatt
++   *  Purpose: Call SDreadattr to get the contents of a numeric attribute
++   *  Inputs:  id: handle to a dataset
++   *           index: index of the attribute to read
++   *           buf: space to hold info
++   *  Returns: 0 on success, FAIL on failure with error set
++   *  Users:   HDF Fortran programmers
++   * ---------------------------------------------------------------------------*/
++
++      FRETVAL(intf)
++  #ifdef PROTOTYPE
++  nscrnatt(intf *id, intf *index, VOIDP buf)
++  #else
++  nscrnatt(id, index, buf)
++       intf *id;
++       intf *index;
++       VOIDP buf;
++  #endif /* PROTOTYPE */
++  {
++      return(SDreadattr(*id, *index, buf));
++  }
++
+ /*-----------------------------------------------------------------------------
+  * Name:    scrcatt
+  * Purpose: Call sfrnatt to get the contents of a char attribute
+@@ -413,29 +440,6 @@
+ }
+ 
+ /*-----------------------------------------------------------------------------
+- * Name:    scrnatt
+- * Purpose: Call SDreadattr to get the contents of a numeric attribute
+- * Inputs:  id: handle to a dataset
+- *          index: index of the attribute to read
+- *          buf: space to hold info
+- * Returns: 0 on success, FAIL on failure with error set
+- * Users:   HDF Fortran programmers
+- *---------------------------------------------------------------------------*/
+-
+-    FRETVAL(intf)
+-#ifdef PROTOTYPE
+-nscrnatt(intf *id, intf *index, VOIDP buf)
+-#else
+-nscrnatt(id, index, buf)
+-     intf *id;
+-     intf *index;
+-     VOIDP buf;
+-#endif /* PROTOTYPE */
+-{
+-    return(SDreadattr(*id, *index, buf));
+-}
+-
+-/*-----------------------------------------------------------------------------
+  * Name:    scrattr
+  * Purpose: Call SDreadattr to get the contents of an attribute
+  * Inputs:  id: handle to a dataset

@@ -16,7 +16,7 @@ The binaries are available at:
    from MSYS2 shell:
 ```
 pacman -Sy --noconfirm curl wget ca-certificates openssh openssl nano tar xz p7zip zip unzip bzip2
-pacman -Sy --noconfirm svn git make patch autoconf libtool nano automake man flex bison pkg-config 
+pacman -Sy --noconfirm patch git make autoconf libtool nano automake man flex bison pkg-config 
 pacman -Sy --noconfirm perl-libwww perl-IPC-Run3 perl-IO-Socket-SSL perl-Archive-Zip perl-LWP-Protocol-https perl-Digest-SHA
 pacman -Sy --noconfirm python2
 pacman -Syu --noconfirm

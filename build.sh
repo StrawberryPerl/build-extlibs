@@ -1494,12 +1494,11 @@ xxrun make install DESTDIR=$OUT HELPFILEJA= LUA=
 #platform-specific: windows
 ;;
 
-# ---------------------------------------------------------------------------- XXX-FIXME-BROKEN
+# ----------------------------------------------------------------------------
 gnuplot-5*)
 cd $WRKDIR/$PACK
 cd config/mingw
-CFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun make console windows pipes support CACA=0 CERF=0 NEWGD=1 FREETYPE=1 PNG=1 JPEG=1 ICONV=1 HELPFILEJA= LUA= HHWPATH=/z/sw/help-workshop/ ARCHNICK=$ARCHNICK LBUFFEROVERFLOWU=$LBUFFEROVERFLOWU
-xxrun make
+CFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun make console windows pipes support M$ARCHBITS=1 MINGW64=1 CERF=0 NEWGD=1 FREETYPE=1 PNG=1 JPEG=1 ICONV=1 HELPFILEJA= LUA= HHWPATH=/z/sw/help-workshop/ ARCHNICK=$ARCHNICK LBUFFEROVERFLOWU=$LBUFFEROVERFLOWU
 xxrun make install DESTDIR=$OUT HELPFILEJA= LUA=
 ;;
 

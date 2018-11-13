@@ -975,7 +975,7 @@ lapack-3.7.*)
 cd $WRKDIR/$PACK
 mkdir MY_BUILD
 cd MY_BUILD
-xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON ..
+xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DBUILD_DEPRECATED=ON ..
 xxrun make
 xxrun make install
 
@@ -1504,7 +1504,7 @@ xxrun make install DESTDIR=$OUT HELPFILEJA= LUA=
 
 # ----------------------------------------------------------------------------
 cfitsio-*)
-cd $WRKDIR/$PACK
+cd $WRKDIR/$PACK/cfitsio
 xxrun make DLLSUFFIX=$DLLSUFFIX PREFIX=$OUT install
 ;;
 

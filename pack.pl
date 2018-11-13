@@ -868,7 +868,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
       ['include', 'c\include', '\.h$'],
     ],
-    'licenses' => [qw/License.txt README/],
+    'licenses' => [qw(cfitsio/License.txt cfitsio/README)],
     'licdir' => 'licenses\libcfitsio',
     'urls' => [
       ['Homepage', 'http://heasarc.gsfc.nasa.gov/fitsio/'],

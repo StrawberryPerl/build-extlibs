@@ -1,3 +1,6 @@
+#### Mingw-w64
+https://downloads.sourceforge.net/mingw-w64/mingw-w64-v5.0.3.tar.bz2
+
 #### XML2/XSLT
 #URL ftp://xmlsoft.org/libxslt/
 ftp://xmlsoft.org/libxslt/libxml2-2.9.2.tar.gz
@@ -29,9 +32,15 @@ http://www.openssl.org/source/openssl-1.0.2e.tar.gz
 http://www.openssl.org/source/openssl-1.0.2g.tar.gz
 http://www.openssl.org/source/openssl-1.0.2h.tar.gz
 http://www.openssl.org/source/openssl-1.0.2j.tar.gz
+http://www.openssl.org/source/openssl-1.0.2l.tar.gz
 https://www.openssl.org/source/openssl-1.0.2k.tar.gz
+https://www.openssl.org/source/openssl-1.0.2o.tar.gz
 https://www.openssl.org/source/openssl-1.1.0b.tar.gz
 https://www.openssl.org/source/openssl-1.1.0e.tar.gz
+https://www.openssl.org/source/openssl-1.1.0f.tar.gz
+https://www.openssl.org/source/openssl-1.1.0h.tar.gz
+https://www.openssl.org/source/openssl-1.1.0i.tar.gz
+https://www.openssl.org/source/openssl-1.1.1.tar.gz
 
 #### LibSSH2
 #URL http://www.libssh2.org/
@@ -234,6 +243,7 @@ http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfit3370.zip -O cfitsio-3.37.
 http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfit3380.zip -O cfitsio-3.38.zip
 http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfit3390.zip -O cfitsio-3.39.zip
 https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfit3410.zip -O cfitsio-3.41.zip
+https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfit3450.zip -O cfitsio-3.45.zip
 
 #URL http://ftp.gnu.org/gnu/libidn/
 http://ftp.gnu.org/gnu/libidn/libidn-1.32.tar.gz
@@ -242,6 +252,7 @@ http://ftp.gnu.org/gnu/libidn/libidn-1.33.tar.gz
 #v2
 http://ftp.gnu.org/gnu/libidn/libidn2-2.0.1.tar.gz
 http://ftp.gnu.org/gnu/libidn/libidn2-2.0.2.tar.gz
+http://ftp.gnu.org/gnu/libidn/libidn2-2.0.4.tar.gz
 
 #URL http://curl.haxx.se/download/
 http://curl.haxx.se/download/curl-7.45.0.tar.gz

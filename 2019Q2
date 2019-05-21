@@ -1,0 +1,108 @@
+###### termcap + readline vybuildit co nejdrive
+termcap-1.3.1
+readline-8.0
+
+###### gddm + db
+##gdbm-1.10
+gdbm-1.18
+#FIXME#db-18.1.32
+db-6.2.38
+
+###### math libs
+gmp-6.1.2
+mpfr-4.0.2
+mpc-1.1.0
+
+###### compress libs
+bzip2-1.0.6
+zlib-1.2.11
+xz-5.2.4
+
+###### misc simple
+libiconv-1.16
+expat-2.2.6
+
+###### xml libs
+libxml2-2.9.9
+libxslt-1.1.33
+
+###### crypto
+openssl-1.1.1b
+libssh2-1.8.2
+libsodium-1.0.17
+
+###### pgsql
+postgresql-11.3
+#mysql-connector-c-6.1.10-src
+
+###### graphics
+freeglut-3.0.0
+giflib-5.1.9
+jpeg-9c
+tiff-4.0.10
+libpng-1.6.37
+libXpm-3.5.12
+graphite2-1.3.13
+
+#HACK: rebuilding freetype twice is insane but necessary
+freetype-2.10.0
+harfbuzz-2.3.1
+freetype-2.10.0
+
+fontconfig-2.13.1
+libgd-2.2.5
+t1lib-5.1.2
+
+###### extras
+libffi-3.2.1
+libuv-v1.28.0
+
+libunistring-0.9.10
+libidn2-2.1.1
+
+######### the following are not part of standard strawberry perl
+#pcre-8.43
+
+######### asi ne
+#patch-2.7.6
+#pexports-0.47
+
+
+######## glib/cairo/pango/gtk
+##gettext-0.19.8.1
+###FIXME#glib-2.60.0
+##glib-2.58.3
+##pixman-0.38.0
+##cairo-1.16.0
+##fribidi-0.19.7
+##pango-1.43.0
+##gtk+-3.94.0
+
+######## curl + relalated
+##curl-7.64.1
+
+###### PDL related
+cfitsio-3.41
+ta-lib-0.4.0
+lapack-3.8.0
+fftw-3.3.8
+gsl-2.5
+#FIXME#proj-6.0.0
+proj-5.2.0
+#? http://sourceforge.net/projects/libharu/files/libharu2/2.0.8/
+plplot-5.14.0
+
+#TEST:
+szip-2.1.1
+hdf-4.2.14
+hdf5-1.10.5
+netcdf-c-4.6.3
+
+#NOT-NEEDED: libcaca-0.99.beta19
+libcerf-1.3
+gnuplot-5.2.6
+
+#EXPERIMENT:
+# ffmpeg-4.1
+# ncurses-5.9     unused
+# gretl-1.9.90    unused

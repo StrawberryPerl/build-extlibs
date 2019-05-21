@@ -1,0 +1,10 @@
+diff -r -u --strip-trailing-cr hdf-4.2.14.original/hdf/test/tusejpegfuncs.c hdf-4.2.14/hdf/test/tusejpegfuncs.c
+--- hdf-4.2.14.original/hdf/test/tusejpegfuncs.c	2019-05-18 20:22:10.481589700 +0200
++++ hdf-4.2.14/hdf/test/tusejpegfuncs.c	2019-05-18 20:21:52.123247200 +0200
+@@ -3,6 +3,7 @@
+  * the JPEG package by The Independent JPEG Group                            *
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+ #include <stdio.h>
++#include <basetsd.h>
+ #include "jpeglib.h"
+ #include "tproto.h"

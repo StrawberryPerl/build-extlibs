@@ -1,0 +1,199 @@
+diff -r -u --strip-trailing-cr netcdf-c-4.6.3.original/CMakeLists.txt netcdf-c-4.6.3/CMakeLists.txt
+--- netcdf-c-4.6.3.original/CMakeLists.txt	2019-05-19 22:43:05.662499700 +0200
++++ netcdf-c-4.6.3/CMakeLists.txt	2019-05-19 22:43:04.186913700 +0200
+@@ -169,7 +169,7 @@
+ 
+ # Set Memory test program for non-MSVC based builds.
+ # Assume valgrind for now.
+-IF(NOT MSVC)
++IF((NOT MSVC) AND (NOT MINGW))
+   SET(CTEST_MEMORYCHECK_COMMAND valgrind CACHE STRING "")
+ ENDIF()
+ 
+@@ -249,10 +249,14 @@
+ 
+ ADD_DEFINITIONS()
+ 
++# Add specific flags for environments that use the windows runtime (MSVC and MINGW)
+ # Suppress CRT Warnings.
+-# Only necessary for Windows
+-IF(MSVC)
++# specify tempfile
++# specify exceptions in sscanf
++IF(MSVC OR MINGW)
+   ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
++  SET (HAVE_WIN_TEMP ON)
++  SET (HAVE_WIN_SSCANF ON)
+ ENDIF()
+ 
+ #####
+@@ -273,7 +277,7 @@
+ # Configuration for post-install RPath
+ # Adapted from http://www.cmake.org/Wiki/CMake_RPATH_handling
+ ##
+-IF(NOT MSVC AND BUILD_SHARED_LIBS)
++IF(NOT WIN32 AND BUILD_SHARED_LIBS)
+   # use, i.e. don't skip the full RPATH for the build tree
+   SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+ 
+@@ -892,7 +896,7 @@
+   SET(NC_CTEST_DROP_LOC_PREFIX "" CACHE STRING "Prefix for Dashboard location on remote server when using CTest-based testing.")
+ 
+   FIND_PROGRAM(HOSTNAME_CMD NAMES hostname)
+-  IF(NOT MSVC)
++  IF(NOT WIN32)
+     SET(HOSTNAME_ARG "-s")
+   ENDIF()
+   IF(HOSTNAME_CMD)
+@@ -1389,7 +1393,9 @@
+ CHECK_FUNCTION_EXISTS(strndup HAVE_STRNDUP)
+ CHECK_FUNCTION_EXISTS(strtoll HAVE_STRTOLL)
+ CHECK_FUNCTION_EXISTS(strtoull  HAVE_STRTOULL)
+-CHECK_FUNCTION_EXISTS(mkstemp HAVE_MKSTEMP)
++IF (NOT MINGW)
++   CHECK_FUNCTION_EXISTS(mkstemp HAVE_MKSTEMP)
++ENDIF(NOT MINGW)
+ CHECK_FUNCTION_EXISTS(mktemp HAVE_MKTEMP)
+ CHECK_FUNCTION_EXISTS(random HAVE_RANDOM)
+ CHECK_FUNCTION_EXISTS(gettimeofday  HAVE_GETTIMEOFDAY)
+diff -r -u --strip-trailing-cr netcdf-c-4.6.3.original/config.h.cmake.in netcdf-c-4.6.3/config.h.cmake.in
+--- netcdf-c-4.6.3.original/config.h.cmake.in	2019-05-19 22:43:05.794807500 +0200
++++ netcdf-c-4.6.3/config.h.cmake.in	2019-05-19 22:43:04.874519400 +0200
+@@ -74,6 +74,11 @@
+    #define strtoll _strtoi64
+ #endif /*_MSC_VER */
+ 
++/* define flags needed when windows runtime is used (MINGW and MSVC) */
++#cmakedefine MINGW
++#cmakedefine HAVE_WIN_TEMP
++#cmakedefine HAVE_WIN_SSCANF
++
+ #cmakedefine const
+ 
+ #ifndef _FILE_OFFSET_BITS
+diff -r -u --strip-trailing-cr netcdf-c-4.6.3.original/include/ncwinpath.h netcdf-c-4.6.3/include/ncwinpath.h
+--- netcdf-c-4.6.3.original/include/ncwinpath.h	2019-05-19 22:43:21.282437100 +0200
++++ netcdf-c-4.6.3/include/ncwinpath.h	2019-05-19 22:43:04.117951000 +0200
+@@ -8,9 +8,6 @@
+ #include "config.h"
+ #include <stdlib.h>
+ #include <stdio.h>
+-#ifdef HAVE_UNISTD_H
+-#include <unistd.h>
+-#endif
+ #include "ncexternl.h"
+ 
+ #ifndef WINPATH
+diff -r -u --strip-trailing-cr netcdf-c-4.6.3.original/libdap2/dapcvt.c netcdf-c-4.6.3/libdap2/dapcvt.c
+--- netcdf-c-4.6.3.original/libdap2/dapcvt.c	2019-05-19 22:43:21.943275000 +0200
++++ netcdf-c-4.6.3/libdap2/dapcvt.c	2019-05-19 22:43:04.997450700 +0200
+@@ -5,7 +5,7 @@
+ #include "config.h"
+ #include "dapincludes.h"
+ 
+-#ifdef _MSC_VER
++#ifdef _WIN32
+ #include <crtdbg.h>
+ #include <math.h>
+ #endif
+diff -r -u --strip-trailing-cr netcdf-c-4.6.3.original/libdispatch/ddispatch.c netcdf-c-4.6.3/libdispatch/ddispatch.c
+--- netcdf-c-4.6.3.original/libdispatch/ddispatch.c	2019-05-19 22:43:24.120096400 +0200
++++ netcdf-c-4.6.3/libdispatch/ddispatch.c	2019-05-19 22:43:04.566695100 +0200
+@@ -77,8 +77,8 @@
+ 	char* p;
+ 	char* q;
+ 	char cwd[4096];
+-#ifdef _MSC_VER
+-        tempdir = getenv("TEMP");
++#ifdef HAVE_WIN_TEMP
++    tempdir = getenv("TEMP");
+ #else
+ 	tempdir = "/tmp";
+ #endif
+diff -r -u --strip-trailing-cr netcdf-c-4.6.3.original/libdispatch/dutil.c netcdf-c-4.6.3/libdispatch/dutil.c
+--- netcdf-c-4.6.3.original/libdispatch/dutil.c	2019-05-19 22:43:24.620116900 +0200
++++ netcdf-c-4.6.3/libdispatch/dutil.c	2019-05-19 22:43:04.392794600 +0200
+@@ -201,7 +201,7 @@
+ 	_mktemp_s(tmp,sizeof(tmp)-1);
+ #else /*!_MSC_VER*/
+         mktemp(tmp);
+-	tmo[sizeof[tmp]-1] = '\0';
++   tmp[sizeof(tmp)-1] = '\0';
+ #endif
+ #else /* !HAVE_MKTEMP */
+ 	/* Need to simulate by using some kind of pseudo-random number */
+diff -r -u --strip-trailing-cr netcdf-c-4.6.3.original/libdispatch/dwinpath.c netcdf-c-4.6.3/libdispatch/dwinpath.c
+--- netcdf-c-4.6.3.original/libdispatch/dwinpath.c	2019-05-19 22:43:24.827605600 +0200
++++ netcdf-c-4.6.3/libdispatch/dwinpath.c	2019-05-19 22:43:05.082400300 +0200
+@@ -14,8 +14,9 @@
+ #ifdef HAVE_UNISTD_H
+ #include <unistd.h>
+ #endif
+-#ifdef _MSC_VER
++#ifdef _WIN32
+ #include <io.h>
++#include <errno.h>
+ #endif
+ 
+ #include "ncexternl.h"
+@@ -216,7 +217,7 @@
+     int status = 0;
+     char* cvtname = NCpathcvt(path);
+     if(cvtname == NULL) return -1;
+-#ifdef _MSC_VER
++#ifdef _WIN32
+     status = _access(cvtname,mode);
+ #else
+     status = access(cvtname,mode);
+diff -r -u --strip-trailing-cr netcdf-c-4.6.3.original/libsrc/memio.c netcdf-c-4.6.3/libsrc/memio.c
+--- netcdf-c-4.6.3.original/libsrc/memio.c	2019-05-19 22:43:26.518110500 +0200
++++ netcdf-c-4.6.3/libsrc/memio.c	2019-05-19 22:43:05.138367700 +0200
+@@ -17,7 +17,7 @@
+ #ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
+ #endif
+-#ifdef _MSC_VER /* Microsoft Compilers */
++#ifdef _WIN32 /* Microsoft Compilers */
+ #include <windows.h>
+ #include <winbase.h>
+ #include <io.h>
+diff -r -u --strip-trailing-cr netcdf-c-4.6.3.original/ncdump/ncdump.c netcdf-c-4.6.3/ncdump/ncdump.c
+--- netcdf-c-4.6.3.original/ncdump/ncdump.c	2019-05-19 22:43:45.092071100 +0200
++++ netcdf-c-4.6.3/ncdump/ncdump.c	2019-05-19 22:43:04.121948500 +0200
+@@ -5,15 +5,9 @@
+ 
+ #include "config.h"
+ #include <stdio.h>
+-#ifdef HAVE_GETOPT_H
+-#include <getopt.h>
+-#endif
+ #ifdef _MSC_VER /* Microsoft Compilers */
+ #include <io.h>
+ #endif
+-#ifdef HAVE_UNISTD_H
+-#include <unistd.h>
+-#endif
+ #ifdef HAVE_FCNTL_H
+ #include <fcntl.h>
+ #endif
+diff -r -u --strip-trailing-cr netcdf-c-4.6.3.original/ncgen/cvt.c netcdf-c-4.6.3/ncgen/cvt.c
+--- netcdf-c-4.6.3.original/ncgen/cvt.c	2019-05-19 22:43:49.451029900 +0200
++++ netcdf-c-4.6.3/ncgen/cvt.c	2019-05-19 22:43:04.679629400 +0200
+@@ -18,7 +18,7 @@
+     Constvalue tmp;
+     unsigned char* bytes = NULL;
+     size_t bytelen;
+-#ifdef _MSC_VER
++#ifdef HAVE_WIN_SSCANF
+     int byteval;
+ #endif
+ 
+@@ -410,7 +410,7 @@
+     break;
+ 
+ /* Conversion of a string to e.g. an integer should be what?*/
+-#ifdef _MSC_VER
++#ifdef HAVE_WIN_SSCANF
+ case CASE(NC_STRING,NC_BYTE):
+     sscanf(src->value.stringv.stringv,"%d",&byteval); tmp.int8v = (char)byteval; break;
+ case CASE(NC_STRING,NC_UBYTE):

@@ -68,7 +68,7 @@ my $desc = {
       ['lib\libdb-6.2.a', 'c\lib\libdb.a'], #XXX_FIXME hack!!!
     ],
     'trees' => [
-      ['bin', 'c\bin', '\.dll$'],
+      ['bin', 'c\bin', 'libdb-\d+\.\d+_*.dll$'], # e.g. libdb-6.2__.dll
     ],
     'licenses' => ['LICENSE'],
     'licdir' => 'licenses\libdb-BerkeleyDB',
@@ -318,7 +318,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
       ['include', 'c\include', '\.h$'],
     ],
-    'licenses' => ['COPYING','AUTHORS'],
+    'licenses' => ['COPYING','README'],
     'licdir' => 'licenses\libgif',
     'urls' => [
       ['Homepage', 'http://giflib.sourceforge.net/'],
@@ -388,6 +388,24 @@ my $desc = {
       ['Homepage', 'http://www.ijg.org/'],
     ],
   },
+  'openssl111-' => {
+    'files' => [
+      ['bin\openssl.exe', 'c\bin\openssl.exe'],
+      ['lib\libcrypto.dll.a', 'c\lib\libcrypto.a'],
+      ['lib\libssl.dll.a', 'c\lib\libssl.a'],
+    ],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['lib\engines-1_1', 'c\lib\engines-1_1', '\.dll$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => ['LICENSE'],
+    'licdir' => 'licenses\openssl',
+    'urls' => [
+      ['Homepage', 'http://www.openssl.org/'],
+    ],
+  },
   'openssl11-' => {
     'files' => [
       ['bin\openssl.exe', 'c\bin\openssl.exe'],
@@ -454,6 +472,75 @@ my $desc = {
       ['Homepage', 'http://www.libpng.org/pub/png/libpng.html'],
     ],
   }, 
+  'libsodium-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => [qw/LICENSE AUTHORS/],
+    'licdir' => 'licenses\libsodium',
+    'urls' => [
+      ['Homepage', 'https://github.com/jedisct1/libsodium'],
+    ],
+  },
+  'harfbuzz-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => [qw/COPYING AUTHORS/],
+    'licdir' => 'licenses\harfbuzz',
+    'urls' => [
+      ['Homepage', 'http://harfbuzz.org'],
+    ],
+  },
+  'graphite2-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => [qw/COPYING LICENSE/],
+    'licdir' => 'licenses\graphite2',
+    'urls' => [
+      ['Homepage', 'https://graphite.sil.org/'],
+    ],
+  },
+  'termcap-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => [qw/COPYING/],
+    'licdir' => 'licenses\termcap',
+    'urls' => [
+      ['Homepage', 'https://www.gnu.org/software/termutils/manual/termcap-1.3/termcap.html'],
+    ],
+  },
+  'readline-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => [qw/COPYING/],
+    'licdir' => 'licenses\readline',
+    'urls' => [
+      ['Homepage', 'https://tiswww.case.edu/php/chet/readline/rltop.html'],
+    ],
+  },
   'libssh2-' => {
     'files' => [],
     'trees' => [
@@ -932,7 +1019,8 @@ sub prepare_pack {
   $jobname = 'fftw2-' if $sihash->{pack} =~ /^fftw-2/; #hack
   $jobname = 'gd-' if $sihash->{pack} =~ /^gd-HG/i;    #hack
   $jobname = 'libuv-' if $sihash->{pack} =~ /^libuv-v/i;   #hack
-  $jobname = 'openssl11-' if $sihash->{pack} =~ /^openssl-1.1/i;   #hack
+  $jobname = 'openssl11-' if $sihash->{pack} =~ /^openssl-1\.1\.0/i;   #hack
+  $jobname = 'openssl111-' if $sihash->{pack} =~ /^openssl-1\.1\.1/i;   #hack
   my $pkghash = $deschash->{$jobname};
   if (! defined $pkghash) {
     warn "###warning### Missing definition for '$jobname' (using default)\n";

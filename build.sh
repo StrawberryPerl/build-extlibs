@@ -322,13 +322,11 @@ aclocal
 automake --add-missing
 autoconf
 
-echo "XXXXX CFLAGS   = $CFLAGS"
-echo "XXXXX CXXFLAGS = $CXXFLAGS"
-echo "XXXXX LDFLAGS  = $LDFLAGS"
-
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-            --with-threads=win32 --without-python \
-            CFLAGS="-O2 -I$OUTINC -D__USE_MINGW_ANSI_STDIO=1" LDFLAGS="-L$OUTLIB" 
+            --with-threads=win32 --without-python --with-modules \
+            --with-iconv=$OUT --with-zlib=$OUT --with-lzma=$OUT \
+            CFLAGS="-O2 -I$OUTINC -D__USE_MINGW_ANSI_STDIO=1" LDFLAGS="-L$OUTLIB"
+
 patch_libtool
 xxrun make
 ##xxrun make check
@@ -343,10 +341,14 @@ cd $WRKDIR/$PACK
 ###xxx-#hack: fix timestamps
 ###xxx-touch -r Makefile.am config.* Makefile.* configure* aclocal.*
 save_configure_help
+
 xxrun autoreconf -fi
+
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-            CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
-###xxx-xxrun make am--refresh
+            --with-libxml-prefix=$OUT --without-python --with-crypto --with-plugins
+
+############CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
+
 patch_libtool
 xxrun make
 #xxrun make check > /dev/null
@@ -409,16 +411,40 @@ install_bats
 ;;
 
 # ----------------------------------------------------------------------------
+harfbuzz-*)
+cd $WRKDIR/$PACK
+save_configure_help
+
+#dll suffix hack
+sed -i "s|LIBRARY lib%s-0\.dll|LIBRARY lib%s-0$DLLSUFFIX.dll|" src/gen-def.py
+
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
+                  --with-graphite2=auto --with-freetype=auto CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
+patch_libtool
+xxrun make
+xxrun make install
+;;
+
+# ----------------------------------------------------------------------------
 fontconfig-*)
 cd $WRKDIR/$PACK
 save_configure_help
-xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-            --with-freetype-config=$OUTBIN/freetype-config \
-            CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
+
 #dll suffix hack
-if [ ! -e src/Makefile.in.backup ] ; then cp -p src/Makefile.in src/Makefile.in.backup; fi
-sed -e "s|@LIBT_CURRENT_MINUS_AGE@.dll|@LIBT_CURRENT_MINUS_AGE@$DLLSUFFIX.dll|g" src/Makefile.in.backup > src/Makefile.in
+sed -i "s|@LIBT_CURRENT_MINUS_AGE@.dll|@LIBT_CURRENT_MINUS_AGE@$DLLSUFFIX.dll|g" src/Makefile.in
+sed -i "s|@LIBT_CURRENT_MINUS_AGE@.dll|@LIBT_CURRENT_MINUS_AGE@$DLLSUFFIX.dll|g" src/Makefile.am
+xxrun autoreconf -fiv
+
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
+            --disable-docs --enable-iconv --with-libiconv=$OUT as_ln_s="cp -pR"
+
+sed -i 's,all-am: Makefile $(PROGRAMS),all-am:,' test/Makefile
+
+#HACK:
+cp $(dirname `which gcc`)/*.dll ./fc-cache
+
 patch_libtool
+xxrun make
 xxrun make install
 ;;
 
@@ -432,7 +458,6 @@ xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enabl
             CFLAGS="-O2 -I$OUTINC -mms-bitfields -DBGDWIN32" LDFLAGS="-L$OUTLIB"
 patch_libtool
 xxrun make
-xxrun make check
 xxrun make install
 #hack: as we do not use install_bats we need to do some magic (copy features: line)
 F=`grep "echo  *\"features:" $OUT/bin/gdlib-config | sed -e "s/^[[:blank:]]*//" -e "s/  */ /g" -e "s/\"//g"`
@@ -462,9 +487,12 @@ sed "s/^echo features:.*$/$F/" gdlib-config.bat.win-gcc > $OUT/bin/gdlib-config.
 db-*)
 cd $WRKDIR/$PACK/build_windows
 ../dist/configure --help > ../help_$PACK.txt
-xxrun ../dist/configure $HOSTBUILD --enable-mingw --prefix="$OUT" --enable-static=no --enable-shared=yes
+xxrun ../dist/configure $HOSTBUILD --prefix="$OUT" --enable-static=no --enable-shared=yes \
+                        --enable-mingw --with-cryptography \
+                        --disable-rpath --disable-tcl
+###removed: --enable-cxx --enable-sql --enable-sql-codegen --enable-stl --enable-compat185 --enable-dbm
 patch_libtool
-xxrun make
+xxrun make LIBSO_LIBS=-lpthread
 xxrun make install
 rm -rf $OUT/docs
 ;;
@@ -473,9 +501,12 @@ rm -rf $OUT/docs
 gdbm-*)
 cd $WRKDIR/$PACK
 save_configure_help
+
+xxrun autoreconf --install --force
+
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-                --without-libintl-prefix --without-libiconv-prefix --without-readline  --enable-libgdbm-compat --disable-nls
-xxrun make am--refresh
+                --without-libintl-prefix --without-libiconv-prefix --without-readline --enable-libgdbm-compat --disable-nls
+
 patch_libtool
 xxrun make
 xxrun make check
@@ -536,6 +567,41 @@ fi
 TERM=msys xxrun perl Configure --prefix=$OUT $OPENSSLTARGET
 xxrun make PERL=perl
 xxrun make PERL=perl install_sw
+;;
+
+# ----------------------------------------------------------------------------
+openssl-1.1.1*)
+cd $WRKDIR/$PACK
+
+if [ $IS64BIT ] ; then
+  OPENSSLTARGET=mingw64
+else
+  OPENSSLTARGET=mingw
+fi
+
+sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/00-base-templates.conf
+sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/10-main.conf 
+sed -i "s/^LIBRARY  *\$libname/LIBRARY  \${libname}$DLLSUFFIX/" util/mkdef.pl
+
+xxrun ./Configure shared zlib enable-rfc3779 enable-camellia enable-capieng enable-idea enable-mdc2 enable-rc5 \
+        -D__MINGW_USE_VC2005_COMPAT \
+        -DOPENSSLBIN=\"\\\"${OUT}/bin\\\"\" --openssldir=ssl \
+        --with-zlib-lib=$OUTLIB --with-zlib-include=$OUTINC \
+        --prefix=$OUT $OPENSSLTARGET
+
+### zlib-dynamic vs. zlib
+
+sed -i 's/__*\.dll\.a/.dll.a/g' Makefile 
+sed -i 's/__*\.dll\.a/.dll.a/g' configdata.pm
+sed -i "s/define LIBZ \"ZLIB1\"/define LIBZ \"ZLIB1$DLLSUFFIX\"/" crypto/comp/c_zlib.c
+
+xxrun make depend all
+#xxrun make tests
+xxrun make install_sw
+
+###HACK engines-1_1/*.dll must be without DLLSUFFIX !!
+mv "$OUT/lib/engines-1_1/capi$DLLSUFFIX.dll" "$OUT/lib/engines-1_1/capi.dll"
+mv "$OUT/lib/engines-1_1/padlock$DLLSUFFIX.dll" "$OUT/lib/engines-1_1/padlock.dll"
 ;;
 
 # ----------------------------------------------------------------------------
@@ -942,7 +1008,7 @@ install_bats
 R-*)
 cd $WRKDIR/$PACK
 save_configure_help
-xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --enable-R-shlib --without-readline --without-tcltk --without-x --disable-BLAS-shlib --disable-R-profiling
+xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --enable-R-shlib --without-tcltk --without-x --disable-BLAS-shlib --disable-R-profiling
 patch_libtool
 xxrun make
 xxrun make check
@@ -965,29 +1031,33 @@ install_bats
 # ----------------------------------------------------------------------------
 graphite2-*)
 cd $WRKDIR/$PACK
-xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF
-xxrun make
-xxrun make install
-;;
 
-# ----------------------------------------------------------------------------
-lapack-3.7.*)
-cd $WRKDIR/$PACK
+echo "IF (BUILD_SHARED_LIBS)" >> CMakeLists.txt
+echo "SET_TARGET_PROPERTIES (graphite2 PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
+echo "ENDIF ()" >> CMakeLists.txt
+
+sed -i "s|graphite2\${CMAKE_SHARED_LIBRARY_SUFFIX}|graphite2$DLLSUFFIX\${CMAKE_SHARED_LIBRARY_SUFFIX}|" tests/bittwiddling/CMakeLists.txt
+sed -i "s|graphite2\${CMAKE_SHARED_LIBRARY_SUFFIX}|graphite2$DLLSUFFIX\${CMAKE_SHARED_LIBRARY_SUFFIX}|" tests/comparerenderer/CMakeLists.txt
+sed -i "s|graphite2\${CMAKE_SHARED_LIBRARY_SUFFIX}|graphite2$DLLSUFFIX\${CMAKE_SHARED_LIBRARY_SUFFIX}|" tests/examples/CMakeLists.txt
+sed -i "s|graphite2\${CMAKE_SHARED_LIBRARY_SUFFIX}|graphite2$DLLSUFFIX\${CMAKE_SHARED_LIBRARY_SUFFIX}|" tests/featuremap/CMakeLists.txt
+sed -i "s|graphite2\${CMAKE_SHARED_LIBRARY_SUFFIX}|graphite2$DLLSUFFIX\${CMAKE_SHARED_LIBRARY_SUFFIX}|" tests/sparsetest/CMakeLists.txt
+sed -i "s|graphite2\${CMAKE_SHARED_LIBRARY_SUFFIX}|graphite2$DLLSUFFIX\${CMAKE_SHARED_LIBRARY_SUFFIX}|" tests/utftest/CMakeLists.txt
+sed -i "s|graphite2\${CMAKE_SHARED_LIBRARY_SUFFIX}|graphite2$DLLSUFFIX\${CMAKE_SHARED_LIBRARY_SUFFIX}|" tests/vm/CMakeLists.txt
+sed -i "s|graphite2\${CMAKE_SHARED_LIBRARY_SUFFIX}|graphite2$DLLSUFFIX\${CMAKE_SHARED_LIBRARY_SUFFIX}|" gr2fonttest/CMakeLists.txt
+
 mkdir MY_BUILD
 cd MY_BUILD
-xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DBUILD_DEPRECATED=ON ..
+xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF ..
 xxrun make
 xxrun make install
-
-###hack needed for static build
-sed -i 's,-lblas,-lblas -lgfortran -lquadmath,' $OUT/lib/pkgconfig/blas.pc
-sed -i 's,-llapack,-llapack -lblas -lgfortran -lquadmath,' $OUT/lib/pkgconfig/lapack.pc
 ;;
 
 # ----------------------------------------------------------------------------
 lapack-*)
 cd $WRKDIR/$PACK
-xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON
+mkdir MY_BUILD
+cd MY_BUILD
+xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DBUILD_DEPRECATED=ON ..
 xxrun make
 xxrun make install
 
@@ -1024,30 +1094,13 @@ xxrun make install
 netcdf-*)
 cd $WRKDIR/$PACK
 
-### ### cmake approach does not work
-### xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT \
-###                                 -DENABLE_DAP=OFF \
-###                                 -DBUILD_SHARED_LIBS=ON
-###                                 -DBUILD_UTILITIES=ON \
-###                                 -DENABLE_NETCDF_4=ON \
-###                                 -DUSE_SZIP=ON \
-###                                 -DUSE_HDF5=ON \
-###                                 -DENABLE_DLL=ON \
-###                                 -DENABLE_HDF4=OFF
-### #ENABLE_DAP requires CURL
-### xxrun make
-### xxrun make install
-
-cp $OUTLIB/hdf-shared.dll.a $OUTLIB/libhdf.dll.a || cp $OUTLIB/libhdf-shared.dll.a $OUTLIB/libhdf.dll.a
-cp $OUTLIB/mfhdf-shared.dll.a $OUTLIB/libmfhdf.dll.a || cp $OUTLIB/libmfhdf-shared.dll.a $OUTLIB/libmfhdf.dll.a 
+###this is a hack
+sed -i s/-ldf/-lhdf/ configure
+sed -i 's/libnetcdf_la_LDFLAGS = /libnetcdf_la_LDFLAGS = -no-undefined /' liblib/Makefile.in
 
 save_configure_help
-## --enable-dap => depends on curl
-## --disable-netcdf-4 => configure: error: Can't find or link to the hdf5 library. Use --disable-netcdf-4, or see config.log for errors
-## without hdf5 support
-#CPPFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --enable-dll --enable-netcdf4 --enable-hdf4 --disable-dap  --disable-dynamic-loading --disable-netcdf-4
-## with hdf5 support
-CPPFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --enable-dll --enable-netcdf4 --enable-hdf4 --disable-dap  --disable-dynamic-loading
+CPPFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
+                        --enable-netcdf4 --enable-hdf4 --disable-dap  --disable-dynamic-loading
 patch_libtool
 xxrun make
 xxrun make check
@@ -1066,28 +1119,36 @@ echo "SET_TARGET_PROPERTIES (\${HDF5_TOOLS_LIBSH_TARGET}    PROPERTIES SUFFIX $D
 echo "ENDIF ()" >> CMakeLists.txt
 mkdir MY_BUILD
 cd MY_BUILD
-#INFO: https://aur.archlinux.org/packages/mi/mingw-w64-hdf5/PKGBUILD
-xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT \
-                                -DCMAKE_BUILD_TYPE:STRING=Release \
-                                -DHDF5_BUILD_TOOLS:BOOL=ON \
-                                -DBUILD_SHARED_LIBS=ON \
-                                -DHDF5_BUILD_HL_LIB=ON \
-                                -DHAVE_IOEO_EXITCODE=1 \
-                                -DH5_LDOUBLE_TO_INTEGER_WORKS=1 \
-                                -DH5_ULONG_TO_FLOAT_ACCURATE=1 \
-                                -DH5_LDOUBLE_TO_UINT_ACCURATE=1 \
-                                -DH5_FP_TO_ULLONG_ACCURATE=1 \
-                                -DH5_ULLONG_TO_LDOUBLE_PRECISION=1 \
-                                -DH5_FP_TO_INTEGER_OVERFLOW_WORKS=1 \
-                                -DH5_LDOUBLE_TO_LLONG_ACCURATE=1 \
-                                -DH5_LLONG_TO_LDOUBLE_CORRECT=1 \
-                                -DH5_NO_ALIGNMENT_RESTRICTIONS=1 \
-                                -DHDF5_ENABLE_SZIP_SUPPORT=ON \
-                                -DHDF5_ENABLE_SZIP_ENCODING=ON \
-                                -DHDF5_ENABLE_Z_LIB_SUPPORT=ON \
-                                -DSZIP_INCLUDE_DIR=$OUT/include \
-                                -DSZIP_LIBRARY=$OUT/lib/libsz.dll.a \
-                                ..
+xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
+            -DBUILD_SHARED_LIBS=ON \
+            -DBUILD_TESTING=OFF \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_SKIP_RPATH=ON \
+            -DHDF5_BUILD_HL_LIB=ON \
+            -DHDF5_BUILD_CPP_LIB=ON \
+            -DHDF5_BUILD_FORTRAN=OFF \
+            -DHDF5_BUILD_TOOLS=ON \
+            -DHDF5_ENABLE_DEPRECATED_SYMBOLS=ON \
+            -DHDF5_ENABLE_Z_LIB_SUPPORT=ON \
+            -DHDF5_ENABLE_SZIP_SUPPORT=ON \
+            -DHDF5_ENABLE_SZIP_ENCODING=ON \
+            -DSZIP_INCLUDE_DIR=$OUT/include \
+            -DSZIP_LIBRARY=$OUT/lib/libsz.dll.a \
+            ..                                
+
+            ###-DHDF5_INSTALL_CMAKE_DIR="lib/cmake" \
+            ###-DHDF5_INSTALL_DATA_DIR="share" \
+            ###-DHAVE_IOEO_EXITCODE=1 \
+            ###-DH5_LDOUBLE_TO_INTEGER_WORKS=1 \
+            ###-DH5_ULONG_TO_FLOAT_ACCURATE=1 \
+            ###-DH5_LDOUBLE_TO_UINT_ACCURATE=1 \
+            ###-DH5_FP_TO_ULLONG_ACCURATE=1 \
+            ###-DH5_ULLONG_TO_LDOUBLE_PRECISION=1 \
+            ###-DH5_FP_TO_INTEGER_OVERFLOW_WORKS=1 \
+            ###-DH5_LDOUBLE_TO_LLONG_ACCURATE=1 \
+            ###-DH5_LLONG_TO_LDOUBLE_CORRECT=1 \
+            ###-DH5_NO_ALIGNMENT_RESTRICTIONS=1 \
+
 xxrun make
 xxrun make install
 ;;
@@ -1115,6 +1176,7 @@ echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_FORTRAN_LIBSH_TARGET}     PROPERTIES SU
 echo "ENDIF ()" >> CMakeLists.txt
 mkdir MY_BUILD
 cd MY_BUILD
+cp ../COPYING.txt ./
 xxrun cmake -G 'MSYS Makefiles' -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$OUT \
                                                        -DBUILD_SHARED_LIBS=ON \
                                                        -DHDF4_BUILD_XDR_LIB=ON \
@@ -1126,7 +1188,8 @@ xxrun cmake -G 'MSYS Makefiles' -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$O
                                                        -DHDF4_BUILD_TOOLS=OFF \
                                                        -DHDF4_BUILD_UTILS=OFF \
                                                        -DHDF4_BUILD_EXAMPLES=OFF \
-                                                       -DHDF4_ENABLE_NETCDF=ON \
+                                                       -DHDF4_NO_PACKAGES=ON \
+                                                       -DHDF4_ENABLE_NETCDF=OFF \
                                                        -DSZIP_INCLUDE_DIR=$OUT/include \
                                                        -DSZIP_LIBRARY=$OUT/lib/libsz.dll.a \
                                                        ..
@@ -1172,6 +1235,7 @@ xxrun cmake -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$OUT \
                                 -DFREETYPE_INCLUDE_DIR=$OUT/include/freetype2 \
                                 -DENABLE_DYNDRIVERS=OFF \
                                 -DENABLE_f95=OFF \
+                                -DENABLE_tcl=OFF \
                                 -DENABLE_ada=OFF \
                                 -DENABLE_d=OFF \
                                 -DCMAKE_BUILD_TYPE=Release
@@ -1260,6 +1324,15 @@ cp pexports.exe $OUT/bin/
 ;;
 
 # ----------------------------------------------------------------------------
+libidn2-*)
+cd $WRKDIR/$PACK
+save_configure_help
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes
+patch_libtool
+xxrun make install
+;;
+
+# ----------------------------------------------------------------------------
 ##standard build - static libs only
 qrencode-* | lzo-*)
 cd $WRKDIR/$PACK
@@ -1307,8 +1380,20 @@ mv $OUT/lib/libfreeglut.dll.a $OUT/lib/libglut.a
 sed -i 's/-lfreeglut/-lglut/' $OUT/lib/lib/pkgconfig/freeglut.pc
 ;;
 
+giflib-*)
+cd $WRKDIR/$PACK
+
+sed -i "s/-\$(LIBMAJOR)\.dll/-\$(LIBMAJOR)${DLLSUFFIX}.dll/g" Makefile
+sed -i "s/\$(MAKE) -C doc/#\$(MAKE) -C doc/g" Makefile
+sed -i "s/diff -u/diff -wu/g" tests/makefile
+
+xxrun make CC=gcc
+xxrun make check
+xxrun make PREFIX="$OUT" install
+;;
+
 # ----------------------------------------------------------------------------
-tiff-* | giflib-* | freeglut-*)
+tiff-* | freeglut-*)
 cd $WRKDIR/$PACK
 save_configure_help
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
@@ -1483,6 +1568,43 @@ xxrun make
 xxrun make install
 ;;
 
+
+# ----------------------------------------------------------------------------
+termcap-*)
+cd $WRKDIR/$PACK
+save_configure_help
+xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
+patch_libtool
+xxrun make
+
+# Build a shared library.  No need for -fPIC on Windows.
+xxrun gcc -shared -Wl,--out-implib,libtermcap.dll.a -o libtermcap-0$DLLSUFFIX.dll termcap.o tparam.o version.o
+
+xxrun make install prefix="$OUT" exec_prefix="$OUT" oldincludedir=
+xxrun mkdir -p $OUT/{bin,lib}
+xxrun install -m 0755 libtermcap-0$DLLSUFFIX.dll "$OUT/bin"
+xxrun install -m 0644 libtermcap.dll.a "$OUT/lib"
+;;
+
+# ----------------------------------------------------------------------------
+readline-*)
+cd $WRKDIR/$PACK
+save_configure_help
+
+sed -i 's|-Wl,-rpath,$(libdir) ||g' support/shobj-conf 
+sed -i "s|SHLIB_LIBVERSION='\$(SHLIB_DLLVERSION)\.\$(SHLIB_LIBSUFF)'|SHLIB_LIBVERSION='\$(SHLIB_DLLVERSION)$DLLSUFFIX.\$(SHLIB_LIBSUFF)'|" support/shobj-conf 
+
+xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --without-curses \
+                  "CFLAGS=-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
+patch_libtool
+xxrun make
+xxrun make install
+
+mv $OUT/lib/libhistory*.dll.a  $OUT/lib/libhistory.dll.a
+mv $OUT/lib/libreadline*.dll.a $OUT/lib/libreadline.dll.a
+
+;;
+
 # ----------------------------------------------------------------------------
 gnuplot-4*)
 cd $WRKDIR/$PACK
@@ -1497,9 +1619,18 @@ xxrun make install DESTDIR=$OUT HELPFILEJA= LUA=
 # ----------------------------------------------------------------------------
 gnuplot-5*)
 cd $WRKDIR/$PACK
-cd config/mingw
-CFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun make console windows pipes support M$ARCHBITS=1 MINGW64=1 CERF=0 NEWGD=1 FREETYPE=1 PNG=1 JPEG=1 ICONV=1 HELPFILEJA= LUA= HHWPATH=/z/sw/help-workshop/ ARCHNICK=$ARCHNICK LBUFFEROVERFLOWU=$LBUFFEROVERFLOWU
-xxrun make install DESTDIR=$OUT HELPFILEJA= LUA=
+
+mv $OUT/bin/gdlib-config $OUT/bin/gdlib-config.OBSOLETE
+
+autoreconf -fi
+save_configure_help
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking \
+                             --without-lua --with-bitmap-terminals
+
+###--with-readline=gnu "CFLAGS=-I$OUTINC" "LDFLAGS=-L$OUTLIB"
+
+xxrun make
+xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------

@@ -91,6 +91,21 @@ my $desc = {
       ['Homepage', 'http://www.unidata.ucar.edu/software/netcdf/'],
     ],
   },
+  'netcdf-c-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '-config(\.bat)?$'],
+      ['include', 'c\include', '\.h$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['bin', 'c\bin', '\.dll$'],
+    ],
+    'licenses' => ['COPYRIGHT'],
+    'licdir' => 'licenses\netfdf',
+    'urls' => [
+      ['Homepage', 'http://www.unidata.ucar.edu/software/netcdf/'],
+    ],
+  },
   'curl-' => {
     'files' => [
       ['bin\curl.exe', 'c\bin\curl.exe'],
@@ -324,6 +339,34 @@ my $desc = {
       ['Homepage', 'http://giflib.sourceforge.net/'],
     ],
   }, 
+  'libunistring-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => ['COPYING','AUTHORS'],
+    'licdir' => 'licenses\libunistring',
+    'urls' => [
+      ['Homepage', 'https://www.gnu.org/software/libunistring/'],
+    ],
+  },
+  'libidn2-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => ['COPYING','AUTHORS'],
+    'licdir' => 'licenses\libidn2',
+    'urls' => [
+      ['Homepage', 'http://www.gnu.org/software/libidn/'],
+    ],
+  },
   'libidn-' => {
     'files' => [
       #['bin\idn.exe', 'c\bin\idn.exe'],
@@ -445,7 +488,6 @@ my $desc = {
   }, 
   'gnuplot-' => {
     'files' => [
-      ['bin\wgnuplot.chm', 'c\bin\wgnuplot.chm'],
       ['bin\wgnuplot.mnu', 'c\bin\wgnuplot.mnu'],
       ['bin\wgnuplot.exe', 'c\bin\wgnuplot.exe'],
       ['bin\gnuplot.exe', 'c\bin\gnuplot.exe'],
@@ -786,7 +828,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
       ['include', 'c\include', '\.h$'],
     ],
-    'licenses' => ['LICENSE','README'],
+    'licenses' => ['LICENSE'],
     'licdir' => 'licenses\liblapack',
     'urls' => [
       ['Homepage', 'http://www.netlib.org/lapack/'],
@@ -955,7 +997,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
       ['include', 'c\include', '\.h$'],
     ],
-    'licenses' => [qw(cfitsio/License.txt cfitsio/README)],
+    'licenses' => [qw(License.txt README)],
     'licdir' => 'licenses\libcfitsio',
     'urls' => [
       ['Homepage', 'http://heasarc.gsfc.nasa.gov/fitsio/'],

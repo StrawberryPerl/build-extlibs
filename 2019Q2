@@ -82,7 +82,7 @@ libidn2-2.1.1
 ##curl-7.64.1
 
 ###### PDL related
-cfitsio-3.41
+cfitsio-3.47
 ta-lib-0.4.0
 lapack-3.8.0
 fftw-3.3.8

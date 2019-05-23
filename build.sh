@@ -1635,7 +1635,7 @@ xxrun make install
 
 # ----------------------------------------------------------------------------
 cfitsio-*)
-cd $WRKDIR/$PACK/cfitsio
+cd $WRKDIR/$PACK
 xxrun make DLLSUFFIX=$DLLSUFFIX PREFIX=$OUT install
 ;;
 

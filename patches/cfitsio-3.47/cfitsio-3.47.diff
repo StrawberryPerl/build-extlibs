@@ -1,0 +1,134 @@
+diff -r -u --strip-trailing-cr cfitsio-3.47.original/fpackutil.c cfitsio-3.47/fpackutil.c
+--- cfitsio-3.47.original/fpackutil.c	2019-05-22 23:17:31.262370500 +0200
++++ cfitsio-3.47/fpackutil.c	2019-05-22 23:17:25.644814800 +0200
+@@ -245,7 +245,7 @@
+ 
+             snprintf (msg, SZ_STR,"# %s (", infits); fp_msg (msg);
+ 
+-#if defined(_MSC_VER)
++#if defined(_MSC_VER) || defined(__MINGW32__)
+     /* Microsoft Visual C++ 6.0 uses '%I64d' syntax  for 8-byte integers */
+         snprintf(msg, SZ_STR,"%I64d bytes)\n", sizell); fp_msg (msg);
+ #elif (USE_LL_SUFFIX == 1)
+diff -r -u --strip-trailing-cr cfitsio-3.47.original/getcols.c cfitsio-3.47/getcols.c
+--- cfitsio-3.47.original/getcols.c	2019-05-22 23:17:32.194384200 +0200
++++ cfitsio-3.47/getcols.c	2019-05-22 23:17:25.676048000 +0200
+@@ -321,7 +321,7 @@
+            else
+            {	   
+ 
+-#if defined(_MSC_VER)
++#if defined(_MSC_VER) || defined(__MINGW32__)
+     /* Microsoft Visual C++ 6.0 uses '%I64d' syntax  for 8-byte integers */
+         snprintf(tmpstr, 400,"%20I64d", llarray[ii]);
+ #elif (USE_LL_SUFFIX == 1)
+diff -r -u --strip-trailing-cr cfitsio-3.47.original/GNUmakefile cfitsio-3.47/GNUmakefile
+--- cfitsio-3.47.original/GNUmakefile	2019-05-22 23:17:33.144313900 +0200
++++ cfitsio-3.47/GNUmakefile	2019-05-22 23:17:25.707310400 +0200
+@@ -0,0 +1,94 @@
++#BEWARE: this Makefile was designed for GNU make and uses some specific syntax
++#        that can be incompatible with other make tools
++
++BASENAME      =cfitsio
++CFITSIO_MAJOR =3
++CFITSIO_MINOR =37
++
++CC       =gcc
++CFLAGS   =-O2 -Wall -Wno-unused -Dg77Fortran -DHAVE_UNISTD_H=1 -DHAVE_FTRUNCATE=1 -DSTDC_HEADERS=1 -D_LARGEFILE_SOURCE=1 -D_FILE_OFFSET_BITS=64
++OBJS     =buffers.o cfileio.o checksum.o drvrfile.o drvrmem.o drvrnet.o drvrsmem.o drvrgsiftp.o editcol.o edithdu.o eval_l.o eval_y.o eval_f.o fitscore.o getcol.o getcolb.o getcold.o getcole.o getcoli.o getcolj.o getcolk.o getcoll.o getcols.o getcolsb.o getcoluk.o getcolui.o getcoluj.o getkey.o group.o grparser.o histo.o iraffits.o modkey.o putcol.o putcolb.o putcold.o putcole.o putcoli.o putcolj.o putcolk.o putcoluk.o putcoll.o putcols.o putcolsb.o putcolu.o putcolui.o putcoluj.o putkey.o region.o scalnull.o swapproc.o wcssub.o wcsutil.o imcompress.o quantize.o ricecomp.o pliocomp.o fits_hcompress.o fits_hdecompress.o simplerng.o f77_wrap1.o f77_wrap2.o f77_wrap3.o f77_wrap4.o zlib/adler32.o zlib/crc32.o zlib/deflate.o zlib/infback.o zlib/inffast.o zlib/inflate.o zlib/inftrees.o zlib/trees.o zlib/uncompr.o zlib/zcompress.o zlib/zuncompress.o zlib/zutil.o
++EXES     =testprog.exe fpack.exe funpack.exe fitscopy.exe speed.exe imcopy.exe cookbook.exe
++
++#### end of packcage-specific ####
++
++ifeq ($(NOPERL), 1)
++  ECHO   = @echo
++  CP     = cp
++  MV     = mv
++  RM_F   = rm -f
++  RM_RF  = rm -rf
++  MKPATH = mkdir -p
++  SED    = sed
++else
++  ECHO   = @perl -l -e "print qq{@ARGV}" --
++  CP     = perl -MExtUtils::Command -e "cp" --
++  MV     = perl -MExtUtils::Command -e "mv" --
++  RM_F   = perl -MExtUtils::Command -e "rm_f" --
++  RM_RF  = perl -MExtUtils::Command -e "rm_rf" --
++  MKPATH = perl -MExtUtils::Command -e "mkpath" --
++  SED    = perl -pe
++endif
++
++PREFIX =./_output_
++BINDIR =$(PREFIX)/bin
++INCDIR =$(PREFIX)/include
++LIBDIR =$(PREFIX)/lib
++
++IMPORT_LIB=lib$(BASENAME).a
++SHARED_LIB=lib$(BASENAME)$(DLLSUFFIX).dll
++PC_FILE=$(BASENAME).pc
++
++TARGETS = $(SHARED_LIB) $(PC_FILE) $(EXES)
++
++all: $(TARGETS)
++
++clean:
++	$(RM_F) *.o zlib/*.o *.dll *.pc *.exe *.a
++
++$(SHARED_LIB): $(OBJS)
++	$(CC) -s -shared -o $@ $^ -Wl,--enable-auto-import,--export-all -Wl,--out-implib=$(IMPORT_LIB) $(LIBS)
++
++$(PC_FILE):
++	@echo prefix=$${pcfiledir}/../.. >$@
++	@echo libdir=$${prefix}/lib >>$@
++	@echo includedir=$${prefix}/include >>$@
++	@echo Name: cfitsio >>$@
++	@echo Description: FITS File Subroutine Library >>$@
++	@echo Version: $(CFITSIO_MAJOR).$(CFITSIO_MINOR) >>$@
++	@echo Libs: -L$${libdir} -lcfitsio >>$@
++	@echo Libs.private: -lm >>$@
++	@echo Cflags: -I$${includedir} >>$@
++
++%.o : %.c ; $(CC) $(CFLAGS) -c $< -o $@
++
++fpack.exe:	fpack.o fpackutil.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o fpack fpack.o fpackutil.o -L. -lcfitsio
++
++funpack.exe:	funpack.o fpackutil.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o funpack funpack.o fpackutil.o -L. -lcfitsio
++
++fitscopy.exe:	fitscopy.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o fitscopy fitscopy.o -L. -lcfitsio
++
++imcopy.exe:	imcopy.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o imcopy imcopy.o -L. -lcfitsio
++
++testprog.exe:	testprog.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o testprog testprog.o -L. -lcfitsio
++
++speed.exe:	speed.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o speed speed.o -L. -lcfitsio
++
++cookbook.exe:	cookbook.o $(IMPORT_LIB)
++		${CC} $(CFLAGS) $(DEFS) -o cookbook cookbook.o -L. -lcfitsio
++
++install: all
++	$(MKPATH) "$(BINDIR)"
++	$(MKPATH) "$(LIBDIR)/pkgconfig"
++	$(MKPATH) "$(INCDIR)"
++	$(CP) fitsio.h fitsio2.h longnam.h drvrsmem.h "$(INCDIR)"
++	$(CP) $(IMPORT_LIB) "$(LIBDIR)"
++	$(CP) $(PC_FILE) "$(LIBDIR)/pkgconfig"
++	$(CP) $(SHARED_LIB) "$(BINDIR)"
++	$(CP) $(EXES) "$(BINDIR)"
+diff -r -u --strip-trailing-cr cfitsio-3.47.original/putkey.c cfitsio-3.47/putkey.c
+--- cfitsio-3.47.original/putkey.c	2019-05-22 23:17:36.604114100 +0200
++++ cfitsio-3.47/putkey.c	2019-05-22 23:17:25.722933800 +0200
+@@ -2935,7 +2935,7 @@
+ 
+     cval[0] = '\0';
+ 
+-#if defined(_MSC_VER)
++#if defined(_MSC_VER) || defined(__MINGW32__)
+     /* Microsoft Visual C++ 6.0 uses '%I64d' syntax  for 8-byte integers */
+     if (sprintf(cval, "%I64d", ival) < 0)
+ 

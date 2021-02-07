@@ -26,6 +26,20 @@ my $desc = {
       ['Homepage', 'http://fribidi.org'],
     ],
   }, 
+  'libwebp-' => {
+    'files' => [],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib', 'c\lib', '\.a$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => ['COPYING','AUTHORS','README'],
+    'licdir' => 'licenses\libwebp',
+    'urls' => [
+      ['Homepage', 'https://developers.google.com/speed/webp'],
+    ],
+  }, 
   'patch-' => {
     'files' => [
       ['bin\patch.exe', 'c\bin\patch.exe'],

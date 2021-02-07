@@ -583,8 +583,9 @@ sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/
 sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/10-main.conf 
 sed -i "s/^LIBRARY  *\$libname/LIBRARY  \${libname}$DLLSUFFIX/" util/mkdef.pl
 
+### -D__MINGW_USE_VC2005_COMPAT is a trouble maker see https://github.com/StrawberryPerl/Perl-Dist-Strawberry/issues/15
+
 xxrun ./Configure shared zlib enable-rfc3779 enable-camellia enable-capieng enable-idea enable-mdc2 enable-rc5 \
-        -D__MINGW_USE_VC2005_COMPAT \
         -DOPENSSLBIN=\"\\\"${OUT}/bin\\\"\" --openssldir=ssl \
         --with-zlib-lib=$OUTLIB --with-zlib-include=$OUTINC \
         --prefix=$OUT $OPENSSLTARGET
@@ -1548,6 +1549,16 @@ xxrun make
 xxrun make install
 mkdir -p $OUT/lib/pkgconfig/
 [ -f $OUT/lib/pkgconfig/fribidi.pc ] || cp -f fribidi.pc $OUT/lib/pkgconfig/fribidi.pc
+;;
+
+# ----------------------------------------------------------------------------
+libwebp-*)
+cd $WRKDIR/$PACK
+save_configure_help
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes --enable-libwebpmux
+patch_libtool
+xxrun make
+xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------

@@ -63,7 +63,7 @@ https://download.libsodium.org/libsodium/releases/libsodium-1.0.17.tar.gz
 
 #### ICU
 #http://download.icu-project.org/files/icu4c/
-http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz 
+http://download.icu-project.org/files/icu4c/63.1/icu4c-63_1-src.tgz
 http://download.icu-project.org/files/icu4c/64.2/icu4c-64_2-src.tgz
 
 #### LibSSH2
@@ -82,6 +82,7 @@ http://download.oracle.com/berkeley-db/db-6.1.26.tar.gz
 http://download.oracle.com/berkeley-db/db-6.2.23.tar.gz
 http://download.oracle.com/berkeley-db/db-6.2.32.tar.gz
 http://download.oracle.com/berkeley-db/db-6.2.32.tar.gz
+http://download.oracle.com/berkeley-db/db-18.1.40.tar.gz
 http://strawberryperl.com/package/kmx/libs_src/db-6.2.38.tar.gz
 http://strawberryperl.com/package/kmx/libs_src/db-18.1.32.tar.gz
 
@@ -94,12 +95,13 @@ https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1
 https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-1.1.0.tar.gz
 
 #### Freetype
-#URL http://mirror.lihnidos.org/GNU/savannah/freetype/
-http://mirror.lihnidos.org/GNU/savannah/freetype/freetype-2.5.5.tar.gz
-http://mirror.lihnidos.org/GNU/savannah/freetype/freetype-2.6.1.tar.gz
-http://mirror.lihnidos.org/GNU/savannah/freetype/freetype-2.6.3.tar.gz
-http://mirror.lihnidos.org/GNU/savannah/freetype/freetype-2.7.1.tar.gz
-http://mirror.lihnidos.org/GNU/savannah/freetype/freetype-2.10.0.tar.gz
+#URL https://download.savannah.gnu.org/releases/freetype/
+https://download.savannah.gnu.org/releases/freetype/freetype-2.5.5.tar.gz
+https://download.savannah.gnu.org/releases/freetype/freetype-2.6.1.tar.gz
+https://download.savannah.gnu.org/releases/freetype/freetype-2.6.3.tar.gz
+https://download.savannah.gnu.org/releases/freetype/freetype-2.7.1.tar.gz
+https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.gz
+https://download.savannah.gnu.org/releases/freetype/freetype-2.11.0.tar.gz
 
 #### GD
 #URL https://libgd.github.io/
@@ -121,6 +123,7 @@ http://downloads.sourceforge.net/giflib/giflib-5.1.9.tar.gz
 http://www.ijg.org/files/jpegsrc.v9a.tar.gz -O jpeg-9a.tar.gz
 http://www.ijg.org/files/jpegsrc.v9b.tar.gz -O jpeg-9b.tar.gz
 http://www.ijg.org/files/jpegsrc.v9c.tar.gz -O jpeg-9c.tar.gz
+http://www.ijg.org/files/jpegsrc.v9d.tar.gz -O jpeg-9d.tar.gz
 
 #### libpng
 #URL http://downloads.sourceforge.net/libpng/
@@ -163,6 +166,7 @@ http://downloads.sourceforge.net/expat/expat-2.1.0.tar.gz
 http://downloads.sourceforge.net/expat/expat-2.1.1.tar.bz2
 http://downloads.sourceforge.net/expat/expat-2.2.0.tar.bz2
 http://downloads.sourceforge.net/expat/expat-2.2.6.tar.bz2
+https://github.com/libexpat/libexpat/releases/download/R_2_4_1/expat-2.4.1.tar.gz
 
 #### libiconv
 #URL http://ftp.gnu.org/gnu/libiconv/
@@ -177,6 +181,7 @@ http://www.zlib.net/zlib-1.2.11.tar.gz
 
 #URL http://www.bzip.org/
 http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
+https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
 
 #### gdbm
 #URL http://ftp.gnu.org/gnu/gdbm/
@@ -184,6 +189,7 @@ http://ftp.gnu.org/gnu/gdbm/gdbm-1.10.tar.gz
 http://ftp.gnu.org/gnu/gdbm/gdbm-1.11.tar.gz
 http://ftp.gnu.org/gnu/gdbm/gdbm-1.13.tar.gz
 http://ftp.gnu.org/gnu/gdbm/gdbm-1.18.tar.gz
+http://ftp.gnu.org/gnu/gdbm/gdbm-1.22.tar.gz
 
 #### gmp
 #URL ftp://ftp.gmplib.org/pub/
@@ -280,6 +286,7 @@ https://ftp.gnu.org/gnu/termcap/termcap-1.3.1.tar.gz
 
 ###### https://ftp.gnu.org/gnu/readline/
 https://ftp.gnu.org/gnu/readline/readline-8.0.tar.gz
+https://ftp.gnu.org/gnu/readline/readline-8.1.tar.gz
 
 #URL http://caca.zoy.org/wiki/libcaca
 http://caca.zoy.org/files/libcaca/libcaca-0.99.beta19.tar.gz
@@ -323,6 +330,7 @@ https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfit3410.zip -O cfitsio-3.41
 https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfit3450.zip -O cfitsio-3.45.zip
 https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.47.tar.gz
 https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.48.tar.gz
+http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-4.0.0.tar.gz
 
 #URL http://ftp.gnu.org/gnu/libidn/
 http://ftp.gnu.org/gnu/libidn/libidn-1.32.tar.gz

@@ -18,7 +18,7 @@ function disable_pthread()
 {
 ### #ultra ugly
 ### for A in `find "$GCCDIR" -name pthread.h`; do
-###   if [ -f $A ] ; then 
+###   if [ -f $A ] ; then
 ###     echo "DISABLING $A"
 ###     mv $A $A.backup
 ###   else
@@ -99,14 +99,14 @@ function patch_prefix ()
       sed -e "s,$OUT2,\$\{pcfiledir}\/../..,gi" \
           -e "s,c:.Windows.System32.\([^\.]*\).dll,-l\1,gi" \
           -e "s,$OUT,\$\{pcfiledir}\/../..,gi" $F.backup > $F
-    fi 
+    fi
   done
 }
 
 function install_bats ()
 {
   echo "curdir=`pwd`"
-  find . -type f -name "*.bat.win-gcc" | while read F; do  
+  find . -type f -name "*.bat.win-gcc" | while read F; do
     FF=`basename $F | sed "s/\.win-gcc$//"`
     FS=`echo $F | sed "s/-config\.bat\.win-gcc$/-config/"`
     V=`grep -A1 "\-\-version)" $FS | grep "echo *[0-9]" | head -n1 | sed "s/^[^0-9]*//"`
@@ -116,7 +116,7 @@ function install_bats ()
       sed "s/^set XVERSION=.*/set XVERSION=$V/" $F > $OUT/bin/$FF
     else
       cp $F $OUT/bin/$FF
-    fi    
+    fi
   done
 }
 
@@ -148,12 +148,12 @@ fi
 if [ ! -e "$1" ] ; then
   echo "Warning: assuming params to be package names!"
   export PKGLISTNAME=buildtest
-  if [ $IS64BIT ] ; then 
+  if [ $IS64BIT ] ; then
     export DLLSUFFIX=__
   else
     export DLLSUFFIX=_
   fi
-  PKGLIST=$@  
+  PKGLIST=$@
 else
   # parameter 1: pkg-list filename
   export PKGLISTNAME=$1
@@ -234,7 +234,7 @@ for PACK in $PKGLIST; do
   if [ -e $SRCDIR/$PACK.tar.xz ]   ; then SRCBALL="$PACK.tar.xz";   tar --xz -xf $SRCDIR/$PACK.tar.xz; fi
   if [ -z $SRCBALL ] ; then echo "FATAL: source tarball for '$PACK' not found" ; exit ; fi
   (
-    #ugly but somehow works  
+    #ugly but somehow works
     echo "{"
     echo "\"url\":\"`grep -v -e '^#' $CURDIR/sources.list | grep $PACK | sed "s/^\([^\t ][^\t ]*\).*/\1/" 2>/dev/null`\","
     echo "\"pack\":\"$PACK\","
@@ -255,7 +255,7 @@ for PACK in $PKGLIST; do
       echo "GONNA Apply: $P" >> $OUT/$PACK.patch.log
       patch --no-backup-if-mismatch -i $P -p 1 >> $OUT/$PACK.patch.log 2>&1
     done
-   
+
     ( cd "$WRKDIR/$PACK" && find . -type f | grep -v -e "\.rej$" -e "\.diff$" -e "\.patch$" | while read XF; do touch "../$PACK.original/$XF"; done )
     ( cd $WRKDIR && diff -r -u --strip-trailing-cr $PACK.original $PACK 2>/dev/null ) | grep -v "^Only in " > $OUT/$PACK.diff
     rm -rf $WRKDIR/$PACK.original
@@ -518,8 +518,8 @@ xxrun make install
 gmp-*)
 cd $WRKDIR/$PACK
 save_configure_help
-#do not use any CFLAGS here!! 
-if [ $IS64BIT ] ; then 
+#do not use any CFLAGS here!!
+if [ $IS64BIT ] ; then
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=yes --enable-shared=no
 else
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-fat --enable-static=yes --enable-shared=no
@@ -534,7 +534,7 @@ xxrun make install
 mpfr-*)
 cd $WRKDIR/$PACK
 save_configure_help
-#do not use any CFLAGS here!! 
+#do not use any CFLAGS here!!
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=yes --enable-shared=no \
             --with-gmp=$OUT
 patch_libtool
@@ -547,7 +547,7 @@ xxrun make install
 mpc-*)
 cd $WRKDIR/$PACK
 save_configure_help
-#do not use any CFLAGS here!! 
+#do not use any CFLAGS here!!
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=yes --enable-shared=no \
             --with-mpfr=$OUT --with-gmp=$OUT
 patch_libtool
@@ -559,7 +559,7 @@ xxrun make install
 
 # ----------------------------------------------------------------------------
 openssl-fips-*)
-if [ $IS64BIT ] ; then 
+if [ $IS64BIT ] ; then
   OPENSSLTARGET=mingw64
 else
   OPENSSLTARGET=mingw
@@ -580,7 +580,7 @@ else
 fi
 
 sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/00-base-templates.conf
-sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/10-main.conf 
+sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/10-main.conf
 sed -i "s/^LIBRARY  *\$libname/LIBRARY  \${libname}$DLLSUFFIX/" util/mkdef.pl
 
 ### -D__MINGW_USE_VC2005_COMPAT is a trouble maker see https://github.com/StrawberryPerl/Perl-Dist-Strawberry/issues/15
@@ -592,7 +592,7 @@ xxrun ./Configure shared zlib enable-rfc3779 enable-camellia enable-capieng enab
 
 ### zlib-dynamic vs. zlib
 
-sed -i 's/__*\.dll\.a/.dll.a/g' Makefile 
+sed -i 's/__*\.dll\.a/.dll.a/g' Makefile
 sed -i 's/__*\.dll\.a/.dll.a/g' configdata.pm
 sed -i "s/define LIBZ \"ZLIB1\"/define LIBZ \"ZLIB1$DLLSUFFIX\"/" crypto/comp/c_zlib.c
 
@@ -643,7 +643,7 @@ sed "s|{ \$libname\.=\"32\"; }|{ \$libname.=\"32$DLLSUFFIX\"; }|" util/mkdef.pl.
 #hack: changing DLL suffix
 sed -i "s/\"ZLIB1\"/\"ZLIB1$DLLSUFFIX\"/" crypto/comp/c_zlib.c
 
-if [ $IS64BIT ] ; then 
+if [ $IS64BIT ] ; then
   OPENSSLTARGET=mingw64
 else
   OPENSSLTARGET=mingw
@@ -817,7 +817,7 @@ SDL_gfx*)
 cd $WRKDIR/$PACK
 save_configure_help
 #disable assembler on 64bit
-if [ $IS64BIT ] ; then 
+if [ $IS64BIT ] ; then
   SDLGFXEXTRA="--disable-mmx"
 else
   SDLGFXEXTRA="--enable-mmx"
@@ -937,7 +937,7 @@ sed "s/libcairo-\$(CAIRO_VERSION_SONUM)\.dll/libcairo-\$(CAIRO_VERSION_SONUM)$DL
 sed "s/libcairo-\$(CAIRO_VERSION_SONUM)\.dll/libcairo-\$(CAIRO_VERSION_SONUM)$DLLSUFFIX.dll/" Makefile.backup > Makefile
 xxrun make install
 ;;
- 
+
 # ----------------------------------------------------------------------------
 glpk-*)
 cd $WRKDIR/$PACK
@@ -1135,7 +1135,7 @@ xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
             -DHDF5_ENABLE_SZIP_ENCODING=ON \
             -DSZIP_INCLUDE_DIR=$OUT/include \
             -DSZIP_LIBRARY=$OUT/lib/libsz.dll.a \
-            ..                                
+            ..
 
             ###-DHDF5_INSTALL_CMAKE_DIR="lib/cmake" \
             ###-DHDF5_INSTALL_DATA_DIR="share" \
@@ -1357,8 +1357,8 @@ xxrun make install
 
 curl-*)
 ###--with-winssl           enable Windows native SSL/TLS
-###--with-gssapi=DIR       Where to look for GSS-API 
-###--with-winidn=PATH      enable Windows native IDN 
+###--with-gssapi=DIR       Where to look for GSS-API
+###--with-winidn=PATH      enable Windows native IDN
 ###--without-ca-bundle --without-random
 cd $WRKDIR/$PACK
 save_configure_help
@@ -1602,11 +1602,11 @@ readline-*)
 cd $WRKDIR/$PACK
 save_configure_help
 
-sed -i 's|-Wl,-rpath,$(libdir) ||g' support/shobj-conf 
-sed -i "s|SHLIB_LIBVERSION='\$(SHLIB_DLLVERSION)\.\$(SHLIB_LIBSUFF)'|SHLIB_LIBVERSION='\$(SHLIB_DLLVERSION)$DLLSUFFIX.\$(SHLIB_LIBSUFF)'|" support/shobj-conf 
+sed -i 's|-Wl,-rpath,$(libdir) ||g' support/shobj-conf
+sed -i "s|SHLIB_LIBVERSION='\$(SHLIB_DLLVERSION)\.\$(SHLIB_LIBSUFF)'|SHLIB_LIBVERSION='\$(SHLIB_DLLVERSION)$DLLSUFFIX.\$(SHLIB_LIBSUFF)'|" support/shobj-conf
 
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --without-curses \
-                  "CFLAGS=-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
+                  "CFLAGS=-O2 -fcommon -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
 patch_libtool
 xxrun make
 xxrun make install
@@ -1647,11 +1647,12 @@ xxrun make install
 # ----------------------------------------------------------------------------
 cfitsio-*)
 cd $WRKDIR/$PACK
+xxrun cmake -G "MinGW Makefiles" -DWITH_ZLIB=system -DWITH_SSL=bundled -DCMAKE_INSTALL_PREFIX=$OUT -DCMAKE_MAKE_PROGRAM=gmake
 xxrun make DLLSUFFIX=$DLLSUFFIX PREFIX=$OUT install
 ;;
 
 # ----------------------------------------------------------------------------
-##standard build - via ./configure 
+##standard build - via ./configure
 *)
 echo "## !!!WARNING!!! using default build scenario"
 cd $WRKDIR/$PACK
@@ -1665,7 +1666,7 @@ xxrun make install
 
 esac
 (
-  cd $OUT; 
+  cd $OUT;
   touch $PACK.diff $PACK.list $PACK.srcinfo.json
   touch build.script.txt build.liblist.txt build.info.json build.sysinfo.txt
   find . -newer $OUT/_timestamp_ -not -type d | sort > $PACK.list
@@ -1698,14 +1699,14 @@ L=`find . -type f \( -name "*.la" -o -name "*.pc" -o -name "*.sh" -o -name "*-co
 patch_prefix $L
 rm -f $OUTZIP/out_all_results.txt
 for PACK in $PKGLIST; do
-  echo "## compressing $PACK"  
+  echo "## compressing $PACK"
   rm -f $OUTZIP/out_$PACK.zip
   touch `cat $OUT/$PACK.list`
 
   #pack
   #tar -czf $OUTZIP/out_$PACK.tar.gz `cat $OUT/$PACK.list`
   zip -q -9 $OUTZIP/out_$PACK.zip -@ < $OUT/$PACK.list
-  
+
   echo "$PACK" >> $OUTZIP/out_all_results.txt
   grep "^\#\#\#" $PACK.build.log >> $OUTZIP/out_all_results.txt
 done

@@ -175,9 +175,10 @@ http://ftp.gnu.org/gnu/libiconv/libiconv-1.15.tar.gz
 http://ftp.gnu.org/gnu/libiconv/libiconv-1.16.tar.gz
 
 #### zlib
-#URL http://www.zlib.net/
-http://www.zlib.net/zlib-1.2.8.tar.gz
-http://www.zlib.net/zlib-1.2.11.tar.gz
+#URL http://www.zlib.net/fossils/
+http://www.zlib.net/fossils/zlib-1.2.8.tar.gz
+http://www.zlib.net/fossils/zlib-1.2.11.tar.gz
+http://www.zlib.net/fossils/zlib-1.2.12.tar.gz
 
 #URL http://www.bzip.org/
 http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz

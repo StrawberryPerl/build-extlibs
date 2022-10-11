@@ -19,7 +19,7 @@ zlib-1.2.11
 xz-5.2.4
 
 ###### misc simple
-libiconv-1.16
+libiconv-1.17
 expat-2.2.6
 
 ###### xml libs

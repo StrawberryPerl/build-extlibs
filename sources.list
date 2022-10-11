@@ -377,6 +377,7 @@ https://dist.libuv.org/dist/v1.28.0/libuv-v1.28.0.tar.gz
 
 # http://fribidi.org
 http://fribidi.org/download/fribidi-0.19.7.tar.bz2
+https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz
 
 # https://ftp.pcre.org/pub/pcre/
 https://ftp.pcre.org/pub/pcre/pcre-8.40.tar.gz

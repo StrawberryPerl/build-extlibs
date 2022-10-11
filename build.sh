@@ -428,6 +428,7 @@ xxrun make install
 # ----------------------------------------------------------------------------
 fontconfig-*)
 cd $WRKDIR/$PACK
+
 save_configure_help
 
 #dll suffix hack

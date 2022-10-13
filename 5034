@@ -94,7 +94,7 @@ plplot-5.14.0
 
 #TEST:
 szip-2.1.1
-hdf-4.2.14
+hdf-4.2.15
 hdf5-1.10.5
 netcdf-c-4.6.3
 

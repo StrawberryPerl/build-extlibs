@@ -59,9 +59,9 @@ if (@packaged) {
     #say STDERR "$zip_dir/$zip_pfx$pkg";
     my @targets = grep {m|^$zip_dir/$zip_pfx$pkg|} @package_zips;
     
-    next if !@targets; #  we found a zipped package
+    next if !@targets; #  we found no zipped package
     
-    @to_build = grep {!m/^$pkg$/} @to_build;
+    @to_build = grep {!m/^$pkg$/} @to_build;  #  retain the file order
     
     my $target = pop @targets;
     say STDERR "Will extract $target to $build_dir";

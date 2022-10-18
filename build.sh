@@ -157,7 +157,9 @@ if [ ! -e "$1" ] ; then
 else
   # parameter 1: pkg-list filename
   export PKGLISTNAME=$1
-  PKGLIST=`grep -v -e "^#" -e "^\s*$" "$1" 2>/dev/null`
+#  PKGLIST=`grep -v -e "^#" -e "^\s*$" "$1" 2>/dev/null`
+  PKGLIST=`perl process_build_artefacts.pl "$1" "$2"`
+
   # parameter 2: dllsuffix
   if [ -s "$2" ] ; then
     export DLLSUFFIX=

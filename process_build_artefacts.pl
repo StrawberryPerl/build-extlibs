@@ -3,7 +3,10 @@
 #
 #  Re-use build artefacts from previous runs.
 #
-#  To override and force a rebuild, append "rebuild" to the entry in the source list.  
+#  To force a rebuild of all packages set an env var called REBUILD_ALL to a true value.  
+#
+#  To override and force a rebuild for an individual package, 
+#  append "rebuild" to the entry in the source list.  
 #  e.g. to rebuild readline  you might use this (without the leading # on each line):
 #
 #  ###### termcap + readline vybuildit co nejdrive
@@ -52,7 +55,7 @@ foreach my $line (<$sources_fh>) {
 #say 'To build: ' . join " ", @to_build;
 #say 'Packaged: ' . join " ", @packaged;
 
-if (@packaged) {
+if (@packaged and !$ENV{REBUILD_ALL}) {
   my @package_zips = sort glob "$zip_dir/*.zip"; 
   foreach my $pkg (@packaged) {
     #say STDERR "PACKAGE IS $pkg";

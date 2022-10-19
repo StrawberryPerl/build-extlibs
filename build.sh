@@ -981,10 +981,24 @@ xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------
-xz-* | gsl-* | libssh2-* |fftw-*)
+xz-* | gsl-* | fftw-*)
 cd $WRKDIR/$PACK
 save_configure_help
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
+patch_libtool
+xxrun make
+xxrun make check
+xxrun make install
+install_bats
+;;
+
+# ----------------------------------------------------------------------------
+libssh2-*)
+cd $WRKDIR/$PACK
+save_configure_help
+#  avoid mansyntax.sh test failure
+sed -i "s|rm -f |rm -rf |" tests/mansyntax.sh
+xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --disable-examples-build
 patch_libtool
 xxrun make
 xxrun make check

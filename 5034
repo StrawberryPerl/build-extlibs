@@ -27,8 +27,8 @@ libxml2-2.9.9
 libxslt-1.1.33
 
 ###### crypto
-openssl-1.1.1b
-libssh2-1.8.2
+openssl-1.1.1q
+libssh2-1.10.0
 libsodium-1.0.17
 
 ###### pgsql

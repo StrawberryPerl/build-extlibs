@@ -74,6 +74,7 @@ http://www.libssh2.org/download/libssh2-1.6.0.tar.gz
 http://www.libssh2.org/download/libssh2-1.7.0.tar.gz
 http://www.libssh2.org/download/libssh2-1.8.0.tar.gz
 https://www.libssh2.org/download/libssh2-1.8.2.tar.gz
+https://www.libssh2.org/download/libssh2-1.10.0.tar.gz
 
 #### Oracle Berkeley DB:
 #URL http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/downloads/index.html
@@ -173,6 +174,8 @@ https://github.com/libexpat/libexpat/releases/download/R_2_4_1/expat-2.4.1.tar.g
 http://ftp.gnu.org/gnu/libiconv/libiconv-1.14.tar.gz
 http://ftp.gnu.org/gnu/libiconv/libiconv-1.15.tar.gz
 http://ftp.gnu.org/gnu/libiconv/libiconv-1.16.tar.gz
+http://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
+
 
 #### zlib
 #URL http://www.zlib.net/fossils/
@@ -220,6 +223,7 @@ https://ftp.gnu.org/gnu/mpc/mpc-1.1.0.tar.gz
 #URL http://sourceforge.net/projects/freeglut/files/freeglut/
 http://downloads.sourceforge.net/freeglut/freeglut-2.8.1.tar.gz
 http://downloads.sourceforge.net/freeglut/freeglut-3.0.0.tar.gz
+http://downloads.sourceforge.net/freeglut/freeglut-3.4.0.tar.gz
 
 #### xz
 #URL http://tukaani.org/xz/
@@ -305,12 +309,15 @@ http://www.hdfgroup.org/ftp/lib-external/szip/2.1/src/szip-2.1.tar.gz
 https://support.hdfgroup.org/ftp/lib-external/szip/2.1.1/src/szip-2.1.1.tar.gz
 
 #URL http://www.hdfgroup.org/HDF5/
+#  odd numbered minor versions are development releases
 http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.13/src/hdf5-1.8.13.tar.gz
 http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.14/src/hdf5-1.8.14.tar.gz
 http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.15-patch1/src/hdf5-1.8.15-patch1.tar.gz
 http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.0/src/hdf5-1.10.0.tar.gz
 https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.1/src/hdf5-1.10.1.tar.gz
 https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.5/src/hdf5-1.10.5.tar.gz
+https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.12/hdf5-1.12.2/src/hdf5-1.12.2.tar.gz
+
 
 #URL http://www.hdfgroup.org/products/hdf4/
 http://www.hdfgroup.org/ftp//HDF/prev-releases/HDF4.2.10/src/hdf-4.2.10.tar.gz
@@ -378,6 +385,7 @@ https://dist.libuv.org/dist/v1.28.0/libuv-v1.28.0.tar.gz
 
 # http://fribidi.org
 http://fribidi.org/download/fribidi-0.19.7.tar.bz2
+https://github.com/fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz
 
 # https://ftp.pcre.org/pub/pcre/
 https://ftp.pcre.org/pub/pcre/pcre-8.40.tar.gz

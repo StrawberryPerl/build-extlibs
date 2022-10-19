@@ -428,6 +428,7 @@ xxrun make install
 # ----------------------------------------------------------------------------
 fontconfig-*)
 cd $WRKDIR/$PACK
+
 save_configure_help
 
 #dll suffix hack
@@ -981,10 +982,24 @@ xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------
-xz-* | gsl-* | libssh2-* |fftw-*)
+xz-* | gsl-* | fftw-*)
 cd $WRKDIR/$PACK
 save_configure_help
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
+patch_libtool
+xxrun make
+xxrun make check
+xxrun make install
+install_bats
+;;
+
+# ----------------------------------------------------------------------------
+libssh2-*)
+cd $WRKDIR/$PACK
+save_configure_help
+#  avoid mansyntax.sh test failure
+sed -i "s|rm -f |rm -rf |" tests/mansyntax.sh
+xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --disable-examples-build
 patch_libtool
 xxrun make
 xxrun make check
@@ -1372,12 +1387,14 @@ cd $WRKDIR/$PACK
 echo "IF (FREEGLUT_BUILD_SHARED_LIBS)" >> CMakeLists.txt
 echo "SET_TARGET_PROPERTIES (freeglut PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "ENDIF ()" >> CMakeLists.txt
-xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DFREEGLUT_BUILD_SHARED_LIBS=ON -DFREEGLUT_BUILD_STATIC_LIBS=OFF
+mkdir _build
+cd _build
+xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DFREEGLUT_BUILD_SHARED_LIBS=ON -DFREEGLUT_BUILD_STATIC_LIBS=OFF ..
 xxrun make
 xxrun make install
 #HACK: OpenGL wants lib/libglut.a not lib/libfreeglut.a
 mv $OUT/lib/libfreeglut.dll.a $OUT/lib/libglut.a
-sed -i 's/-lfreeglut/-lglut/' $OUT/lib/lib/pkgconfig/freeglut.pc
+sed -i 's/-lfreeglut/-lglut/' $OUT/lib/pkgconfig/freeglut.pc
 ;;
 
 giflib-*)

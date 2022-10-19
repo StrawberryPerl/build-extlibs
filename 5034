@@ -19,7 +19,7 @@ zlib-1.2.11
 xz-5.2.4
 
 ###### misc simple
-libiconv-1.16
+libiconv-1.17
 expat-2.2.6
 
 ###### xml libs
@@ -27,8 +27,8 @@ libxml2-2.9.9
 libxslt-1.1.33
 
 ###### crypto
-openssl-1.1.1b
-libssh2-1.8.2
+openssl-1.1.1q
+libssh2-1.10.0
 libsodium-1.0.17
 
 ###### pgsql
@@ -36,7 +36,7 @@ postgresql-11.3
 #mysql-connector-c-6.1.10-src
 
 ###### graphics
-freeglut-3.0.0
+freeglut-3.4.0
 giflib-5.1.9
 jpeg-9c
 tiff-4.0.10
@@ -45,6 +45,7 @@ libXpm-3.5.12
 graphite2-1.3.13
 
 #HACK: rebuilding freetype twice is insane but necessary
+fribidi-1.0.12
 freetype-2.10.0
 harfbuzz-2.3.1
 freetype-2.10.0
@@ -95,7 +96,7 @@ plplot-5.14.0
 #TEST:
 szip-2.1.1
 hdf-4.2.15
-hdf5-1.10.5
+hdf5-1.12.2
 netcdf-c-4.6.3
 
 #NOT-NEEDED: libcaca-0.99.beta19

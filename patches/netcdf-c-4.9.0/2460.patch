@@ -1,0 +1,25 @@
+From 1975911aaed1b2869a9f44fe7ca315cc52d8d6d0 Mon Sep 17 00:00:00 2001
+From: Ward Fisher <wfisher@ucar.edu>
+Date: Mon, 11 Jul 2022 14:09:57 -0600
+Subject: [PATCH] Guard _declspec(dllexport) in support of
+ https://github.com/Unidata/netcdf-c/issues/2446
+
+---
+ libdispatch/dreg.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/libdispatch/dreg.c b/libdispatch/dreg.c
+index 5bb9005a18..9e65ddcbde 100644
+--- a/libdispatch/dreg.c
++++ b/libdispatch/dreg.c
+@@ -16,7 +16,10 @@
+ #include <locale.h>
+ //#include <direct.h>
+ 
++#ifdef _WIN32
+ __declspec(dllexport)
++#endif
++
+ int
+ getmountpoint(char* keyvalue, size_t size)
+ {

@@ -1116,7 +1116,9 @@ sed -i 's/libnetcdf_la_LDFLAGS = /libnetcdf_la_LDFLAGS = -no-undefined /' liblib
 
 save_configure_help
 CPPFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
-                        --enable-netcdf4 --enable-hdf4 --disable-dap  --disable-dynamic-loading
+                        --enable-hdf4 --disable-dap  --disable-dynamic-loading \
+                       --disable-utilities --disable-plugins \
+                       --disable-nczarr-filters --disable-nczarr
 patch_libtool
 xxrun make
 xxrun make check

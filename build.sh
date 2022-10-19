@@ -1177,10 +1177,10 @@ echo "IF (BUILD_SHARED_LIBS)" >> CMakeLists.txt
 echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_LIBSH_TARGET}             PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "SET_TARGET_PROPERTIES (\${HDF4_MF_XDR_LIBSH_TARGET}          PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "SET_TARGET_PROPERTIES (\${HDF4_MF_LIBSH_TARGET}              PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
-echo "SET_TARGET_PROPERTIES (\${HDF4_MF_FCSTUB_LIBSH_TARGET}       PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
-echo "SET_TARGET_PROPERTIES (\${HDF4_MF_FORTRAN_LIBSH_TARGET}      PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
-echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_FCSTUB_LIBSH_TARGET}      PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
-echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_FORTRAN_LIBSH_TARGET}     PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
+#echo "SET_TARGET_PROPERTIES (\${HDF4_MF_FCSTUB_LIBSH_TARGET}       PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
+#echo "SET_TARGET_PROPERTIES (\${HDF4_MF_FORTRAN_LIBSH_TARGET}      PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
+#echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_FCSTUB_LIBSH_TARGET}      PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
+#echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_FORTRAN_LIBSH_TARGET}     PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 ###old
 #echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_LIB_NAME} PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 #echo "SET_TARGET_PROPERTIES (\${HDF4_MF_XDR_LIB_TARGET} PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
@@ -1193,14 +1193,13 @@ echo "ENDIF ()" >> CMakeLists.txt
 mkdir MY_BUILD
 cd MY_BUILD
 cp ../COPYING.txt ./
-xxrun cmake -G 'MSYS Makefiles' -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$OUT \
-                                                       -DBUILD_SHARED_LIBS=ON \
+xxrun cmake -G 'Unix Makefiles' -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$OUT \
                                                        -DHDF4_BUILD_XDR_LIB=ON \
                                                        -DHDF4_ENABLE_SZIP_SUPPORT=ON \
                                                        -DHDF4_ENABLE_SZIP_ENCODING=ON \
                                                        -DHDF4_ENABLE_JPEG_LIB_SUPPORT=ON \
                                                        -DHDF4_ENABLE_Z_LIB_SUPPORT=ON \
-                                                       -DHDF4_BUILD_FORTRAN=ON \
+                                                       -DHDF4_BUILD_FORTRAN=OFF \
                                                        -DHDF4_BUILD_TOOLS=OFF \
                                                        -DHDF4_BUILD_UTILS=OFF \
                                                        -DHDF4_BUILD_EXAMPLES=OFF \
@@ -1209,8 +1208,8 @@ xxrun cmake -G 'MSYS Makefiles' -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$O
                                                        -DSZIP_INCLUDE_DIR=$OUT/include \
                                                        -DSZIP_LIBRARY=$OUT/lib/libsz.dll.a \
                                                        ..
-xxrun make
-xxrun make install
+xxrun gmake
+xxrun gmake install
 # names:
 # cp hdf_fcstub-shared.dll.a    libhdf_fcstub.dll.a
 # cp hdf_fortran-shared.dll.a   libhdf_fortran.dll.a

@@ -36,7 +36,7 @@ postgresql-11.3
 #mysql-connector-c-6.1.10-src
 
 ###### graphics
-freeglut-3.0.0
+freeglut-3.4.0
 giflib-5.1.9
 jpeg-9c
 tiff-4.0.10

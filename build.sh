@@ -1373,12 +1373,14 @@ cd $WRKDIR/$PACK
 echo "IF (FREEGLUT_BUILD_SHARED_LIBS)" >> CMakeLists.txt
 echo "SET_TARGET_PROPERTIES (freeglut PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "ENDIF ()" >> CMakeLists.txt
-xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DFREEGLUT_BUILD_SHARED_LIBS=ON -DFREEGLUT_BUILD_STATIC_LIBS=OFF
+mkdir _build
+cd _build
+xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DFREEGLUT_BUILD_SHARED_LIBS=ON -DFREEGLUT_BUILD_STATIC_LIBS=OFF ..
 xxrun make
 xxrun make install
 #HACK: OpenGL wants lib/libglut.a not lib/libfreeglut.a
 mv $OUT/lib/libfreeglut.dll.a $OUT/lib/libglut.a
-sed -i 's/-lfreeglut/-lglut/' $OUT/lib/lib/pkgconfig/freeglut.pc
+sed -i 's/-lfreeglut/-lglut/' $OUT/lib/pkgconfig/freeglut.pc
 ;;
 
 giflib-*)

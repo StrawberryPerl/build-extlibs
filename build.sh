@@ -249,7 +249,8 @@ for PACK in $PKGLIST; do
   if [ -d $PATCHDIR/$PACK ] ; then
     cp -R $WRKDIR/$PACK $WRKDIR/$PACK.original
     cd $WRKDIR/$PACK
-    cmd.exe /c 'attrib -R *.* /S /D' # removing R/O attribute - berkeley-db hack
+    # cmd.exe /c 'attrib -R *.* /S /D' # removing R/O attribute - berkeley-db hack
+    chmod -R u+w *
     cp -r $PATCHDIR/$PACK/* . 2>/dev/null
     echo -n '' > $OUT/$PACK.patch.log
     ls $PATCHDIR/$PACK/*.patch $PATCHDIR/$PACK/*.diff 2>/dev/null | while read P; do

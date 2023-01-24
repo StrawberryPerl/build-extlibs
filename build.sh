@@ -258,9 +258,13 @@ for PACK in $PKGLIST; do
       echo "GONNA Apply: $P" >> $OUT/$PACK.patch.log
       patch --no-backup-if-mismatch -i $P -p 1 >> $OUT/$PACK.patch.log 2>&1
     done
+    if [ "${RETAIN_PATCHED_PKG_DIFFS}xx" != "xx" ]; then 
+         ( cd "$WRKDIR/$PACK" && find . -type f | grep -v -e "\.rej$" -e "\.diff$" -e "\.patch$" | while read XF; do touch "../$PACK.original/$XF"; done )
+         ( cd $WRKDIR && diff -r -u --strip-trailing-cr $PACK.original $PACK 2>/dev/null ) | grep -v "^Only in " > $OUT/$PACK.diff
+    else 
+        echo "Pack diff not generated" > $OUT/$PACK.diff
+    fi
 
-    ( cd "$WRKDIR/$PACK" && find . -type f | grep -v -e "\.rej$" -e "\.diff$" -e "\.patch$" | while read XF; do touch "../$PACK.original/$XF"; done )
-    ( cd $WRKDIR && diff -r -u --strip-trailing-cr $PACK.original $PACK 2>/dev/null ) | grep -v "^Only in " > $OUT/$PACK.diff
     rm -rf $WRKDIR/$PACK.original
   fi
 done

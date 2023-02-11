@@ -1,60 +1,38 @@
-# Introduction
+# Overview
 
 This repository contains build scripts used for building external libraries that are bundled with strawberry perl.
 
-The binaries are available at:
-* http://strawberryperl.com/package/kmx/32_libs/
-* http://strawberryperl.com/package/kmx/64_libs/
+It is intended to be used as part of a larger process via a docker container.  That container will install all the requisite libraries and tools for the build process, as well as generate the appropriate directories.  See details at https://github.com/StrawberryPerl/spbuild .
 
-# Initial Setup
+If you wish to replicate build systems for older versions of Strawberry perl then see the README file under the archive directory of this repository.  
 
-1. install base MSYS2 environment into e.g. `z:\msys2`
-   see https://sourceforge.net/projects/msys2/
-   run: `z:\msys2\msys2_shell.cmd` 
+Below is some general information about the system for those wishing to try different options or build their own verisons of the libraries. 
 
-1. install additional MSYS2 packages (no GCC!)
-   from MSYS2 shell:
+# Building libraries using job files
+
+The set of libraries to build is specified using a job file.  This lists the name and version of the libraries to build.  There is currently no dependency tracking so you will need to ensure all dependencies have already been built or downloaded into the ```_out``` directory.  
+
+The job file is passed as the first argument to the build script.  The second argument is the DLL suffix (see below).
+
 ```
-pacman -Sy --noconfirm curl wget ca-certificates openssh openssl nano tar xz p7zip zip unzip bzip2
-pacman -Sy --noconfirm patch git make autoconf libtool nano automake man flex bison pkg-config 
-pacman -Sy --noconfirm perl-libwww perl-IPC-Run3 perl-IO-Socket-SSL perl-Archive-Zip perl-LWP-Protocol-https perl-Digest-SHA
-pacman -Sy --noconfirm python2
-pacman -Syu --noconfirm
+$ ./build.sh 5034 __
 ```
-   
-1. unpack gcc-4.8.3 toolchains into e.g. `z:\mingw32bit.483` and `z:\mingw64bit.483`
-   * http://strawberryperl.com/package/kmx/64_gcctoolchain/
-   * http://strawberryperl.com/package/kmx/32_gcctoolchain/
 
-1. unpack cmake into e.g. `z:\cmake`
-   * get win binaries from: http://www.cmake.org/download/
+If you wish to build a different version of a library then ensure its URL is listed in the ```sources.list``` file and that the name in the build script matches the basename of the URL, without any file type extensions.  For example ```tiff-4.5.0``` in the job file corresponds with ```http://download.osgeo.org/libtiff/tiff-4.5.0.tar.gz``` in ```sources.list```.  
 
-1. download or `git clone` build-extlibs into e.g. z:\extlib
+By default, any existing build artefacts in the ```_out``` directory are reused to speed up the build process.  If you wish to rebuild all libraries then delete the ```_out``` directory or set an environment variable ```REBUILD_ALL``` to a true value before calling ```build.sh```.
 
-1. check correct paths to `cmake` and `gcc` in `msys2_shell_483_32.bat` and `msys2_shell_483_64.bat`
+If you wish to rebuild individual libs then append ```rebuild``` to their entries in the job file.  For example this simplified job file will rebuild gdbm-1.23 but not db-6.2.38 if it already exists in ```_out```.
 
-# Building libraries
-
-2. source code tarball must be listed in `sources.list`
-
-2. edit "job file" e.g. `2014Q4` 
-
-2. 32bit build:
-   * start `msys2_shell_483_32.bat`
-   * from MSYS2 shell:
 ```
-$ cd /z/extlib
-$ ./build.sh 2014Q4 _
-```
-   * NOTE: `_` means that all DLLs will have special suffix `*_.dll` e.g. `zlib1_.dll`
+###### gddm + db
+gdbm-1.23 rebuild
+db-6.2.38
+``` 
 
-2. 64bit build:
-   * start `msys2_shell_483_64.bat`
-   * from MSYS2 shell:
-```
-$ cd /z/extlib
-$ ./build.sh 2014Q4 __
-```
-   * NOTE: `__` means that all DLLs will have special suffix `*__.dll` e.g. `zlib1__.dll`
 
-2. see `_out` directory for outputs
+#  DLL naming convention
+
+One point that is worth noting is that DLLs built using this system have a suffix appended to the name.  This is so they are less likely to clash with other versions of those DLLs that have already been loaded, and which may be incompatible.  The 64-bit builds use two underscores by default, for example ```libpong__.dll```, while the 32-bit builds use a single underscore (```libpong_.dll```).  Note that this suffix needs to be passed as an argument to the ```build.sh``` call or no suffix is appended.
+
+The DLL suffix is probably the point of greatest complexity for the build system, especially for cmake builds.  A [patchelf](https://github.com/NixOS/patchelf) equivalent for PE32 files would  greatly simplify the whole process.  

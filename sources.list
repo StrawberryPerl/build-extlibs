@@ -188,7 +188,7 @@ http://www.zlib.net/fossils/zlib-1.2.11.tar.gz
 http://www.zlib.net/fossils/zlib-1.2.12.tar.gz
 
 #URL http://www.bzip.org/
-http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
+https://sourceware.org/pub/bzip2/bzip2-1.0.6.tar.gz
 https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
 
 #### gdbm

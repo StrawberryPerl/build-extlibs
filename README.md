@@ -33,6 +33,6 @@ db-6.2.38
 
 #  DLL naming convention
 
-One point that is worth noting is that DLLs built using this system have a suffix appended to the name.  This is so they are less likely to clash with other versions of those DLLs that have already been loaded, and which may be incompatible.  The 64-bit builds use two underscores by default, for example ```libpong__.dll```, while the 32-bit builds use a single underscore (```libpong_.dll```).  Note that this suffix needs to be passed as an argument to the ```build.sh``` call or no suffix is appended.
+One point that is worth noting is that DLLs built using this system have a suffix appended to the name.  This is so they are less likely to clash with other versions of those DLLs that have already been loaded, and which may be incompatible.  The 64-bit builds use two underscores by default, for example ```libpong__.dll```, while the 32-bit builds use a single underscore (```libpong_.dll```).  Note that this suffix is added by default if no second argument is specified.  If you want no suffix then pass ```none``` as the second argument, for example ```./build.sh 5034 none```.
 
 The DLL suffix is probably the point of greatest complexity for the build system, especially for cmake builds.  A [patchelf](https://github.com/NixOS/patchelf) equivalent for PE32 files would  greatly simplify the whole process.  

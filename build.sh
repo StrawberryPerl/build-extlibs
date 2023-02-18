@@ -148,24 +148,29 @@ fi
 if [ ! -e "$1" ] ; then
   echo "Warning: assuming params to be package names!"
   export PKGLISTNAME=buildtest
-  if [ $IS64BIT ] ; then
-    export DLLSUFFIX=__
-  else
-    export DLLSUFFIX=_
-  fi
   PKGLIST=$@
 else
   # parameter 1: pkg-list filename
   export PKGLISTNAME=$1
 #  PKGLIST=`grep -v -e "^#" -e "^\s*$" "$1" 2>/dev/null`
   PKGLIST=`perl process_build_artefacts.pl "$1" "$2"`
+fi
 
-  # parameter 2: dllsuffix
-  if [ -s "$2" ] ; then
-    export DLLSUFFIX=
+#  handle no dllsuffix being passed
+#  assumes user wants _ or __, which is what the build system is set up for
+export DLLSUFFIX=$2
+if [ -z "$DLLSUFFIX" ] ; then
+  if [ $IS64BIT ] ; then
+    export DLLSUFFIX=__
   else
-    export DLLSUFFIX=$2
+    export DLLSUFFIX=_
   fi
+  echo "no dllsuffix arg, defaulting to $DLLSUFFIX"
+fi
+#  user really wants no suffix
+if [ "$DLLSUFFIX" == "none" ] ; then
+  export DLLSUFFIX=
+  echo "dllsuffix arg is 'none', defaulting to no suffix"
 fi
 
 #calling pwd needs correct PATH

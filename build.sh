@@ -145,10 +145,13 @@ ARCHNICK=32bit
 ARCHBITS=32
 fi
 
+export DLLSUFFIX=$2
 if [ ! -e "$1" ] ; then
   echo "Warning: assuming params to be package names!"
   export PKGLISTNAME=buildtest
   PKGLIST=$@
+  #  dllsuffix will be set to the default below
+  export DLLSUFFIX=
 else
   # parameter 1: pkg-list filename
   export PKGLISTNAME=$1
@@ -158,7 +161,6 @@ fi
 
 #  handle no dllsuffix being passed
 #  assumes user wants _ or __, which is what the build system is set up for
-export DLLSUFFIX=$2
 if [ -z "$DLLSUFFIX" ] ; then
   if [ $IS64BIT ] ; then
     export DLLSUFFIX=__

@@ -3,7 +3,7 @@ termcap-1.3.1
 readline-8.2
 
 ###### gddm + db
-gdbm-1.23
+gdbm-1.19
 db-6.2.38
 
 ###### math libs

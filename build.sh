@@ -474,9 +474,10 @@ xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enabl
 patch_libtool
 xxrun make
 xxrun make install
+#  disable next hack as 2.3.2 does not generate gdlib-config
 #hack: as we do not use install_bats we need to do some magic (copy features: line)
-F=`grep "echo  *\"features:" $OUT/bin/gdlib-config | sed -e "s/^[[:blank:]]*//" -e "s/  */ /g" -e "s/\"//g"`
-sed "s/^echo features:.*$/$F/" gdlib-config.bat.win-gcc > $OUT/bin/gdlib-config.bat
+#F=`grep "echo  *\"features:" $OUT/bin/gdlib-config | sed -e "s/^[[:blank:]]*//" -e "s/  */ /g" -e "s/\"//g"`
+#sed "s/^echo features:.*$/$F/" gdlib-config.bat.win-gcc > $OUT/bin/gdlib-config.bat
 ;;
 
 # ----------------------------------------------------------------------------

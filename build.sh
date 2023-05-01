@@ -1140,16 +1140,18 @@ cd $WRKDIR/$PACK
 
 ###this is a hack
 sed -i s/-ldf/-lhdf/ configure
-sed -i 's/libnetcdf_la_LDFLAGS = /libnetcdf_la_LDFLAGS = -no-undefined /' liblib/Makefile.in
+#sed -i 's/libnetcdf_la_LDFLAGS = /libnetcdf_la_LDFLAGS = -no-undefined /' liblib/Makefile.in
 
 save_configure_help
-CPPFLAGS=-I$OUTINC LDFLAGS=-L$OUTLIB xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
+CPPFLAGS=-I$OUTINC LDFLAGS="-L$OUTLIB -Wl,--export-all-symbols" \
+    xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
                         --enable-hdf4 --disable-dap  --disable-dynamic-loading \
                        --disable-utilities --disable-plugins \
-                       --disable-nczarr-filters --disable-nczarr
+                       --disable-nczarr-filters --disable-nczarr \
+                       --disable-byterange
 patch_libtool
-xxrun make
-xxrun make check
+xxrun make 
+xxrun make check 
 xxrun make install
 ;;
 

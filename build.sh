@@ -327,6 +327,19 @@ xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------
+libunistring-*)
+cd $WRKDIR/$PACK
+save_configure_help
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking \
+                             --enable-static=no --enable-shared=yes \
+                             --enable-threads=windows \
+                             CFLAGS=" -O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
+patch_libtool
+xxrun make
+xxrun make install
+;;
+
+# ----------------------------------------------------------------------------
 libxml2-*)
 cd $WRKDIR/$PACK
 save_configure_help

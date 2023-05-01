@@ -56,7 +56,7 @@ t1lib-5.1.2
 libffi-3.2.1
 libuv-v1.28.0
 
-libunistring-0.9.10
+libunistring-1.1
 libidn2-2.1.1
 
 ###### PDL related

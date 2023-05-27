@@ -1711,6 +1711,43 @@ xxrun make DLLSUFFIX=$DLLSUFFIX PREFIX=$OUT install
 ;;
 
 # ----------------------------------------------------------------------------
+gdb-*)
+cd $WRKDIR/$PACK
+
+autoreconf -fi
+save_configure_help
+xxrun ./configure $HOSTBUILDTARGET --prefix=$OUT \
+    --disable-werror \
+    --disable-staticlib \
+    --disable-gdbserver \
+    --without-tcl \
+    --without-tk \
+    --without-guile \
+    --without-mpfr \
+    --without-zstd \
+    --without-python \
+    --disable-source-highlight \
+    --with-libgmp-prefix=$OUT \
+    --with-libexpat-prefix=$OUT \
+    --with-lzma-prefix=$OUT \
+    --with-libiconv-prefix=$OUT \
+    CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
+
+    #--without-expat \
+    #--enable-64-bit-bfd \
+    #--with-system-zlib
+    #--with-lzma \
+    #--enable-64-bit-bfd \
+    #--with-system-gdbinit=/etc/gdbinit \
+    #--with-system-readline \
+    #--with-libiconv-prefix=/usr \
+
+
+xxrun make
+xxrun make install
+;;
+
+# ----------------------------------------------------------------------------
 ##standard build - via ./configure
 *)
 echo "## !!!WARNING!!! using default build scenario"

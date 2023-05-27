@@ -514,7 +514,18 @@ sed "s/^echo features:.*$/$F/" gdlib-config.bat.win-gcc > $OUT/bin/gdlib-config.
 
 # ----------------------------------------------------------------------------
 db-*)
+cd $WRKDIR/$PACK
+
+pwd
+#  verbatim from msys2 build 
+pushd dist
+autoreconf -fiv -I aclocal -I aclocal_java
+# they have an extra sed in here that we need
+./s_config
+popd
+
 cd $WRKDIR/$PACK/build_windows
+
 ../dist/configure --help > ../help_$PACK.txt
 xxrun ../dist/configure $HOSTBUILD --prefix="$OUT" --enable-static=no --enable-shared=yes \
                         --enable-mingw --with-cryptography \

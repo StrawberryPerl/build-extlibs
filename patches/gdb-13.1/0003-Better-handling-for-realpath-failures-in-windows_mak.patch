@@ -1,0 +1,37 @@
+From ed36ae973e27d52f688d9e7fca4aee06a1303d1e Mon Sep 17 00:00:00 2001
+From: Jon Turney <jon.turney@dronecode.org.uk>
+Date: Wed, 13 Jan 2016 18:27:48 +0000
+Subject: [PATCH 3/6] Better handling for realpath() failures in
+ windows_make_so() on Cygwin
+
+Fix a memory leak which would occur in the case when the result of realpath() is
+greater than or equal to SO_NAME_MAX_PATH_SIZE.
+
+Distinguish between realpath() failing (returning NULL), and returning a path
+longer than SO_NAME_MAX_PATH_SIZE
+
+Warn rather than stopping with an error in those cases.
+
+Original patch from Tim Chick.  Memory leak fix by Corinna Vinschen.
+---
+ gdb/windows-nat.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/gdb/windows-nat.c b/gdb/windows-nat.c
+index 79afc742166..2fc00dd449f 100644
+--- a/gdb/windows-nat.c
++++ b/gdb/windows-nat.c
+@@ -902,6 +902,10 @@ windows_make_so (const char *name, LPVOID load_addr)
+ 	{
+ 	  warning (_("dll path for \"%s\" too long or inaccessible"), name);
+ 	  so->name = so->original_name;
++	  if (rname)
++	    {
++	      free (rname);
++	    }
+ 	}
+     }
+   /* Record cygwin1.dll .text start/end.  */
+-- 
+2.40.0.windows.1
+

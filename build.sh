@@ -514,7 +514,18 @@ sed "s/^echo features:.*$/$F/" gdlib-config.bat.win-gcc > $OUT/bin/gdlib-config.
 
 # ----------------------------------------------------------------------------
 db-*)
+cd $WRKDIR/$PACK
+
+pwd
+#  verbatim from msys2 build 
+pushd dist
+autoreconf -fiv -I aclocal -I aclocal_java
+# they have an extra sed in here that we need
+./s_config
+popd
+
 cd $WRKDIR/$PACK/build_windows
+
 ../dist/configure --help > ../help_$PACK.txt
 xxrun ../dist/configure $HOSTBUILD --prefix="$OUT" --enable-static=no --enable-shared=yes \
                         --enable-mingw --with-cryptography \
@@ -1697,6 +1708,43 @@ cfitsio-*)
 cd $WRKDIR/$PACK
 xxrun cmake -G "MinGW Makefiles" -DWITH_ZLIB=system -DWITH_SSL=bundled -DCMAKE_INSTALL_PREFIX=$OUT -DCMAKE_MAKE_PROGRAM=gmake
 xxrun make DLLSUFFIX=$DLLSUFFIX PREFIX=$OUT install
+;;
+
+# ----------------------------------------------------------------------------
+gdb-*)
+cd $WRKDIR/$PACK
+
+autoreconf -fi
+save_configure_help
+xxrun ./configure $HOSTBUILDTARGET --prefix=$OUT \
+    --disable-werror \
+    --disable-staticlib \
+    --disable-gdbserver \
+    --without-tcl \
+    --without-tk \
+    --without-guile \
+    --without-mpfr \
+    --without-zstd \
+    --without-python \
+    --disable-source-highlight \
+    --with-libgmp-prefix=$OUT \
+    --with-libexpat-prefix=$OUT \
+    --with-lzma-prefix=$OUT \
+    --with-libiconv-prefix=$OUT \
+    CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
+
+    #--without-expat \
+    #--enable-64-bit-bfd \
+    #--with-system-zlib
+    #--with-lzma \
+    #--enable-64-bit-bfd \
+    #--with-system-gdbinit=/etc/gdbinit \
+    #--with-system-readline \
+    #--with-libiconv-prefix=/usr \
+
+
+xxrun make
+xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------

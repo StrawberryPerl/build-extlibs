@@ -64,7 +64,8 @@ https://www.openssl.org/source/openssl-1.1.1q.tar.gz
 
 #### libsodium
 #https://download.libsodium.org/libsodium/releases/
-https://download.libsodium.org/libsodium/releases/libsodium-1.0.17.tar.gz
+https://download.libsodium.org/libsodium/releases/old/libsodium-1.0.17.tar.gz
+https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz
 
 #### ICU
 #http://download.icu-project.org/files/icu4c/
@@ -115,6 +116,7 @@ https://bitbucket.org/libgd/gd-libgd/downloads/libgd-2.1.1.tar.gz
 https://github.com/libgd/libgd/releases/download/gd-2.2.4/libgd-2.2.4.tar.gz
 https://github.com/libgd/libgd/releases/download/gd-2.2.5/libgd-2.2.5.tar.gz
 https://github.com/libgd/libgd/releases/download/gd-2.3.2/libgd-2.3.2.tar.gz
+https://github.com/libgd/libgd/releases/download/gd-2.3.2/libgd-2.3.3:.tar.gz
 
 #### giflib
 #URL http://sourceforge.net/projects/giflib/files/
@@ -543,3 +545,8 @@ http://downloads.sourceforge.net/gphoto/libgphoto2-2.5.0.tar.gz
 #http://strawberryperl.com/package/kmx/sdl/src/SDL2_net-hg20130301.tar.gz
 #http://strawberryperl.com/package/kmx/sdl/src/SDL2_sound-hg20130301.tar.gz
 #http://strawberryperl.com/package/kmx/sdl/src/SDL2_ttf-hg20130301.tar.gz
+
+
+#### https://ftp.gnu.org/gnu/gdb/
+https://ftp.gnu.org/gnu/gdb/gdb-13.1.tar.xz
+

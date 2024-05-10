@@ -115,6 +115,7 @@ https://download.savannah.gnu.org/releases/freetype/freetype-2.6.3.tar.gz
 https://download.savannah.gnu.org/releases/freetype/freetype-2.7.1.tar.gz
 https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.gz
 https://download.savannah.gnu.org/releases/freetype/freetype-2.11.0.tar.gz
+https://download.savannah.gnu.org/releases/freetype/freetype-2.13.2.tar.gz
 
 #### GD
 #URL https://libgd.github.io/
@@ -442,6 +443,7 @@ https://www.cairographics.org/releases/pixman-0.38.0.tar.gz
 
 # https://www.freedesktop.org/wiki/Software/HarfBuzz
 https://www.freedesktop.org/software/harfbuzz/release/harfbuzz-2.3.1.tar.bz2
+https://github.com/harfbuzz/harfbuzz/releases/download/8.4.0/harfbuzz-8.4.0.tar.xz
 
 # https://download.gnome.org/sources/gtk+/
 https://download.gnome.org/sources/gtk+/3.94/gtk+-3.94.0.tar.xz

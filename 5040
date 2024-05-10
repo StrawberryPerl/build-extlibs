@@ -35,7 +35,7 @@ postgresql-15.1
 
 ###### graphics
 freeglut-3.4.0
-giflib-5.1.9
+giflib-5.2.2
 jpeg-9c
 tiff-4.5.0
 libpng-1.6.37

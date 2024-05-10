@@ -1487,7 +1487,7 @@ sed -i 's/-lfreeglut/-lglut/' $OUT/lib/pkgconfig/freeglut.pc
 giflib-*)
 cd $WRKDIR/$PACK
 
-sed -i "s/-\$(LIBMAJOR)\.dll/-\$(LIBMAJOR)${DLLSUFFIX}.dll/g" Makefile
+sed -i "s/-\$(LIBMAJOR)\.\$(SOEXTENSION)/-\$(LIBMAJOR)${DLLSUFFIX}.\$(SOEXTENSION)/g" Makefile
 sed -i "s/\$(MAKE) -C doc/#\$(MAKE) -C doc/g" Makefile
 sed -i "s/diff -u/diff -wu/g" tests/makefile
 

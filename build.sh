@@ -1080,6 +1080,7 @@ libssh2-*)
 cd $WRKDIR/$PACK
 save_configure_help
 #  avoid mansyntax.sh test failure
+xxrun autoreconf -fi
 sed -i "s|rm -f |rm -rf |" tests/mansyntax.sh
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --disable-examples-build
 patch_libtool

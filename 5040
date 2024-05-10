@@ -26,7 +26,7 @@ libxslt-1.1.39
 
 ###### crypto
 openssl-3.3.0
-libssh2-1.10.0
+libssh2-1.11.0
 #libsodium-1.0.19
 
 ###### pgsql

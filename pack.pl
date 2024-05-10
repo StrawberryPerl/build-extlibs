@@ -671,7 +671,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
       ['include', 'c\include', '\.(h|hxx)$'],
     ],
-    'licenses' => ['COPYRIGHT'],
+    'licenses' => ['LICENSE.md'],
     'licdir' => 'licenses\libtiff',
     'urls' => [
       ['Homepage', 'http://remotesensing.org/libtiff/'],

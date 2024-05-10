@@ -128,6 +128,9 @@ function reset_timestamps ()
 
 ### start ###
 
+#  first time we build freetype we don't want harfbuzz
+with_harfbuzz=no
+
 if gcc -v 2>&1 | grep "Target.*x86_64" >/dev/null ; then
 IS64BIT=1
 HOSTBUILD="--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32"
@@ -429,12 +432,15 @@ install_bats
 freetype-*)
 cd $WRKDIR/$PACK
 save_configure_help
+
 CC=gcc xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
+            --with-harfbuzz=$with_harfbuzz
             CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
 patch_libtool
 xxrun make
 xxrun make install
 install_bats
+with_harfbuzz=yes
 ;;
 
 # ----------------------------------------------------------------------------
@@ -446,7 +452,8 @@ save_configure_help
 sed -i "s|LIBRARY lib%s-0\.dll|LIBRARY lib%s-0$DLLSUFFIX.dll|" src/gen-def.py
 
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-                  --with-graphite2=auto --with-freetype=auto CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
+                  --with-graphite2=auto --with-freetype=auto CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB" \
+                  CFLAGS="-pthread" CXXFLAGS="-pthread"
 patch_libtool
 xxrun make
 xxrun make install

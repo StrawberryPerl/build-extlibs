@@ -14,6 +14,8 @@ ftp://xmlsoft.org/libxslt/libxslt-1.1.29.tar.gz
 ftp://xmlsoft.org/libxslt/libxslt-1.1.33.tar.gz
 https://download.gnome.org/sources/libxml2/2.10/libxml2-2.10.4.tar.xz
 https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.37.tar.xz
+https://download.gnome.org/sources/libxml2/2.12/libxml2-2.12.6.tar.xz
+https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.39.tar.xz
 
 #### Postgres
 #URL http://ftp.postgresql.org/pub/source/
@@ -178,6 +180,7 @@ http://downloads.sourceforge.net/expat/expat-2.1.1.tar.bz2
 http://downloads.sourceforge.net/expat/expat-2.2.0.tar.bz2
 https://github.com/libexpat/libexpat/releases/download/R_2_2_6/expat-2.2.6.tar.bz2
 https://github.com/libexpat/libexpat/releases/download/R_2_4_1/expat-2.4.1.tar.gz
+https://github.com/libexpat/libexpat/releases/download/R_2_6_2/expat-2.6.2.tar.gz
 
 #### libiconv
 #URL http://ftp.gnu.org/gnu/libiconv/
@@ -191,7 +194,7 @@ http://ftp.gnu.org/gnu/libiconv/libiconv-1.17.tar.gz
 #URL http://www.zlib.net/fossils/
 http://www.zlib.net/fossils/zlib-1.2.8.tar.gz
 http://www.zlib.net/fossils/zlib-1.2.11.tar.gz
-http://www.zlib.net/fossils/zlib-1.2.12.tar.gz
+http://www.zlib.net/fossils/zlib-1.3.1.tar.gz
 
 #URL http://www.bzip.org/
 https://sourceware.org/pub/bzip2/bzip2-1.0.6.tar.gz

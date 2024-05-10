@@ -610,6 +610,49 @@ xxrun make PERL=perl install_sw
 ;;
 
 # ----------------------------------------------------------------------------
+openssl-3.*)
+cd $WRKDIR/$PACK
+
+if [ $IS64BIT ] ; then
+  OPENSSLTARGET=mingw64
+else
+  OPENSSLTARGET=mingw
+fi
+
+#sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/00-base-templates.conf
+sed -i "s/shared_target/shared_extension => \"${DLLSUFFIX}.dll\", shared_target/g" Configurations/00-base-templates.conf
+#sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/10-main.conf
+sed -i "s/^LIBRARY  *\"\$libname/LIBRARY  \"\${libname}$DLLSUFFIX/" util/mkdef.pl
+sed -i "s/'.dll'/'${DLLSUFFIX}.dll'/g" Configurations/platform/mingw.pm
+
+### -D__MINGW_USE_VC2005_COMPAT is a trouble maker see https://github.com/StrawberryPerl/Perl-Dist-Strawberry/issues/15
+
+xxrun ./Configure shared zlib enable-rfc3779 enable-camellia enable-capieng enable-idea enable-mdc2 enable-rc5 \
+        -DOPENSSLBIN=\"\\\"${OUT}/bin\\\"\" --openssldir=ssl \
+        --with-zlib-lib=$OUTLIB --with-zlib-include=$OUTINC \
+        --libdir=lib \
+        --prefix=$OUT $OPENSSLTARGET
+
+### zlib-dynamic vs. zlib
+
+sed -i 's/__*\.dll\.a/.dll.a/g' Makefile
+sed -i 's/__*\.dll\.a/.dll.a/g' configdata.pm
+sed -i "s/define LIBZ \"ZLIB1\"/define LIBZ \"ZLIB1$DLLSUFFIX\"/" crypto/comp/c_zlib.c
+
+xxrun make depend all
+#xxrun make tests
+xxrun make install_sw
+
+###HACK engines-1_1/*.dll must be without DLLSUFFIX !!
+#  should use a find and exec for this
+mv "$OUT/lib/engines-3/capi$DLLSUFFIX.dll" "$OUT/lib/engines-3/capi.dll"
+mv "$OUT/lib/engines-3/padlock$DLLSUFFIX.dll" "$OUT/lib/engines-3/padlock.dll"
+#mv "$OUT/lib/engines-3/dasync$DLLSUFFIX.dll" "$OUT/lib/engines-3/dasync.dll"
+mv "$OUT/lib/engines-3/loader_attic$DLLSUFFIX.dll" "$OUT/lib/engines-3/loader_attic.dll"
+#mv "$OUT/lib/engines-3/ossltest$DLLSUFFIX.dll" "$OUT/lib/engines-3/ossltest.dll"
+;;
+
+# ----------------------------------------------------------------------------
 openssl-1.1.1*)
 cd $WRKDIR/$PACK
 

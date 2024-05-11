@@ -1639,7 +1639,8 @@ libuv-*)
 cd $WRKDIR/$PACK
 ./autogen.sh
 save_configure_help
-xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
+                  CFLAGS="-Wno-int-conversion"
 patch_libtool
 xxrun make
 xxrun make install

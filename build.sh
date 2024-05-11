@@ -453,6 +453,7 @@ sed -i "s|LIBRARY lib%s-0\.dll|LIBRARY lib%s-0$DLLSUFFIX.dll|" src/gen-def.py
 
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
                   --with-graphite2=auto --with-freetype=auto --with-cairo=no --with-chafa=no \
+                  --with-glib=no --with-gobject=no \
                   CFLAGS="-O2 -I$OUTINC -mms-bitfields -pthread -Wa,-mbig-obj" \
                   CXXFLAGS="-pthread -Wa,-mbig-obj" \
                   LDFLAGS="-L$OUTLIB" 

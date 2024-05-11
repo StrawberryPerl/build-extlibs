@@ -434,13 +434,13 @@ cd $WRKDIR/$PACK
 save_configure_help
 
 CC=gcc xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
-            --with-harfbuzz=$with_harfbuzz
+            --with-harfbuzz=$with_harfbuzz \
             CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
 patch_libtool
 xxrun make
 xxrun make install
 install_bats
-with_harfbuzz=yes
+with_harfbuzz=auto
 ;;
 
 # ----------------------------------------------------------------------------
@@ -452,8 +452,14 @@ save_configure_help
 sed -i "s|LIBRARY lib%s-0\.dll|LIBRARY lib%s-0$DLLSUFFIX.dll|" src/gen-def.py
 
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-                  --with-graphite2=auto --with-freetype=auto CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB" \
-                  CFLAGS="-pthread" CXXFLAGS="-pthread"
+                  --with-graphite2=auto --with-freetype=auto --with-cairo=no --with-chafa=no \
+                  CFLAGS="-O2 -I$OUTINC -mms-bitfields -pthread -Wa,-mbig-obj" \
+                  CXXFLAGS="-pthread -Wa,-mbig-obj" \
+                  LDFLAGS="-L$OUTLIB" 
+
+#  could use -flto -Wl,-allow-multiple-definition instead of -Wa,mbig-obj 
+#  as the latter reportedly does not work on 32 bit
+
 patch_libtool
 xxrun make
 xxrun make install

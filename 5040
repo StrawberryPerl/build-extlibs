@@ -58,7 +58,7 @@ libffi-3.4.6
 libuv-v1.48.0
 
 libunistring-1.2
-libidn2-2.1.1
+libidn2-2.3.7
 
 ###### PDL related
 #cfitsio-3.47

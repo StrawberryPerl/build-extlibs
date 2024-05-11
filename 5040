@@ -64,7 +64,7 @@ libidn2-2.3.7
 #cfitsio-3.47
 ta-lib-0.4.0
 lapack-3.12.0
-fftw-3.3.8
+fftw-3.3.10
 gsl-2.5
 #proj-9.1.0
 #? http://sourceforge.net/projects/libharu/files/libharu2/2.0.8/

@@ -403,6 +403,7 @@ ftp://sourceware.org/pub/libffi/libffi-3.2.1.tar.gz
 http://sourceware.org/pub/libffi/libffi-3.3.tar.gz
 ###https://github.com/libffi/libffi/releases/download/v3.3-rc0/libffi-3.3-rc0.tar.gz
 ###http://strawberryperl.com/package/kmx/libs_src/libffi-3.3-rc0.tar.gz
+https://github.com/libffi/libffi/releases/download/v3.4.6/libffi-3.4.6.tar.gz
 
 #URL http://www.libuv.org/dist/
 http://www.libuv.org/dist/v1.2.1/libuv-v1.2.1.tar.gz

@@ -54,7 +54,7 @@ libgd-2.3.3
 #t1lib-5.1.2
 
 ###### extras
-libffi-3.2.1
+libffi-3.4.6
 libuv-v1.28.0
 
 libunistring-1.1

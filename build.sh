@@ -487,6 +487,7 @@ cp $(dirname `which gcc`)/*.dll ./fc-cache
 patch_libtool
 xxrun make
 xxrun make install
+#xxrun make install DESTDIR=$OUT
 ;;
 
 # ----------------------------------------------------------------------------

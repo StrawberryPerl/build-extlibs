@@ -1,0 +1,26 @@
+From a76b95105ca26c600279b2daf4bd43b37a918823 Mon Sep 17 00:00:00 2001
+From: Akira TAGOH <akira@tagoh.org>
+Date: Sat, 10 Feb 2024 02:15:45 +0900
+Subject: [PATCH] Fix undesired unref of FcConfig on Win32
+
+---
+ src/fccache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/fccache.c b/src/fccache.c
+index cebbb810..54f76ac1 100644
+--- a/src/fccache.c
++++ b/src/fccache.c
+@@ -106,8 +106,8 @@ FcDirCacheDeleteUUID (const FcChar8  *dir,
+     FcStrFree (target);
+ bail:
+     FcStrFree (d);
+-#endif
+     FcConfigDestroy (config);
++#endif
+ 
+     return ret;
+ }
+-- 
+GitLab
+

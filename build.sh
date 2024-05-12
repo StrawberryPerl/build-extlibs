@@ -245,6 +245,9 @@ for PACK in $PKGLIST; do
   if [ -e $SRCDIR/$PACK.tar.lzma ] ; then SRCBALL="$PACK.tar.lzma"; tar --lzma -xf $SRCDIR/$PACK.tar.lzma; fi
   if [ -e $SRCDIR/$PACK.tar.xz ]   ; then SRCBALL="$PACK.tar.xz";   tar --xz -xf $SRCDIR/$PACK.tar.xz; fi
   if [ -z $SRCBALL ] ; then echo "FATAL: source tarball for '$PACK' not found" ; exit ; fi
+  #  Ugly hack for hdf-4 to account for the top-level dir name in the tarball.
+  #  Will need to be generalised if future versions do the same.
+  if [ $PACK = "hdf-4.3.0" ] ; then mv hdfsrc $PACK ; fi
   (
     #ugly but somehow works
     echo "{"
@@ -1251,7 +1254,7 @@ xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
             -DHDF5_ENABLE_SZIP_SUPPORT=ON \
             -DHDF5_ENABLE_SZIP_ENCODING=ON \
             -DSZIP_INCLUDE_DIR=$OUT/include \
-            -DSZIP_LIBRARY=$OUT/lib/libsz.dll.a \
+            -DSZIP_LIBRARY=$OUT/lib/libsz.a \
             ..
 
             ###-DHDF5_INSTALL_CMAKE_DIR="lib/cmake" \
@@ -1273,7 +1276,8 @@ xxrun make install
 
 # ----------------------------------------------------------------------------
 hdf-*)
-cd $WRKDIR/$PACK
+#cd $WRKDIR/$PACK
+cd $WRKDIR/hdfsrc
 echo "IF (BUILD_SHARED_LIBS)" >> CMakeLists.txt
 ###new
 echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_LIBSH_TARGET}             PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
@@ -1308,7 +1312,7 @@ xxrun cmake -G 'Unix Makefiles' -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$O
                                                        -DHDF4_NO_PACKAGES=ON \
                                                        -DHDF4_ENABLE_NETCDF=OFF \
                                                        -DSZIP_INCLUDE_DIR=$OUT/include \
-                                                       -DSZIP_LIBRARY=$OUT/lib/libsz.dll.a \
+                                                       -DSZIP_LIBRARY=$OUT/lib/libsz.a \
                                                        ..
 xxrun gmake
 xxrun gmake install

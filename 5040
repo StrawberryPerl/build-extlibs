@@ -74,7 +74,7 @@ plplot-5.15.0
 szip-2.1.1
 hdf-4.3.0
 hdf5-1.12.2
-netcdf-c-4.9.0
+netcdf-c-4.9.2
 
 
 #NOT-NEEDED: libcaca-0.99.beta19

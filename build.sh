@@ -1768,6 +1768,29 @@ xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------
+gnuplot-6*)
+cd $WRKDIR/$PACK
+
+# mv $OUT/bin/gdlib-config $OUT/bin/gdlib-config.OBSOLETE
+
+autoreconf -fi
+save_configure_help
+
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking \
+                             --without-qt --without-latex --without-cairo \
+                             --without-lua --with-bitmap-terminals --disable-raise-console \
+                             --with-readline=gnu
+
+###--with-readline=gnu "CFLAGS=-I$OUTINC" "LDFLAGS=-L$OUTLIB"
+
+#  ugly hack to not build docs - need to find the configure switch
+sed -i "s/SUBDIRS = config m4 term src docs/SUBDIRS = config m4 term src/" Makefile
+
+xxrun make
+xxrun make install
+;;
+
+# ----------------------------------------------------------------------------
 cfitsio-*)
 cd $WRKDIR/$PACK
 xxrun cmake -G "MinGW Makefiles" -DWITH_ZLIB=system -DWITH_SSL=bundled -DCMAKE_INSTALL_PREFIX=$OUT -DCMAKE_MAKE_PROGRAM=gmake

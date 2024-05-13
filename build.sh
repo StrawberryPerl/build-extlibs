@@ -797,7 +797,9 @@ test -e $OUT/lib/libssl.dll.a && cp $OUT/lib/libssl.dll.a $OUT/lib/libssl32.a
 test -e $OUT/lib/libssl.dll.a && cp $OUT/lib/libssl.dll.a $OUT/lib/libssleay32.a
 #hacks: done
 save_configure_help
-xxrun ./configure $HOSTBUILD --prefix=$OUT --with-zlib --with-ldap --with-openssl --with-includes=$OUTINC --with-libraries=$OUTLIB
+xxrun ./configure $HOSTBUILD --prefix=$OUT --with-zlib --with-ldap --with-openssl \
+                  --without-icu \
+                  --with-includes=$OUTINC --with-libraries=$OUTLIB
 #build only client related parts
 xxrun make -C src/bin/pg_config install
 xxrun make -C src/interfaces/libpq install

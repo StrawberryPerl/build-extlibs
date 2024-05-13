@@ -30,7 +30,7 @@ libssh2-1.11.0
 #libsodium-1.0.19
 
 ###### pgsql
-postgresql-15.1
+postgresql-16.2 rebuild
 # mysql-connector-c-8.0.15-src
 
 ###### graphics

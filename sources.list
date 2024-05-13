@@ -30,6 +30,7 @@ http://ftp.postgresql.org/pub/source/v10.7/postgresql-10.7.tar.gz
 http://ftp.postgresql.org/pub/source/v11.2/postgresql-11.2.tar.gz
 http://ftp.postgresql.org/pub/source/v11.3/postgresql-11.3.tar.gz
 http://ftp.postgresql.org/pub/source/v15.1/postgresql-15.1.tar.gz
+https://ftp.postgresql.org/pub/source/v16.2/postgresql-16.2.tar.gz
 
 #### MySQL Connector-C
 #URL http://dev.mysql.com/downloads/connector/c/

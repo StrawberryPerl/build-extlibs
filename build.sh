@@ -198,7 +198,7 @@ OUTINC=$OUT/include
 CURDATE=`date "+%Y%m%d"`
 
 export PATH="$PATH:$OUTBIN:$CURDIR/bin"
-export PKG_CONFIG_PATH="$OUTLIB/pkgconfig/"
+export PKG_CONFIG_PATH="$OUTLIB/pkgconfig"
 export PKG_CONFIG=/bin/pkg-config
 
 echo "###### [`date +%T`] BUILD STARTED param1='$PKGLISTNAME' param2='$DLLSUFFIX'"
@@ -447,6 +447,42 @@ with_harfbuzz=auto
 ;;
 
 # ----------------------------------------------------------------------------
+harfbuzz-8*)
+cd $WRKDIR/$PACK
+save_configure_help
+
+#  Use the mingw64 meson so the python libs work.
+#  Also make sure we use the pkg-config that lives with meson
+#  The default gives path headaches.
+old_path=$PATH
+old_pk=$PKG_CONFIG
+PKG_CONFIG=
+export PATH=/z/msys64/mingw64/bin:${PATH}
+
+sed -i "s/hb_so_version = ''/hb_so_version = '__'/" src/meson.build
+sed -i "s/hb_so_version = '0'/hb_so_version = '0__'/" src/meson.build
+
+xxrun meson setup \
+          --prefix=$OUT  --buildtype plain     \
+          --wrap-mode=nofallback     --default-library=shared     \
+          -Dauto_features=enabled -Dintrospection=disabled  -Dicu=disabled \
+          -Dgdi=enabled -Dgraphite=enabled -Dchafa=disabled     \
+          -Ddirectwrite=enabled -Dtests=disabled -Dfreetype=enabled  \
+          -Dglib=disabled -Dgobject=disabled -Dcairo=disabled \
+          -Ddocs=disabled \
+          . \
+          _build
+
+xxrun meson compile -C _build
+
+xxrun meson install -C _build
+
+export PATH=$old_path
+PKG_CONFIG=$old_pk
+
+;;
+
+# ----------------------------------------------------------------------------
 harfbuzz-*)
 cd $WRKDIR/$PACK
 save_configure_help
@@ -459,9 +495,9 @@ xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enabl
                   --with-glib=no --with-gobject=no \
                   CFLAGS="-O2 -I$OUTINC -mms-bitfields -pthread -Wa,-mbig-obj" \
                   CXXFLAGS="-pthread -Wa,-mbig-obj" \
-                  LDFLAGS="-L$OUTLIB" 
+                  LDFLAGS="-L$OUTLIB"
 
-#  could use -flto -Wl,-allow-multiple-definition instead of -Wa,mbig-obj 
+#  could use -flto -Wl,-allow-multiple-definition instead of -Wa,mbig-obj
 #  as the latter reportedly does not work on 32 bit
 
 patch_libtool

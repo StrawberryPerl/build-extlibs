@@ -30,7 +30,7 @@ libssh2-1.11.0
 #libsodium-1.0.19
 
 ###### pgsql
-postgresql-16.2 rebuild
+postgresql-16.2
 # mysql-connector-c-8.0.15-src
 
 ###### graphics
@@ -45,9 +45,9 @@ libwebp-1.4.0
 
 #HACK: rebuilding freetype twice is insane but necessary
 fribidi-1.0.14
-freetype-2.10.0
-harfbuzz-2.3.1
-freetype-2.10.0
+freetype-2.13.2
+harfbuzz-8.4.0
+freetype-2.13.2
 
 fontconfig-2.15.0
 libgd-2.3.3

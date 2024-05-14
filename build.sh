@@ -488,7 +488,7 @@ cd $WRKDIR/$PACK
 save_configure_help
 
 #dll suffix hack
-sed -i "s|LIBRARY lib%s-0\.dll|LIBRARY lib%s-0$DLLSUFFIX.dll|" src/gen-def.py
+#sed -i "s|LIBRARY lib%s-0\.dll|LIBRARY lib%s-0$DLLSUFFIX.dll|" src/gen-def.py
 
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
                   --with-graphite2=auto --with-freetype=auto --with-cairo=no --with-chafa=no \
@@ -1314,8 +1314,8 @@ xxrun make install
 
 # ----------------------------------------------------------------------------
 hdf-*)
-#cd $WRKDIR/$PACK
-cd $WRKDIR/hdfsrc
+cd $WRKDIR/$PACK
+#cd $WRKDIR/hdfsrc
 echo "IF (BUILD_SHARED_LIBS)" >> CMakeLists.txt
 ###new
 echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_LIBSH_TARGET}             PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt

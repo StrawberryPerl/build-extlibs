@@ -1276,6 +1276,10 @@ echo "SET_TARGET_PROPERTIES (\${HDF5_HL_LIBSH_TARGET}       PROPERTIES SUFFIX $D
 echo "SET_TARGET_PROPERTIES (\${HDF5_HL_CPP_LIBSH_TARGET}   PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "SET_TARGET_PROPERTIES (\${HDF5_TOOLS_LIBSH_TARGET}    PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "ENDIF ()" >> CMakeLists.txt
+
+szlib=$OUTLIB/libsz.dll.a
+[ -e $OUTLIB/libsz.a ] && szlib=$OUTLIB/libsz.a
+
 mkdir MY_BUILD
 cd MY_BUILD
 xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
@@ -1292,7 +1296,7 @@ xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
             -DHDF5_ENABLE_SZIP_SUPPORT=ON \
             -DHDF5_ENABLE_SZIP_ENCODING=ON \
             -DSZIP_INCLUDE_DIR=$OUT/include \
-            -DSZIP_LIBRARY=$OUT/lib/libsz.a \
+            -DSZIP_LIBRARY=$szlib \
             ..
 
             ###-DHDF5_INSTALL_CMAKE_DIR="lib/cmake" \
@@ -1334,6 +1338,10 @@ echo "SET_TARGET_PROPERTIES (\${HDF4_MF_LIBSH_TARGET}              PROPERTIES SU
 #echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_FCSTUB_LIB_NAME} PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 #echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_FORTRAN_LIB_NAME} PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "ENDIF ()" >> CMakeLists.txt
+
+szlib=$OUTLIB/libsz.dll.a
+[ -e $OUTLIB/libsz.a ] && szlib=$OUTLIB/libsz.a
+
 mkdir MY_BUILD
 cd MY_BUILD
 cp ../COPYING.txt ./
@@ -1350,7 +1358,7 @@ xxrun cmake -G 'Unix Makefiles' -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$O
                                                        -DHDF4_NO_PACKAGES=ON \
                                                        -DHDF4_ENABLE_NETCDF=OFF \
                                                        -DSZIP_INCLUDE_DIR=$OUT/include \
-                                                       -DSZIP_LIBRARY=$OUT/lib/libsz.a \
+                                                       -DSZIP_LIBRARY=$szlib \
                                                        ..
 xxrun gmake
 xxrun gmake install

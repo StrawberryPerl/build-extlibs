@@ -259,6 +259,7 @@ http://tukaani.org/xz/xz-5.2.1.tar.gz
 http://tukaani.org/xz/xz-5.2.2.tar.gz
 http://tukaani.org/xz/xz-5.2.3.tar.gz
 https://tukaani.org/xz/xz-5.2.4.tar.gz
+https://github.com/tukaani-project/xz/releases/download/v5.4.6/xz-5.4.6.tar.gz
 
 #URL ftp://ftp.unidata.ucar.edu/pub/netcdf/
 ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.3.3.tar.gz
@@ -578,4 +579,6 @@ http://downloads.sourceforge.net/gphoto/libgphoto2-2.5.0.tar.gz
 
 #### https://ftp.gnu.org/gnu/gdb/
 https://ftp.gnu.org/gnu/gdb/gdb-13.1.tar.xz
+https://ftp.gnu.org/gnu/gdb/gdb-14.2.tar.gz
+
 

@@ -1,0 +1,65 @@
+--- giflib-5.2.2/Makefile.orig	2024-02-19 02:01:50.000000000 +0100
++++ giflib-5.2.2/Makefile	2024-02-20 23:05:57.574482400 +0100
+@@ -86,6 +86,16 @@
+ LIBUTILSO	= libutil.$(SOEXTENSION)
+ LIBUTILSOMAJOR	= libutil.$(LIBMAJOR).$(SOEXTENSION)
+ endif
++ifeq ($(findstring MINGW, $(UNAME)), MINGW)
++SOEXTENSION	= dll
++LIBGIFSO        = libgif-$(LIBMAJOR).$(SOEXTENSION)
++LIBGIFSOIMPORT  = libgif.dll.a
++LIBGIFSOMAJOR   = libgif-$(LIBMAJOR).$(SOEXTENSION)
++LIBGIFSOVER	= libgif-$(LIBMAJOR).$(SOEXTENSION)
++LIBUTILSO	= libutil-$(LIBMAJOR).$(SOEXTENSION)
++LIBUTILSOMAJOR	= libutil-$(LIBMAJOR).$(SOEXTENSION)
++LIBUTILSOIMPORT = libutil.dll.a
++endif
+ 
+ all: $(LIBGIFSO) libgif.a $(LIBUTILSO) libutil.a $(UTILS)
+ ifeq ($(UNAME), Darwin)
+@@ -98,6 +108,8 @@
+ $(LIBGIFSO): $(OBJECTS) $(HEADERS)
+ ifeq ($(UNAME), Darwin)
+ 	$(CC) $(CFLAGS) -dynamiclib -current_version $(LIBVER) $(OBJECTS) -o $(LIBGIFSO)
++else ifeq ($(findstring MINGW,$(UNAME)),MINGW)
++	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,--out-implib,$(LIBGIFSOIMPORT) -o $(LIBGIFSO) $(OBJECTS)
+ else
+ 	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,-soname -Wl,$(LIBGIFSOMAJOR) -o $(LIBGIFSO) $(OBJECTS)
+ endif
+@@ -105,9 +117,11 @@
+ libgif.a: $(OBJECTS) $(HEADERS)
+ 	$(AR) rcs libgif.a $(OBJECTS)
+ 
+-$(LIBUTILSO): $(UOBJECTS) $(UHEADERS)
++$(LIBUTILSO): $(UOBJECTS) $(UHEADERS) $(LIBGIFSO)
+ ifeq ($(UNAME), Darwin)
+ 	$(CC) $(CFLAGS) -dynamiclib -current_version $(LIBVER) $(OBJECTS) -o $(LIBUTILSO)
++else ifeq ($(findstring MINGW,$(UNAME)),MINGW)
++	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,--out-implib,$(LIBUTILSOIMPORT) -o $(LIBUTILSO) $(UOBJECTS) -L. -lgif
+ else
+ 	$(CC) $(CFLAGS) -shared $(LDFLAGS) -Wl,-soname -Wl,$(LIBUTILMAJOR) -o $(LIBUTILSO) $(UOBJECTS)
+ endif
+@@ -144,9 +158,9 @@
+ install-lib:
+ 	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)"
+ 	$(INSTALL) -m 644 libgif.a "$(DESTDIR)$(LIBDIR)/libgif.a"
+-	$(INSTALL) -m 755 $(LIBGIFSO) "$(DESTDIR)$(LIBDIR)/$(LIBGIFSOVER)"
+-	ln -sf $(LIBGIFSOVER) "$(DESTDIR)$(LIBDIR)/$(LIBGIFSOMAJOR)"
+-	ln -sf $(LIBGIFSOMAJOR) "$(DESTDIR)$(LIBDIR)/$(LIBGIFSO)"
++	$(INSTALL) -m 644 $(LIBGIFSOIMPORT) "$(DESTDIR)$(LIBDIR)/$(LIBGIFSOIMPORT)"
++	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
++	$(INSTALL) -m 755 $(LIBGIFSO) "$(DESTDIR)$(BINDIR)/$(LIBGIFSO)"
+ install-man:
+ 	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man1"
+ 	$(INSTALL) -m 644 $(MANUAL_PAGES) "$(DESTDIR)$(MANDIR)/man1"
+--- giflib-5.2.2/doc/Makefile.orig	2024-02-18 19:15:05.000000000 +0100
++++ giflib-5.2.2/doc/Makefile	2024-02-21 09:00:48.621317500 +0100
+@@ -15,7 +15,7 @@
+ .adoc.html:
+ 	asciidoc $<
+ 
+-all: allhtml manpages
++all: manpages
+ 
+ # The distinction between XMLMAN and XMLINTERNAL is because
+ # some pages shouldn't be installed as part of a binary package;

@@ -445,6 +445,24 @@ my $desc = {
       ['Homepage', 'http://www.ijg.org/'],
     ],
   },
+  'openssl3-' => {
+    'files' => [
+      ['bin\openssl.exe', 'c\bin\openssl.exe'],
+      ['lib\libcrypto.dll.a', 'c\lib\libcrypto.a'],
+      ['lib\libssl.dll.a', 'c\lib\libssl.a'],
+    ],
+    'trees' => [
+      ['bin', 'c\bin', '\.dll$'],
+      ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
+      ['lib\engines-3', 'c\lib\engines-3', '\.dll$'],
+      ['include', 'c\include', '\.h$'],
+    ],
+    'licenses' => ['LICENSE.txt'],
+    'licdir' => 'licenses\openssl',
+    'urls' => [
+      ['Homepage', 'http://www.openssl.org/'],
+    ],
+  },
   'openssl111-' => {
     'files' => [
       ['bin\openssl.exe', 'c\bin\openssl.exe'],
@@ -653,7 +671,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
       ['include', 'c\include', '\.(h|hxx)$'],
     ],
-    'licenses' => ['COPYRIGHT'],
+    'licenses' => ['LICENSE.md'],
     'licdir' => 'licenses\libtiff',
     'urls' => [
       ['Homepage', 'http://remotesensing.org/libtiff/'],
@@ -1077,6 +1095,8 @@ sub prepare_pack {
   $jobname = 'libuv-' if $sihash->{pack} =~ /^libuv-v/i;   #hack
   $jobname = 'openssl11-' if $sihash->{pack} =~ /^openssl-1\.1\.0/i;   #hack
   $jobname = 'openssl111-' if $sihash->{pack} =~ /^openssl-1\.1\.1/i;   #hack
+  $jobname = 'openssl3-' if $sihash->{pack} =~ /^openssl-3/i;   #hack
+print STDERR "JOBNAME IS $jobname\n";
   my $pkghash = $deschash->{$jobname};
   if (! defined $pkghash) {
     warn "###warning### Missing definition for '$jobname' (using default)\n";

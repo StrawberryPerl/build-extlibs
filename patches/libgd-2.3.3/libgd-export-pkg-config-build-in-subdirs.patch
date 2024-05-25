@@ -18,32 +18,6 @@ diff -ur libgd-2.2.3/CMakeLists.txt libgd-2.2.3-new/CMakeLists.txt
 +# install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
  INCLUDE(CPack)
  
-diff -ur libgd-2.2.3/config/gdlib.pc.in libgd-2.2.3-new/config/gdlib.pc.in
---- libgd-2.2.3/config/gdlib.pc.in	2016-06-03 10:34:39.000000000 +0200
-+++ libgd-2.2.3-new/config/gdlib.pc.in	2016-09-25 11:09:38.702045800 +0200
-@@ -1,13 +1,13 @@
--prefix=@prefix@
--exec_prefix=@exec_prefix@
--libdir=@libdir@
--includedir=@includedir@
-+prefix=@CMAKE_INSTALL_PREFIX@
-+exec_prefix=${prefix}
-+libdir=${prefix}/lib
-+includedir=${prefix}/include/
- 
- Name: gd
- Description: GD graphics library
--Version: @VERSION@
--Requires:
--Requires.private: @PKG_REQUIRES_PRIVATES@
--Cflags: -I${includedir}
--Libs.private: @LIBS_PRIVATES@ @LIBICONV@
-+Version: @GD_VERSION_STRING@
-+Requires:
-+Requires.private: @PKG_REQUIRES_PRIVATES@
-+Cflags: -I${includedir}
-+Libs.private: @PRIVLIBLIST@
- Libs: -L${libdir} -lgd
 diff -ur libgd-2.2.4/src/CMakeLists.txt.orig libgd-2.2.4/src/CMakeLists.txt
 --- libgd-2.2.4/src/CMakeLists.txt.orig	2017-01-18 06:01:19.000000000 -0500
 +++ libgd-2.2.4/src/CMakeLists.txt	2017-01-23 13:39:47.661420900 -0500

@@ -128,6 +128,9 @@ function reset_timestamps ()
 
 ### start ###
 
+#  first time we build freetype we don't want harfbuzz
+with_harfbuzz=no
+
 if gcc -v 2>&1 | grep "Target.*x86_64" >/dev/null ; then
 IS64BIT=1
 HOSTBUILD="--host=x86_64-w64-mingw32 --build=x86_64-w64-mingw32"
@@ -195,7 +198,7 @@ OUTINC=$OUT/include
 CURDATE=`date "+%Y%m%d"`
 
 export PATH="$PATH:$OUTBIN:$CURDIR/bin"
-export PKG_CONFIG_PATH="$OUTLIB/pkgconfig/"
+export PKG_CONFIG_PATH="$OUTLIB/pkgconfig"
 export PKG_CONFIG=/bin/pkg-config
 
 echo "###### [`date +%T`] BUILD STARTED param1='$PKGLISTNAME' param2='$DLLSUFFIX'"
@@ -242,6 +245,9 @@ for PACK in $PKGLIST; do
   if [ -e $SRCDIR/$PACK.tar.lzma ] ; then SRCBALL="$PACK.tar.lzma"; tar --lzma -xf $SRCDIR/$PACK.tar.lzma; fi
   if [ -e $SRCDIR/$PACK.tar.xz ]   ; then SRCBALL="$PACK.tar.xz";   tar --xz -xf $SRCDIR/$PACK.tar.xz; fi
   if [ -z $SRCBALL ] ; then echo "FATAL: source tarball for '$PACK' not found" ; exit ; fi
+  #  Ugly hack for hdf-4 to account for the top-level dir name in the tarball.
+  #  Will need to be generalised if future versions do the same.
+  if [ $PACK = "hdf-4.3.0" ] ; then mv hdfsrc $PACK ; fi
   (
     #ugly but somehow works
     echo "{"
@@ -429,12 +435,51 @@ install_bats
 freetype-*)
 cd $WRKDIR/$PACK
 save_configure_help
+
 CC=gcc xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
+            --with-harfbuzz=$with_harfbuzz \
             CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
 patch_libtool
 xxrun make
 xxrun make install
 install_bats
+with_harfbuzz=auto
+;;
+
+# ----------------------------------------------------------------------------
+harfbuzz-8*)
+cd $WRKDIR/$PACK
+save_configure_help
+
+#  Use the mingw64 meson so the python libs work.
+#  Also make sure we use the pkg-config that lives with meson
+#  The default gives path headaches.
+old_path=$PATH
+old_pk=$PKG_CONFIG
+PKG_CONFIG=
+export PATH=/z/msys64/mingw64/bin:${PATH}
+
+sed -i "s/hb_so_version = ''/hb_so_version = '__'/" src/meson.build
+sed -i "s/hb_so_version = '0'/hb_so_version = '0__'/" src/meson.build
+
+xxrun meson setup \
+          --prefix=$OUT  --buildtype plain     \
+          --wrap-mode=nofallback     --default-library=shared     \
+          -Dauto_features=enabled -Dintrospection=disabled  -Dicu=disabled \
+          -Dgdi=enabled -Dgraphite=enabled -Dchafa=disabled     \
+          -Ddirectwrite=enabled -Dtests=disabled -Dfreetype=enabled  \
+          -Dglib=disabled -Dgobject=disabled -Dcairo=disabled \
+          -Ddocs=disabled \
+          . \
+          _build
+
+xxrun meson compile -C _build
+
+xxrun meson install -C _build
+
+export PATH=$old_path
+PKG_CONFIG=$old_pk
+
 ;;
 
 # ----------------------------------------------------------------------------
@@ -443,10 +488,18 @@ cd $WRKDIR/$PACK
 save_configure_help
 
 #dll suffix hack
-sed -i "s|LIBRARY lib%s-0\.dll|LIBRARY lib%s-0$DLLSUFFIX.dll|" src/gen-def.py
+#sed -i "s|LIBRARY lib%s-0\.dll|LIBRARY lib%s-0$DLLSUFFIX.dll|" src/gen-def.py
 
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-                  --with-graphite2=auto --with-freetype=auto CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
+                  --with-graphite2=auto --with-freetype=auto --with-cairo=no --with-chafa=no \
+                  --with-glib=no --with-gobject=no \
+                  CFLAGS="-O2 -I$OUTINC -mms-bitfields -pthread -Wa,-mbig-obj" \
+                  CXXFLAGS="-pthread -Wa,-mbig-obj" \
+                  LDFLAGS="-L$OUTLIB"
+
+#  could use -flto -Wl,-allow-multiple-definition instead of -Wa,mbig-obj
+#  as the latter reportedly does not work on 32 bit
+
 patch_libtool
 xxrun make
 xxrun make install
@@ -474,6 +527,7 @@ cp $(dirname `which gcc`)/*.dll ./fc-cache
 patch_libtool
 xxrun make
 xxrun make install
+#xxrun make install DESTDIR=$OUT
 ;;
 
 # ----------------------------------------------------------------------------
@@ -610,6 +664,49 @@ xxrun make PERL=perl install_sw
 ;;
 
 # ----------------------------------------------------------------------------
+openssl-3.*)
+cd $WRKDIR/$PACK
+
+if [ $IS64BIT ] ; then
+  OPENSSLTARGET=mingw64
+else
+  OPENSSLTARGET=mingw
+fi
+
+#sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/00-base-templates.conf
+sed -i "s/shared_target/shared_extension => \"${DLLSUFFIX}.dll\", shared_target/g" Configurations/00-base-templates.conf
+#sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/10-main.conf
+sed -i "s/^LIBRARY  *\"\$libname/LIBRARY  \"\${libname}$DLLSUFFIX/" util/mkdef.pl
+sed -i "s/'.dll'/'${DLLSUFFIX}.dll'/g" Configurations/platform/mingw.pm
+
+### -D__MINGW_USE_VC2005_COMPAT is a trouble maker see https://github.com/StrawberryPerl/Perl-Dist-Strawberry/issues/15
+
+xxrun ./Configure shared zlib enable-rfc3779 enable-camellia enable-capieng enable-idea enable-mdc2 enable-rc5 \
+        -DOPENSSLBIN=\"\\\"${OUT}/bin\\\"\" --openssldir=ssl \
+        --with-zlib-lib=$OUTLIB --with-zlib-include=$OUTINC \
+        --libdir=lib \
+        --prefix=$OUT $OPENSSLTARGET
+
+### zlib-dynamic vs. zlib
+
+sed -i 's/__*\.dll\.a/.dll.a/g' Makefile
+sed -i 's/__*\.dll\.a/.dll.a/g' configdata.pm
+sed -i "s/define LIBZ \"ZLIB1\"/define LIBZ \"ZLIB1$DLLSUFFIX\"/" crypto/comp/c_zlib.c
+
+xxrun make depend all
+#xxrun make tests
+xxrun make install_sw
+
+###HACK engines-1_1/*.dll must be without DLLSUFFIX !!
+#  should use a find and exec for this
+mv "$OUT/lib/engines-3/capi$DLLSUFFIX.dll" "$OUT/lib/engines-3/capi.dll"
+mv "$OUT/lib/engines-3/padlock$DLLSUFFIX.dll" "$OUT/lib/engines-3/padlock.dll"
+#mv "$OUT/lib/engines-3/dasync$DLLSUFFIX.dll" "$OUT/lib/engines-3/dasync.dll"
+mv "$OUT/lib/engines-3/loader_attic$DLLSUFFIX.dll" "$OUT/lib/engines-3/loader_attic.dll"
+#mv "$OUT/lib/engines-3/ossltest$DLLSUFFIX.dll" "$OUT/lib/engines-3/ossltest.dll"
+;;
+
+# ----------------------------------------------------------------------------
 openssl-1.1.1*)
 cd $WRKDIR/$PACK
 
@@ -736,7 +833,9 @@ test -e $OUT/lib/libssl.dll.a && cp $OUT/lib/libssl.dll.a $OUT/lib/libssl32.a
 test -e $OUT/lib/libssl.dll.a && cp $OUT/lib/libssl.dll.a $OUT/lib/libssleay32.a
 #hacks: done
 save_configure_help
-xxrun ./configure $HOSTBUILD --prefix=$OUT --with-zlib --with-ldap --with-openssl --with-includes=$OUTINC --with-libraries=$OUTLIB
+xxrun ./configure $HOSTBUILD --prefix=$OUT --with-zlib --with-ldap --with-openssl \
+                  --without-icu \
+                  --with-includes=$OUTINC --with-libraries=$OUTLIB
 #build only client related parts
 xxrun make -C src/bin/pg_config install
 xxrun make -C src/interfaces/libpq install
@@ -1037,6 +1136,7 @@ libssh2-*)
 cd $WRKDIR/$PACK
 save_configure_help
 #  avoid mansyntax.sh test failure
+xxrun autoreconf -fi
 sed -i "s|rm -f |rm -rf |" tests/mansyntax.sh
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes --disable-examples-build
 patch_libtool
@@ -1176,6 +1276,10 @@ echo "SET_TARGET_PROPERTIES (\${HDF5_HL_LIBSH_TARGET}       PROPERTIES SUFFIX $D
 echo "SET_TARGET_PROPERTIES (\${HDF5_HL_CPP_LIBSH_TARGET}   PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "SET_TARGET_PROPERTIES (\${HDF5_TOOLS_LIBSH_TARGET}    PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "ENDIF ()" >> CMakeLists.txt
+
+szlib=$OUTLIB/libsz.dll.a
+[ -e $OUTLIB/libsz.a ] && szlib=$OUTLIB/libsz.a
+
 mkdir MY_BUILD
 cd MY_BUILD
 xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
@@ -1192,7 +1296,7 @@ xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
             -DHDF5_ENABLE_SZIP_SUPPORT=ON \
             -DHDF5_ENABLE_SZIP_ENCODING=ON \
             -DSZIP_INCLUDE_DIR=$OUT/include \
-            -DSZIP_LIBRARY=$OUT/lib/libsz.dll.a \
+            -DSZIP_LIBRARY=$szlib \
             ..
 
             ###-DHDF5_INSTALL_CMAKE_DIR="lib/cmake" \
@@ -1215,6 +1319,7 @@ xxrun make install
 # ----------------------------------------------------------------------------
 hdf-*)
 cd $WRKDIR/$PACK
+#cd $WRKDIR/hdfsrc
 echo "IF (BUILD_SHARED_LIBS)" >> CMakeLists.txt
 ###new
 echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_LIBSH_TARGET}             PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
@@ -1233,6 +1338,10 @@ echo "SET_TARGET_PROPERTIES (\${HDF4_MF_LIBSH_TARGET}              PROPERTIES SU
 #echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_FCSTUB_LIB_NAME} PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 #echo "SET_TARGET_PROPERTIES (\${HDF4_SRC_FORTRAN_LIB_NAME} PROPERTIES SUFFIX $DLLSUFFIX.dll)">> CMakeLists.txt
 echo "ENDIF ()" >> CMakeLists.txt
+
+szlib=$OUTLIB/libsz.dll.a
+[ -e $OUTLIB/libsz.a ] && szlib=$OUTLIB/libsz.a
+
 mkdir MY_BUILD
 cd MY_BUILD
 cp ../COPYING.txt ./
@@ -1249,7 +1358,7 @@ xxrun cmake -G 'Unix Makefiles' -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$O
                                                        -DHDF4_NO_PACKAGES=ON \
                                                        -DHDF4_ENABLE_NETCDF=OFF \
                                                        -DSZIP_INCLUDE_DIR=$OUT/include \
-                                                       -DSZIP_LIBRARY=$OUT/lib/libsz.dll.a \
+                                                       -DSZIP_LIBRARY=$szlib \
                                                        ..
 xxrun gmake
 xxrun gmake install
@@ -1443,7 +1552,7 @@ sed -i 's/-lfreeglut/-lglut/' $OUT/lib/pkgconfig/freeglut.pc
 giflib-*)
 cd $WRKDIR/$PACK
 
-sed -i "s/-\$(LIBMAJOR)\.dll/-\$(LIBMAJOR)${DLLSUFFIX}.dll/g" Makefile
+sed -i "s/-\$(LIBMAJOR)\.\$(SOEXTENSION)/-\$(LIBMAJOR)${DLLSUFFIX}.\$(SOEXTENSION)/g" Makefile
 sed -i "s/\$(MAKE) -C doc/#\$(MAKE) -C doc/g" Makefile
 sed -i "s/diff -u/diff -wu/g" tests/makefile
 
@@ -1581,7 +1690,8 @@ libuv-*)
 cd $WRKDIR/$PACK
 ./autogen.sh
 save_configure_help
-xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
+                  CFLAGS="-Wno-int-conversion"
 patch_libtool
 xxrun make
 xxrun make install
@@ -1698,6 +1808,29 @@ xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking \
                              --without-lua --with-bitmap-terminals
 
 ###--with-readline=gnu "CFLAGS=-I$OUTINC" "LDFLAGS=-L$OUTLIB"
+
+xxrun make
+xxrun make install
+;;
+
+# ----------------------------------------------------------------------------
+gnuplot-6*)
+cd $WRKDIR/$PACK
+
+# mv $OUT/bin/gdlib-config $OUT/bin/gdlib-config.OBSOLETE
+
+autoreconf -fi
+save_configure_help
+
+xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking \
+                             --without-qt --without-latex --without-cairo \
+                             --without-lua --with-bitmap-terminals --disable-raise-console \
+                             --with-readline=gnu
+
+###--with-readline=gnu "CFLAGS=-I$OUTINC" "LDFLAGS=-L$OUTLIB"
+
+#  ugly hack to not build docs - need to find the configure switch
+sed -i "s/SUBDIRS = config m4 term src docs/SUBDIRS = config m4 term src/" Makefile
 
 xxrun make
 xxrun make install

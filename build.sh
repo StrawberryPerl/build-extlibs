@@ -614,7 +614,7 @@ cd $WRKDIR/$PACK
 save_configure_help
 #do not use any CFLAGS here!!
 if [ $IS64BIT ] ; then
-xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=yes --enable-shared=no
+CC="gcc -D__USE_MINGW_ANSI_STDIO" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=yes --enable-shared=no
 else
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-fat --enable-static=yes --enable-shared=no
 fi
@@ -672,6 +672,12 @@ if [ $IS64BIT ] ; then
 else
   OPENSSLTARGET=mingw
 fi
+
+# f_to_copy="${PATCHDIR}${PACK}"/pathtools.c
+# [ -d "${f_to_copy}" ] && cp -fHv "${f_to_copy}"/pathtools.c crypto/
+# f_to_copy="${PATCHDIR}${PACK}"/pathtools.h
+# [ -d "${f_to_copy}" ] && cp -fHv "${f_to_copy}"/pathtools.h ./
+
 
 #sed -i "s/shared_extension => \".dll\"/shared_extension => \"${DLLSUFFIX}.dll\"/g" Configurations/00-base-templates.conf
 sed -i "s/shared_target/shared_extension => \"${DLLSUFFIX}.dll\", shared_target/g" Configurations/00-base-templates.conf

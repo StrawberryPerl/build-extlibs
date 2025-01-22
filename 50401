@@ -21,8 +21,8 @@ libiconv-1.17
 expat-2.6.2
 
 ###### xml libs
-libxml2-2.13.5
-libxslt-1.1.39
+libxml2-2.12.9
+libxslt-1.1.39 rebuild
 
 ###### crypto
 openssl-3.3.0

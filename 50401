@@ -36,7 +36,7 @@ postgresql-16.2
 ###### graphics
 freeglut-3.4.0
 giflib-5.2.2
-jpeg-9c
+jpeg-9f
 tiff-4.6.0
 libpng-1.6.43
 libXpm-3.5.12

@@ -146,6 +146,7 @@ http://www.ijg.org/files/jpegsrc.v9a.tar.gz -O jpeg-9a.tar.gz
 http://www.ijg.org/files/jpegsrc.v9b.tar.gz -O jpeg-9b.tar.gz
 http://www.ijg.org/files/jpegsrc.v9c.tar.gz -O jpeg-9c.tar.gz
 http://www.ijg.org/files/jpegsrc.v9d.tar.gz -O jpeg-9d.tar.gz
+http://www.ijg.org/files/jpegsrc.v9f.tar.gz -O jpeg-9f.tar.gz
 
 #### libpng
 #URL http://downloads.sourceforge.net/libpng/

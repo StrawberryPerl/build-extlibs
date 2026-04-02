@@ -68,6 +68,7 @@ https://www.openssl.org/source/openssl-1.1.1i.tar.gz
 https://www.openssl.org/source/openssl-1.1.1q.tar.gz
 https://www.openssl.org/source/openssl-3.3.0.tar.gz
 https://www.openssl.org/source/openssl-3.4.0.tar.gz
+https://www.openssl.org/source/openssl-3.6.1.tar.gz
 
 #### libsodium
 #https://download.libsodium.org/libsodium/releases/
@@ -90,6 +91,7 @@ http://www.libssh2.org/download/libssh2-1.8.0.tar.gz
 https://www.libssh2.org/download/libssh2-1.8.2.tar.gz
 https://www.libssh2.org/download/libssh2-1.10.0.tar.gz
 https://www.libssh2.org/download/libssh2-1.11.0.tar.gz
+https://www.libssh2.org/download/libssh2-1.11.1.tar.gz
 
 #### Oracle Berkeley DB:
 #URL http://www.oracle.com/technetwork/database/database-technologies/berkeleydb/downloads/index.html

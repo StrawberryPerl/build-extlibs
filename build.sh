@@ -583,7 +583,8 @@ cd $WRKDIR/$PACK/build_windows
 ../dist/configure --help > ../help_$PACK.txt
 xxrun ../dist/configure $HOSTBUILD --prefix="$OUT" --enable-static=no --enable-shared=yes \
                         --enable-mingw --with-cryptography \
-                        --disable-rpath --disable-tcl
+                        --disable-rpath --disable-tcl \
+                        CFLAGS="-std=gnu89"
 ###removed: --enable-cxx --enable-sql --enable-sql-codegen --enable-stl --enable-compat185 --enable-dbm
 patch_libtool
 xxrun make LIBSO_LIBS=-lpthread

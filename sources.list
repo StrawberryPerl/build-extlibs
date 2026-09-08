@@ -270,6 +270,7 @@ http://tukaani.org/xz/xz-5.2.2.tar.gz
 http://tukaani.org/xz/xz-5.2.3.tar.gz
 https://tukaani.org/xz/xz-5.2.4.tar.gz
 https://github.com/tukaani-project/xz/releases/download/v5.4.6/xz-5.4.6.tar.gz
+https://github.com/tukaani-project/xz/releases/download/v5.8.3/xz-5.8.3.tar.gz
 
 #URL ftp://ftp.unidata.ucar.edu/pub/netcdf/
 ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.3.3.tar.gz

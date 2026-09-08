@@ -615,7 +615,7 @@ cd $WRKDIR/$PACK
 save_configure_help
 #do not use any CFLAGS here!!
 if [ $IS64BIT ] ; then
-CC="gcc -D__USE_MINGW_ANSI_STDIO" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=yes --enable-shared=no
+CC="gcc -D__USE_MINGW_ANSI_STDIO -std=gnu89" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=yes --enable-shared=no
 else
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-fat --enable-static=yes --enable-shared=no
 fi

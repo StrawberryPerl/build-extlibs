@@ -1,0 +1,96 @@
+From c95d589c5ad4710697a12dc2a2dbf998678de1e1 Mon Sep 17 00:00:00 2001
+From: Chet Ramey <chet.ramey@case.edu>
+Date: Sat, 8 Oct 2022 14:25:55 -0400
+Subject: readline-20221008 snapshot
+
+---
+ display.c   | 10 ++++------
+ input.c     |  4 +++-
+ nls.c       |  4 ++++
+ rlprivate.h |  2 +-
+ 4 files changed, 12 insertions(+), 8 deletions(-)
+
+diff --git a/display.c b/display.c
+index c1135ec..df9d749 100644
+--- a/display.c
++++ b/display.c
+@@ -684,7 +684,7 @@ init_line_structures (int minsize)
+       if (line_size > minsize)
+ 	minsize = line_size;
+     }
+-   realloc_line (minsize); 
++  realloc_line (minsize); 
+ 
+   if (vis_lbreaks == 0)
+     {
+@@ -2681,13 +2681,11 @@ int
+ rl_forced_update_display (void)
+ {
+   register char *temp;
++  register int tlen;
+ 
+   if (visible_line)
+-    {
+-      temp = visible_line;
+-      while (*temp)
+-	*temp++ = '\0';
+-    }
++    memset (visible_line, 0, line_size);
++
+   rl_on_new_line ();
+   forced_display++;
+   (*rl_redisplay_function) ();
+diff --git a/input.c b/input.c
+index 6f038d4..da4da45 100644
+--- a/input.c
++++ b/input.c
+@@ -151,7 +151,9 @@ int rl_timeout_remaining (unsigned int *, unsigned int *);
+ 
+ int _rl_timeout_init (void);
+ int _rl_timeout_sigalrm_handler (void);
++#if defined (RL_TIMEOUT_USE_SELECT)
+ int _rl_timeout_select (int, fd_set *, fd_set *, fd_set *, const struct timeval *, const sigset_t *);
++#endif
+ 
+ static void _rl_timeout_handle (void);
+ #if defined (RL_TIMEOUT_USE_SIGALRM)
+@@ -818,7 +820,7 @@ rl_getc (FILE *stream)
+       /* We know at this point that _rl_caught_signal == 0 */
+ 
+ #if defined (__MINGW32__)
+-      if (isatty (fd)
++      if (isatty (fd))
+ 	return (_getch ());	/* "There is no error return." */
+ #endif
+       result = 0;
+diff --git a/nls.c b/nls.c
+index 5c6a13b..8c027d6 100644
+--- a/nls.c
++++ b/nls.c
+@@ -141,6 +141,10 @@ _rl_init_locale (void)
+   if (lspec == 0)
+     lspec = "";
+   ret = setlocale (LC_CTYPE, lspec);	/* ok, since it does not change locale */
++  if (ret == 0 || *ret == 0)
++    ret = setlocale (LC_CTYPE, (char *)NULL);
++  if (ret == 0 || *ret == 0)
++    ret = RL_DEFAULT_LOCALE;
+ #else
+   ret = (lspec == 0 || *lspec == 0) ? RL_DEFAULT_LOCALE : lspec;
+ #endif
+diff --git a/rlprivate.h b/rlprivate.h
+index d87d07a..fc3171a 100644
+--- a/rlprivate.h
++++ b/rlprivate.h
+@@ -303,7 +303,7 @@ extern int _rl_pushed_input_available (void);
+ 
+ extern int _rl_timeout_init (void);
+ extern int _rl_timeout_handle_sigalrm (void);
+-#if defined (_POSIXSELECT_H_)
++#if defined (_POSIXSELECT_H_) && !defined (__MINGW32__)
+ /* use as a sentinel for fd_set, struct timeval,  and sigset_t definitions */
+ extern int _rl_timeout_select (int, fd_set *, fd_set *, fd_set *, const struct timeval *, const sigset_t *);
+ #endif
+-- 
+cgit v1.1
+

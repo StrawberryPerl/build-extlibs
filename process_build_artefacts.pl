@@ -19,7 +19,7 @@ use warnings;
 use 5.010;
 
 use Archive::Zip qw /:ERROR_CODES/;
-
+use File::Copy qw /copy/;
 
 my $sources_file = shift @ARGV or die "Need sources file";
 my $suffix       = shift @ARGV || '__';
@@ -29,6 +29,13 @@ die "bitness argument $bitness is invalid, can only be 64 or 32"
 my $build_dir    = "_${sources_file}" . ($bitness eq 64 ? "__" : "_");
 my $zip_dir = '_out';
 my $zip_pfx = "${bitness}bit_";
+
+#  any downloads go here first as then we can delete the entire _out dir
+#  and they just get recopied.
+my $download_dir = '_downloaded_zips';
+if (!-d $download_dir) {
+  mkdir $download_dir;
+}
 
 open my $sources_fh, '<', $sources_file
   or die "Cannot open $sources_file, $!";
@@ -45,7 +52,24 @@ foreach my $line (<$sources_fh>) {
   next if !length $line; 
   next if $line =~ /^#/;
   my ($package, $rebuild) = split /\s+/, $line;
-  #  only need those flagged as rebuilds
+  $rebuild //= '';
+
+  #  are we working with a pre-built lib?
+  if ($rebuild =~ /^https.+\.zip$/) {
+    my @parts = split '/', $rebuild;
+    my $zip_file = $parts[-1];
+    my $downloaded = "$download_dir/$zip_file";
+    if (!-e $downloaded) {
+      system ('wget', $rebuild, '-O', $downloaded);
+    }
+    if (!-e "$zip_dir/$zip_file") {
+      mkdir $zip_dir if !-d $zip_dir;
+      copy ($downloaded, "$zip_dir/$zip_file");
+    }
+    $rebuild = 0;
+  }
+
+  #  if not flagged as a rebuild then we try to re-use the already built package
   if (!$rebuild) {
     push @packaged, $package;
   } 

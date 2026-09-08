@@ -1760,7 +1760,7 @@ xxrun make install
 termcap-*)
 cd $WRKDIR/$PACK
 save_configure_help
-xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
+CC="gcc -std=gnu89" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
 patch_libtool
 xxrun make
 

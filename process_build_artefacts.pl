@@ -25,7 +25,7 @@ my $sources_file = shift @ARGV or die "Need sources file";
 my $suffix       = shift @ARGV || '__';
 my $bitness      = $suffix eq '_' ? '32' : '64';
 die "bitness argument $bitness is invalid, can only be 64 or 32"
-  if not $bitness eq '64' and $bitness eq '32';
+  if not ($bitness eq '64' or $bitness eq '32');
 my $build_dir    = "_${sources_file}" . ($bitness eq 64 ? "__" : "_");
 my $zip_dir = '_out';
 my $zip_pfx = "${bitness}bit_";

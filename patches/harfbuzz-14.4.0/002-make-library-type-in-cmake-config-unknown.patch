@@ -1,0 +1,33 @@
+--- harfbuzz-14.3.0/src/harfbuzz-config.cmake.in.orig	2026-07-31 16:49:40.000000000 +0200
++++ harfbuzz-14.3.0/src/harfbuzz-config.cmake.in	2026-07-31 20:04:36.077780000 +0200
+@@ -14,18 +14,18 @@
+ endfunction()
+ 
+ # Add the libraries.
+-add_library(harfbuzz::harfbuzz @HB_LIBRARY_TYPE@ IMPORTED)
++add_library(harfbuzz::harfbuzz UNKNOWN IMPORTED)
+ set_target_properties(harfbuzz::harfbuzz PROPERTIES
+   INTERFACE_INCLUDE_DIRECTORIES "@PACKAGE_INCLUDE_INSTALL_DIR@")
+ _harfbuzz_set_imported_library(harfbuzz::harfbuzz harfbuzz)
+ 
+-add_library(harfbuzz::icu @HB_LIBRARY_TYPE@ IMPORTED)
++add_library(harfbuzz::icu UNKNOWN IMPORTED)
+ set_target_properties(harfbuzz::icu PROPERTIES
+   INTERFACE_INCLUDE_DIRECTORIES "@PACKAGE_INCLUDE_INSTALL_DIR@"
+   INTERFACE_LINK_LIBRARIES "harfbuzz::harfbuzz")
+ _harfbuzz_set_imported_library(harfbuzz::icu harfbuzz-icu)
+ 
+-add_library(harfbuzz::subset @HB_LIBRARY_TYPE@ IMPORTED)
++add_library(harfbuzz::subset UNKNOWN IMPORTED)
+ set_target_properties(harfbuzz::subset PROPERTIES
+   INTERFACE_INCLUDE_DIRECTORIES "@PACKAGE_INCLUDE_INSTALL_DIR@"
+   INTERFACE_LINK_LIBRARIES "harfbuzz::harfbuzz")
+@@ -33,7 +33,7 @@
+ 
+ # Only add the gobject library if it was built.
+ if (@HB_HAVE_GOBJECT@)
+-  add_library(harfbuzz::gobject @HB_LIBRARY_TYPE@ IMPORTED)
++  add_library(harfbuzz::gobject UNKNOWN IMPORTED)
+   set_target_properties(harfbuzz::gobject PROPERTIES
+     INTERFACE_INCLUDE_DIRECTORIES "@PACKAGE_INCLUDE_INSTALL_DIR@"
+     INTERFACE_LINK_LIBRARIES "harfbuzz::harfbuzz")

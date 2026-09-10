@@ -447,7 +447,7 @@ with_harfbuzz=auto
 ;;
 
 # ----------------------------------------------------------------------------
-harfbuzz-8*)
+harfbuzz-8* | harfbuzz-1*)
 cd $WRKDIR/$PACK
 save_configure_help
 
@@ -469,7 +469,7 @@ xxrun meson setup \
           -Dgdi=enabled -Dgraphite=enabled -Dchafa=disabled     \
           -Ddirectwrite=enabled -Dtests=disabled -Dfreetype=enabled  \
           -Dglib=disabled -Dgobject=disabled -Dcairo=disabled \
-          -Ddocs=disabled \
+          -Dgpu=disabled -Ddocs=disabled \
           . \
           _build
 

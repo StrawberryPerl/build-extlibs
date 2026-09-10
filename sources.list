@@ -486,6 +486,7 @@ https://www.cairographics.org/releases/pixman-0.38.0.tar.gz
 # https://www.freedesktop.org/wiki/Software/HarfBuzz
 https://www.freedesktop.org/software/harfbuzz/release/harfbuzz-2.3.1.tar.bz2
 https://github.com/harfbuzz/harfbuzz/releases/download/8.4.0/harfbuzz-8.4.0.tar.xz
+https://github.com/harfbuzz/harfbuzz/releases/download/14.4.0/harfbuzz-14.4.0.tar.xz
 
 # https://download.gnome.org/sources/gtk+/
 https://download.gnome.org/sources/gtk+/3.94/gtk+-3.94.0.tar.xz

@@ -700,7 +700,8 @@ sed -i 's/__*\.dll\.a/.dll.a/g' Makefile
 sed -i 's/__*\.dll\.a/.dll.a/g' configdata.pm
 sed -i "s/define LIBZ \"ZLIB1\"/define LIBZ \"ZLIB1$DLLSUFFIX\"/" crypto/comp/c_zlib.c
 
-xxrun make depend all
+#  sometimes needs to be rerun
+xxrun make depend all || xxrun make depend all
 #xxrun make tests
 xxrun make install_sw
 

@@ -506,6 +506,68 @@ xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------
+#  meson build for fontconfig 2.18+
+fontconfig-2*)
+cd $WRKDIR/$PACK
+
+save_configure_help
+
+#  cargo culted from harfbuzz - might not be needed?
+#  Use the mingw64 meson so the python libs work.
+#  Also make sure we use the pkg-config that lives with meson
+#  The default gives path headaches.
+old_path=$PATH
+old_pk=$PKG_CONFIG
+PKG_CONFIG=
+export PATH=/z/msys64/mingw64/bin:${PATH}
+
+#dll suffix hack - prob not needed under meson
+#sed -i "s|@LIBT_CURRENT_MINUS_AGE@.dll|@LIBT_CURRENT_MINUS_AGE@$DLLSUFFIX.dll|g" src/Makefile.in
+#sed -i "s|@LIBT_CURRENT_MINUS_AGE@.dll|@LIBT_CURRENT_MINUS_AGE@$DLLSUFFIX.dll|g" src/Makefile.am
+#xxrun autoreconf -fiv
+
+sed -i "s|libfontconfig = library|xxsoversion = '@0@__'.format(soversion)\nlibfontconfig = library|g" meson.build
+sed -i "s|  soversion: soversion,|  soversion: xxsoversion,|g" meson.build
+
+#xxrun meson configure .
+
+#HACK:
+cp $(dirname `which gcc`)/*.dll ./fc-cache
+
+xxrun meson setup \
+      --default-library=shared \
+      --prefix="${OUT}" \
+      --wrap-mode=nodownload \
+      --buildtype=release \
+      --auto-features=disabled \
+      -Ddoc-man=disabled \
+      -Ddoc-txt=disabled \
+      -Ddoc-pdf=disabled \
+      -Ddoc-html=disabled \
+      -Dcache-build=disabled \
+      -Dtests=disabled \
+      . \
+      _build
+
+xxrun meson compile -C _build
+
+xxrun meson install -C _build
+
+#  Update the .pc file.  The last four are not distributed with Strawberry Perl.
+sed -i -e 's|^prefix=.*|prefix=\${pcfiledir}/../..|' $OUT/lib/pkgconfig/fontconfig.pc
+sed -i -e 's|^sysconfdir=.*||' $OUT/lib/pkgconfig/fontconfig.pc
+sed -i -e 's|^localstatedir=.*||' $OUT/lib/pkgconfig/fontconfig.pc
+sed -i -e 's|^confdir=.*||' $OUT/lib/pkgconfig/fontconfig.pc
+sed -i -e 's|^cachedir=.*||' $OUT/lib/pkgconfig/fontconfig.pc
+
+
+export PATH=$old_path
+PKG_CONFIG=$old_pk
+
+;;
+
+
+# ----------------------------------------------------------------------------
 fontconfig-*)
 cd $WRKDIR/$PACK
 
@@ -517,7 +579,8 @@ sed -i "s|@LIBT_CURRENT_MINUS_AGE@.dll|@LIBT_CURRENT_MINUS_AGE@$DLLSUFFIX.dll|g"
 xxrun autoreconf -fiv
 
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-            --disable-docs --enable-iconv --with-libiconv=$OUT as_ln_s="cp -pR"
+            --disable-docs --enable-iconv --with-libiconv=$OUT as_ln_s="cp -pR" \
+            CFLAGS="-Wno-int-conversion -Wno-implicit-function-declaration"
 
 sed -i 's,all-am: Makefile $(PROGRAMS),all-am:,' test/Makefile
 

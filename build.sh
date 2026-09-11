@@ -1283,7 +1283,12 @@ lapack-*)
 cd $WRKDIR/$PACK
 mkdir MY_BUILD
 cd MY_BUILD
-xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DBUILD_DEPRECATED=ON ..
+xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT \
+               -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON \
+               -DBUILD_DEPRECATED=ON -DBUILD_TESTING=OFF \
+               -DLAPACKE=ON -DCBLAS=ON \
+               -DBUILD_INDEX64=OFF \
+               ..
 xxrun make
 xxrun make install
 

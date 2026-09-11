@@ -1753,6 +1753,9 @@ cd $WRKDIR/$PACK
 save_configure_help
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes
 patch_libtool
+
+sed -i.bak -e "s/\(allow_undefined=\)yes/\1no/" libtool
+
 xxrun make
 xxrun make install
 install_bats

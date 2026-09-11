@@ -402,6 +402,7 @@ https://github.com/Reference-LAPACK/lapack/archive/refs/tags/v3.12.0.tar.gz -O l
 #URL http://sourceforge.net/projects/ta-lib/files/ta-lib/
 #http://downloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
 http://strawberryperl.com/package/kmx/libs_src/ta-lib-0.4.0.tar.gz
+https://github.com/ta-lib/ta-lib/releases/download/v0.7.1/ta-lib-0.7.1-src.tar.gz -O ta-lib-0.7.1.tar.gz
 
 #URL http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/
 http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfit3370.zip -O cfitsio-3.37.zip

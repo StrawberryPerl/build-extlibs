@@ -247,7 +247,8 @@ for PACK in $PKGLIST; do
   if [ -z $SRCBALL ] ; then echo "FATAL: source tarball for '$PACK' not found" ; exit ; fi
   #  Ugly hack for hdf-4 to account for the top-level dir name in the tarball.
   #  Will need to be generalised if future versions do the same.
-  if [ $PACK = "hdf-4.3.0" ] ; then mv hdfsrc $PACK ; fi
+  if [[ $PACK == "hdf-4.3.0" ]] ; then mv hdfsrc $PACK ; fi
+  if [[ $PACK == "hdf-4.4.0" ]] ; then mv hdf4.4.0 $PACK ; fi
   (
     #ugly but somehow works
     echo "{"
@@ -1303,6 +1304,7 @@ cd $WRKDIR/$PACK
 
 ### old style (DLL library)
 save_configure_help
+sed -i.bak -e "s/\(allow_undefined=\)yes/\1no/" configure
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
 patch_libtool
 xxrun make
@@ -1316,6 +1318,34 @@ xxrun make install
 # xxrun make
 # xxrun make install
 # ###hack
+# cd ..
+# cp -f src/ricehdf.h $OUT/include/ricehdf.h
+# cp $OUT/lib/libszip-static.a $OUT/lib/libszip.a
+;;
+
+# ----------------------------------------------------------------------------
+libaec-*)
+cd $WRKDIR/$PACK
+
+sed -i 's/SOVERSION "\${sz_VERSION_MAJOR}"/SOVERSION "${sz_VERSION_MAJOR}__"/' src/CMakeLists.txt
+sed -i 's/SOVERSION "\${libaec_VERSION_MAJOR}"/SOVERSION "${libaec_VERSION_MAJOR}__"/' src/CMakeLists.txt
+
+mkdir MY_BUILD
+cd MY_BUILD
+cmake \
+      -G'MSYS Makefiles' \
+      -DCMAKE_INSTALL_PREFIX="$OUT" \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_DLL_NAME_WITH_SOVERSION=ON \
+      -DBUILD_TESTING=OFF \
+      ..
+
+##### cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=OFF -DSZIP_ENABLE_ENCODING=ON ..
+#xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT ..
+patch_libtool
+xxrun make
+xxrun make install
+###hack
 # cd ..
 # cp -f src/ricehdf.h $OUT/include/ricehdf.h
 # cp $OUT/lib/libszip-static.a $OUT/lib/libszip.a

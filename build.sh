@@ -1946,8 +1946,9 @@ cd $WRKDIR/$PACK
 autoreconf -fi
 save_configure_help
 
-xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking \
+CFLAGS="-std=gnu17" xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking \
                              --without-qt --without-latex --without-cairo \
+                             --without-wx --disable-wxwidgets \
                              --without-lua --with-bitmap-terminals --disable-raise-console \
                              --with-readline=gnu
 

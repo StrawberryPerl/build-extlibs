@@ -297,7 +297,7 @@ ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-c-4.6.2.tar.gz
 ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-c-4.6.3.tar.gz
 https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.9.0.tar.gz -O netcdf-c-4.9.0.tar.gz
 https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.9.2.tar.gz -O netcdf-c-4.9.2.tar.gz
-
+https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.10.1.tar.gz -O netcdf-c-4.10.1.tar.gz
 
 #URL http://www.fftw.org/
 http://www.fftw.org/fftw-2.1.5.tar.gz

@@ -1365,7 +1365,7 @@ CPPFLAGS=-I$OUTINC LDFLAGS="-L$OUTLIB -Wl,--export-all-symbols" \
                         --enable-hdf4 --disable-dap  --disable-dynamic-loading \
                        --disable-utilities --disable-plugins \
                        --disable-nczarr-filters --disable-nczarr \
-                       --disable-byterange
+                       --disable-byterange --disable-libxml2
 patch_libtool
 xxrun make 
 xxrun make check 
@@ -1385,10 +1385,12 @@ echo "ENDIF ()" >> CMakeLists.txt
 
 szlib=$OUTLIB/libsz.dll.a
 [ -e $OUTLIB/libsz.a ] && szlib=$OUTLIB/libsz.a
+zlib=$OUTLIB/libz.dll.a
+[ -e $OUTLIB/libz.a ] && zlib=$OUTLIB/libz.a
 
 mkdir MY_BUILD
 cd MY_BUILD
-xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
+PKG_CONFIG_PATH=${OUTLIB}/pkgconfig ZLIB_ROOT=$OUT xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
             -DBUILD_SHARED_LIBS=ON \
             -DBUILD_TESTING=OFF \
             -DCMAKE_BUILD_TYPE=Release \
@@ -1398,11 +1400,19 @@ xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
             -DHDF5_BUILD_FORTRAN=OFF \
             -DHDF5_BUILD_TOOLS=ON \
             -DHDF5_ENABLE_DEPRECATED_SYMBOLS=ON \
-            -DHDF5_ENABLE_Z_LIB_SUPPORT=ON \
+            -DHDF5_ALLOW_EXTERNAL_SUPPORT=NO \
             -DHDF5_ENABLE_SZIP_SUPPORT=ON \
             -DHDF5_ENABLE_SZIP_ENCODING=ON \
             -DSZIP_INCLUDE_DIR=$OUT/include \
             -DSZIP_LIBRARY=$szlib \
+            -DHDF5_ENABLE_ZLIB_SUPPORT:BOOL=ON \
+            -DHDF5_ENABLE_ZLIB_SUPPORT=ON \
+            -DZLIB_USE_EXTERNAL=OFF \
+            -DZLIB_ROOT=$OUT \
+            -DZLIB_INCLUDE_DIR=$OUT/include \
+            -DZLIB_LIBRARY=$zlib \
+            -DHDF5_MSVC_NAMING_CONVENTION=OFF \
+            -DHDF5_ENABLE_ALL_WARNINGS=OFF \
             ..
 
             ###-DHDF5_INSTALL_CMAKE_DIR="lib/cmake" \
@@ -1709,6 +1719,9 @@ cd $WRKDIR/$PACK
 ### old way
 xxrun make -f win32/Makefile.gcc BINARY_PATH=$OUTBIN INCLUDE_PATH=$OUTINC LIBRARY_PATH=$OUTLIB SHAREDLIB=zlib1$DLLSUFFIX.dll SHARED_MODE=1 install
 rm $OUTLIB/libz.a
+sed -i -e 's|^prefix=.*|prefix=\${pcfiledir}/../..|' $OUT/lib/pkgconfig/zlib.pc
+sed -i -e 's|^exec_prefix=.*|exec_prefix=\${pcfiledir}/../..|' $OUT/lib/pkgconfig/zlib.pc
+sed -i -e "s|$OUT|\${prefix}|" $OUT/lib/pkgconfig/zlib.pc
 ;;
 
 # ----------------------------------------------------------------------------

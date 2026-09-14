@@ -359,6 +359,7 @@ autoconf
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
             --with-threads=win32 --without-python --with-modules \
             --with-iconv=$OUT --with-zlib=$OUT --with-lzma=$OUT \
+            --with-legacy \
             CFLAGS="-O2 -I$OUTINC -D__USE_MINGW_ANSI_STDIO=1" LDFLAGS="-L$OUTLIB"
 
 patch_libtool
@@ -378,8 +379,16 @@ save_configure_help
 
 xxrun autoreconf -fi
 
+#  when first built, libxml2 include files are under .../include/libxml2/libxml
+#  but when packed and then unpacked they are under .../include/libxml
+xmlinc=${OUTINC}
+[ -d ${xmlinc}/libxml2 ] && xmlinc=${xmlinc}/libxml2
+
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-            --with-libxml-prefix=$OUT --without-python --with-crypto --with-plugins
+            --without-python --with-crypto --without-plugins \
+            --with-libxml-prefix=${OUT} \
+            --with-libxml-include-prefix=$xmlinc --with-libxml-libs-prefix=${OUTLIB} \
+            --disable-silent-rules
 
 ############CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
 

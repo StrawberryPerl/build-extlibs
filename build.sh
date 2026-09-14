@@ -384,7 +384,9 @@ xxrun autoreconf -fi
 xmlinc=${OUTINC}
 [ -d ${xmlinc}/libxml2 ] && xmlinc=${xmlinc}/libxml2
 
-xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
+ldflags=$(${OUT}/bin/xml2-config --libs)
+LDFLAGS="${ldflags}" xxrun ./configure $HOSTBUILD --prefix=$OUT \
+            --disable-dependency-tracking --enable-static=no --enable-shared=yes \
             --without-python --with-crypto --without-plugins \
             --with-libxml-prefix=${OUT} \
             --with-libxml-include-prefix=$xmlinc --with-libxml-libs-prefix=${OUTLIB} \

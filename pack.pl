@@ -1089,7 +1089,7 @@ sub prepare_pack {
   my $srcroot = $pkgsrc;
   
   my $jobname = $sihash->{pack};
-  $jobname =~ s/-\d.*$/-/g;
+  $jobname =~ s/-v?\d.*$/-/g;
   $jobname = 'fftw2-' if $sihash->{pack} =~ /^fftw-2/; #hack
   $jobname = 'gd-' if $sihash->{pack} =~ /^gd-HG/i;    #hack
   $jobname = 'libuv-' if $sihash->{pack} =~ /^libuv-v/i;   #hack

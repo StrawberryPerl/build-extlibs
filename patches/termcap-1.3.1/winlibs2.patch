@@ -1,0 +1,7 @@
+--- a/tparam.c
++++ b/tparam.c
+@@ -90,3 +90,3 @@
+
+-static char *tparam1 ();
++static char *tparam1 (char *string, char *outstring, int len, char *up, char *left, register int *argp);
+

@@ -1983,12 +1983,18 @@ xxrun make DLLSUFFIX=$DLLSUFFIX PREFIX=$OUT install
 gdb-*)
 cd $WRKDIR/$PACK
 
+#  build needs texinfo package installed to get makeinfo
+
 autoreconf -fi
 save_configure_help
+
+sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/" libiberty/configure
+
 xxrun ./configure $HOSTBUILDTARGET --prefix=$OUT \
     --disable-werror \
     --disable-staticlib \
     --disable-gdbserver \
+    --disable-win32-registry \
     --without-tcl \
     --without-tk \
     --without-guile \
@@ -1996,6 +2002,8 @@ xxrun ./configure $HOSTBUILDTARGET --prefix=$OUT \
     --without-zstd \
     --without-python \
     --disable-source-highlight \
+    --disable-tui \
+    --with-{expat,gmp,mpfr,lzma}=${OUT} \
     --with-libgmp-prefix=$OUT \
     --with-libexpat-prefix=$OUT \
     --with-lzma-prefix=$OUT \
@@ -2006,7 +2014,6 @@ xxrun ./configure $HOSTBUILDTARGET --prefix=$OUT \
     #--enable-64-bit-bfd \
     #--with-system-zlib
     #--with-lzma \
-    #--enable-64-bit-bfd \
     #--with-system-gdbinit=/etc/gdbinit \
     #--with-system-readline \
     #--with-libiconv-prefix=/usr \

@@ -22,8 +22,8 @@ libiconv-1.19
 expat-2.8.4
 
 ###### xml libs
-libxml2-2.15.4 rebuild
-libxslt-v1.1.45 rebuild
+libxml2-2.15.4
+libxslt-v1.1.45
 
 ###### crypto
 openssl-3.6.3
@@ -46,7 +46,7 @@ libwebp-1.6.0
 fribidi-1.0.16
 freetype-2.14.3
 harfbuzz-14.4.0
-freetype-2.14.3 rebuild
+freetype-2.14.3
 
 fontconfig-2.18.3
 libgd-2.3.3
@@ -74,4 +74,6 @@ netcdf-c-4.10.1
 
 libcerf-1.3
 gnuplot-6.0.0
+
+gdb-17.2
 

@@ -201,6 +201,8 @@ export PATH="$PATH:$OUTBIN:$CURDIR/bin"
 export PKG_CONFIG_PATH="$OUTLIB/pkgconfig"
 export PKG_CONFIG=/bin/pkg-config
 
+ccache --version > /dev/nul && export CC="ccache $(which gcc)"
+
 echo "###### [`date +%T`] BUILD STARTED param1='$PKGLISTNAME' param2='$DLLSUFFIX'"
 echo "###### gcc: `gcc -v 2>&1 | grep Target`"
 echo "###### is64bit: $IS64BIT"

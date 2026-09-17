@@ -1973,6 +1973,26 @@ xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------
+glfw-3*)
+cd $WRKDIR/$PACK
+#  zip file has on extra dir
+cd $PACK
+sed -i "s/set(GLFW_LIB_NAME glfw3)/set(GLFW_LIB_NAME glfw3${DLLSUFFIX})/" src/CMakeLists.txt
+
+mkdir _build
+cd _build
+
+xxrun cmake -G 'MSYS Makefiles' \
+            -DBUILD_SHARED_LIBS=ON \
+            -DGLFW_BUILD_DOCS=OFF \
+            -DCMAKE_INSTALL_PREFIX=$OUT \
+            ..
+xxrun make
+xxrun make install
+
+;;
+
+# ----------------------------------------------------------------------------
 cfitsio-*)
 cd $WRKDIR/$PACK
 xxrun cmake -G "MinGW Makefiles" -DWITH_ZLIB=system -DWITH_SSL=bundled -DCMAKE_INSTALL_PREFIX=$OUT -DCMAKE_MAKE_PROGRAM=gmake

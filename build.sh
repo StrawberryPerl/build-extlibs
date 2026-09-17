@@ -201,6 +201,8 @@ export PATH="$PATH:$OUTBIN:$CURDIR/bin"
 export PKG_CONFIG_PATH="$OUTLIB/pkgconfig"
 export PKG_CONFIG=/bin/pkg-config
 
+ccache --version > /dev/nul && export CC="ccache $(which gcc)"
+
 echo "###### [`date +%T`] BUILD STARTED param1='$PKGLISTNAME' param2='$DLLSUFFIX'"
 echo "###### gcc: `gcc -v 2>&1 | grep Target`"
 echo "###### is64bit: $IS64BIT"
@@ -247,7 +249,8 @@ for PACK in $PKGLIST; do
   if [ -z $SRCBALL ] ; then echo "FATAL: source tarball for '$PACK' not found" ; exit ; fi
   #  Ugly hack for hdf-4 to account for the top-level dir name in the tarball.
   #  Will need to be generalised if future versions do the same.
-  if [ $PACK = "hdf-4.3.0" ] ; then mv hdfsrc $PACK ; fi
+  if [[ $PACK == "hdf-4.3.0" ]] ; then mv hdfsrc $PACK ; fi
+  if [[ $PACK == "hdf-4.4.0" ]] ; then mv hdf4.4.0 $PACK ; fi
   (
     #ugly but somehow works
     echo "{"
@@ -358,6 +361,7 @@ autoconf
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
             --with-threads=win32 --without-python --with-modules \
             --with-iconv=$OUT --with-zlib=$OUT --with-lzma=$OUT \
+            --with-legacy \
             CFLAGS="-O2 -I$OUTINC -D__USE_MINGW_ANSI_STDIO=1" LDFLAGS="-L$OUTLIB"
 
 patch_libtool
@@ -377,8 +381,18 @@ save_configure_help
 
 xxrun autoreconf -fi
 
-xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-            --with-libxml-prefix=$OUT --without-python --with-crypto --with-plugins
+#  when first built, libxml2 include files are under .../include/libxml2/libxml
+#  but when packed and then unpacked they are under .../include/libxml
+xmlinc=${OUTINC}
+[ -d ${xmlinc}/libxml2 ] && xmlinc=${xmlinc}/libxml2
+
+ldflags=$(${OUT}/bin/xml2-config --libs)
+LDFLAGS="${ldflags}" xxrun ./configure $HOSTBUILD --prefix=$OUT \
+            --disable-dependency-tracking --enable-static=no --enable-shared=yes \
+            --without-python --with-crypto --without-plugins \
+            --with-libxml-prefix=${OUT} \
+            --with-libxml-include-prefix=$xmlinc --with-libxml-libs-prefix=${OUTLIB} \
+            --disable-silent-rules
 
 ############CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
 
@@ -436,7 +450,11 @@ freetype-*)
 cd $WRKDIR/$PACK
 save_configure_help
 
-CC=gcc xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
+#  we will be using gcc if ccache is in use
+localcc=$CC
+echo $localcc | grep -q gcc || localcc="gcc"
+
+CC=$localcc xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
             --with-harfbuzz=$with_harfbuzz \
             CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
 patch_libtool
@@ -447,7 +465,7 @@ with_harfbuzz=auto
 ;;
 
 # ----------------------------------------------------------------------------
-harfbuzz-8*)
+harfbuzz-8* | harfbuzz-1*)
 cd $WRKDIR/$PACK
 save_configure_help
 
@@ -469,7 +487,7 @@ xxrun meson setup \
           -Dgdi=enabled -Dgraphite=enabled -Dchafa=disabled     \
           -Ddirectwrite=enabled -Dtests=disabled -Dfreetype=enabled  \
           -Dglib=disabled -Dgobject=disabled -Dcairo=disabled \
-          -Ddocs=disabled \
+          -Dgpu=disabled -Ddocs=disabled \
           . \
           _build
 
@@ -506,6 +524,68 @@ xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------
+#  meson build for fontconfig 2.18+
+fontconfig-2*)
+cd $WRKDIR/$PACK
+
+save_configure_help
+
+#  cargo culted from harfbuzz - might not be needed?
+#  Use the mingw64 meson so the python libs work.
+#  Also make sure we use the pkg-config that lives with meson
+#  The default gives path headaches.
+old_path=$PATH
+old_pk=$PKG_CONFIG
+PKG_CONFIG=
+export PATH=/z/msys64/mingw64/bin:${PATH}
+
+#dll suffix hack - prob not needed under meson
+#sed -i "s|@LIBT_CURRENT_MINUS_AGE@.dll|@LIBT_CURRENT_MINUS_AGE@$DLLSUFFIX.dll|g" src/Makefile.in
+#sed -i "s|@LIBT_CURRENT_MINUS_AGE@.dll|@LIBT_CURRENT_MINUS_AGE@$DLLSUFFIX.dll|g" src/Makefile.am
+#xxrun autoreconf -fiv
+
+sed -i "s|libfontconfig = library|xxsoversion = '@0@__'.format(soversion)\nlibfontconfig = library|g" meson.build
+sed -i "s|  soversion: soversion,|  soversion: xxsoversion,|g" meson.build
+
+#xxrun meson configure .
+
+#HACK:
+cp $(dirname `which gcc`)/*.dll ./fc-cache
+
+xxrun meson setup \
+      --default-library=shared \
+      --prefix="${OUT}" \
+      --wrap-mode=nodownload \
+      --buildtype=release \
+      --auto-features=disabled \
+      -Ddoc-man=disabled \
+      -Ddoc-txt=disabled \
+      -Ddoc-pdf=disabled \
+      -Ddoc-html=disabled \
+      -Dcache-build=disabled \
+      -Dtests=disabled \
+      . \
+      _build
+
+xxrun meson compile -C _build
+
+xxrun meson install -C _build
+
+#  Update the .pc file.  The last four are not distributed with Strawberry Perl.
+sed -i -e 's|^prefix=.*|prefix=\${pcfiledir}/../..|' $OUT/lib/pkgconfig/fontconfig.pc
+sed -i -e 's|^sysconfdir=.*||' $OUT/lib/pkgconfig/fontconfig.pc
+sed -i -e 's|^localstatedir=.*||' $OUT/lib/pkgconfig/fontconfig.pc
+sed -i -e 's|^confdir=.*||' $OUT/lib/pkgconfig/fontconfig.pc
+sed -i -e 's|^cachedir=.*||' $OUT/lib/pkgconfig/fontconfig.pc
+
+
+export PATH=$old_path
+PKG_CONFIG=$old_pk
+
+;;
+
+
+# ----------------------------------------------------------------------------
 fontconfig-*)
 cd $WRKDIR/$PACK
 
@@ -517,7 +597,8 @@ sed -i "s|@LIBT_CURRENT_MINUS_AGE@.dll|@LIBT_CURRENT_MINUS_AGE@$DLLSUFFIX.dll|g"
 xxrun autoreconf -fiv
 
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-            --disable-docs --enable-iconv --with-libiconv=$OUT as_ln_s="cp -pR"
+            --disable-docs --enable-iconv --with-libiconv=$OUT as_ln_s="cp -pR" \
+            CFLAGS="-Wno-int-conversion -Wno-implicit-function-declaration"
 
 sed -i 's,all-am: Makefile $(PROGRAMS),all-am:,' test/Makefile
 
@@ -583,7 +664,8 @@ cd $WRKDIR/$PACK/build_windows
 ../dist/configure --help > ../help_$PACK.txt
 xxrun ../dist/configure $HOSTBUILD --prefix="$OUT" --enable-static=no --enable-shared=yes \
                         --enable-mingw --with-cryptography \
-                        --disable-rpath --disable-tcl
+                        --disable-rpath --disable-tcl \
+                        CFLAGS="-std=gnu89"
 ###removed: --enable-cxx --enable-sql --enable-sql-codegen --enable-stl --enable-compat185 --enable-dbm
 patch_libtool
 xxrun make LIBSO_LIBS=-lpthread
@@ -614,7 +696,10 @@ cd $WRKDIR/$PACK
 save_configure_help
 #do not use any CFLAGS here!!
 if [ $IS64BIT ] ; then
-CC="gcc -D__USE_MINGW_ANSI_STDIO" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=yes --enable-shared=no
+#  we will be using gcc if ccache is in use
+localcc=$CC
+echo $localcc | grep -q gcc || localcc="gcc"
+CC="$localcc -D__USE_MINGW_ANSI_STDIO" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=yes --enable-shared=no
 else
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-fat --enable-static=yes --enable-shared=no
 fi
@@ -699,7 +784,8 @@ sed -i 's/__*\.dll\.a/.dll.a/g' Makefile
 sed -i 's/__*\.dll\.a/.dll.a/g' configdata.pm
 sed -i "s/define LIBZ \"ZLIB1\"/define LIBZ \"ZLIB1$DLLSUFFIX\"/" crypto/comp/c_zlib.c
 
-xxrun make depend all
+#  sometimes needs to be rerun
+xxrun make depend all || xxrun make depend all
 #xxrun make tests
 xxrun make install_sw
 
@@ -1218,7 +1304,12 @@ lapack-*)
 cd $WRKDIR/$PACK
 mkdir MY_BUILD
 cd MY_BUILD
-xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON -DBUILD_DEPRECATED=ON ..
+xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT \
+               -DBUILD_SHARED_LIBS=OFF -DBUILD_STATIC_LIBS=ON \
+               -DBUILD_DEPRECATED=ON -DBUILD_TESTING=OFF \
+               -DLAPACKE=ON -DCBLAS=ON \
+               -DBUILD_INDEX64=OFF \
+               ..
 xxrun make
 xxrun make install
 
@@ -1233,6 +1324,7 @@ cd $WRKDIR/$PACK
 
 ### old style (DLL library)
 save_configure_help
+sed -i.bak -e "s/\(allow_undefined=\)yes/\1no/" configure
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
 patch_libtool
 xxrun make
@@ -1252,6 +1344,34 @@ xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------
+libaec-*)
+cd $WRKDIR/$PACK
+
+sed -i 's/SOVERSION "\${sz_VERSION_MAJOR}"/SOVERSION "${sz_VERSION_MAJOR}__"/' src/CMakeLists.txt
+sed -i 's/SOVERSION "\${libaec_VERSION_MAJOR}"/SOVERSION "${libaec_VERSION_MAJOR}__"/' src/CMakeLists.txt
+
+mkdir MY_BUILD
+cd MY_BUILD
+cmake \
+      -G'MSYS Makefiles' \
+      -DCMAKE_INSTALL_PREFIX="$OUT" \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_DLL_NAME_WITH_SOVERSION=ON \
+      -DBUILD_TESTING=OFF \
+      ..
+
+##### cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT -DBUILD_SHARED_LIBS=OFF -DSZIP_ENABLE_ENCODING=ON ..
+#xxrun cmake -G 'MSYS Makefiles' -DCMAKE_INSTALL_PREFIX=$OUT ..
+patch_libtool
+xxrun make
+xxrun make install
+###hack
+# cd ..
+# cp -f src/ricehdf.h $OUT/include/ricehdf.h
+# cp $OUT/lib/libszip-static.a $OUT/lib/libszip.a
+;;
+
+# ----------------------------------------------------------------------------
 netcdf-*)
 cd $WRKDIR/$PACK
 
@@ -1265,7 +1385,7 @@ CPPFLAGS=-I$OUTINC LDFLAGS="-L$OUTLIB -Wl,--export-all-symbols" \
                         --enable-hdf4 --disable-dap  --disable-dynamic-loading \
                        --disable-utilities --disable-plugins \
                        --disable-nczarr-filters --disable-nczarr \
-                       --disable-byterange
+                       --disable-byterange --disable-libxml2
 patch_libtool
 xxrun make 
 xxrun make check 
@@ -1285,10 +1405,12 @@ echo "ENDIF ()" >> CMakeLists.txt
 
 szlib=$OUTLIB/libsz.dll.a
 [ -e $OUTLIB/libsz.a ] && szlib=$OUTLIB/libsz.a
+zlib=$OUTLIB/libz.dll.a
+[ -e $OUTLIB/libz.a ] && zlib=$OUTLIB/libz.a
 
 mkdir MY_BUILD
 cd MY_BUILD
-xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
+PKG_CONFIG_PATH=${OUTLIB}/pkgconfig ZLIB_ROOT=$OUT xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
             -DBUILD_SHARED_LIBS=ON \
             -DBUILD_TESTING=OFF \
             -DCMAKE_BUILD_TYPE=Release \
@@ -1298,11 +1420,19 @@ xxrun cmake -G 'MSYS Makefiles' -Wno-dev -DCMAKE_INSTALL_PREFIX=$OUT \
             -DHDF5_BUILD_FORTRAN=OFF \
             -DHDF5_BUILD_TOOLS=ON \
             -DHDF5_ENABLE_DEPRECATED_SYMBOLS=ON \
-            -DHDF5_ENABLE_Z_LIB_SUPPORT=ON \
+            -DHDF5_ALLOW_EXTERNAL_SUPPORT=NO \
             -DHDF5_ENABLE_SZIP_SUPPORT=ON \
             -DHDF5_ENABLE_SZIP_ENCODING=ON \
             -DSZIP_INCLUDE_DIR=$OUT/include \
             -DSZIP_LIBRARY=$szlib \
+            -DHDF5_ENABLE_ZLIB_SUPPORT:BOOL=ON \
+            -DHDF5_ENABLE_ZLIB_SUPPORT=ON \
+            -DZLIB_USE_EXTERNAL=OFF \
+            -DZLIB_ROOT=$OUT \
+            -DZLIB_INCLUDE_DIR=$OUT/include \
+            -DZLIB_LIBRARY=$zlib \
+            -DHDF5_MSVC_NAMING_CONVENTION=OFF \
+            -DHDF5_ENABLE_ALL_WARNINGS=OFF \
             ..
 
             ###-DHDF5_INSTALL_CMAKE_DIR="lib/cmake" \
@@ -1562,8 +1692,14 @@ sed -i "s/-\$(LIBMAJOR)\.\$(SOEXTENSION)/-\$(LIBMAJOR)${DLLSUFFIX}.\$(SOEXTENSIO
 sed -i "s/\$(MAKE) -C doc/#\$(MAKE) -C doc/g" Makefile
 sed -i "s/diff -u/diff -wu/g" tests/makefile
 
-xxrun make CC=gcc
-xxrun make check
+#  we will be using gcc if ccache is in use
+localcc=$CC
+echo $localcc | grep -q gcc || localcc="gcc"
+
+xxrun make CC=$localcc
+#  Skip make check - tests fail due to line ending differences.
+#  MSYS2 also skip this.  
+#xxrun make check
 xxrun make PREFIX="$OUT" install
 ;;
 
@@ -1607,6 +1743,9 @@ cd $WRKDIR/$PACK
 ### old way
 xxrun make -f win32/Makefile.gcc BINARY_PATH=$OUTBIN INCLUDE_PATH=$OUTINC LIBRARY_PATH=$OUTLIB SHAREDLIB=zlib1$DLLSUFFIX.dll SHARED_MODE=1 install
 rm $OUTLIB/libz.a
+sed -i -e 's|^prefix=.*|prefix=\${pcfiledir}/../..|' $OUT/lib/pkgconfig/zlib.pc
+sed -i -e 's|^exec_prefix=.*|exec_prefix=\${pcfiledir}/../..|' $OUT/lib/pkgconfig/zlib.pc
+sed -i -e "s|$OUT|\${prefix}|" $OUT/lib/pkgconfig/zlib.pc
 ;;
 
 # ----------------------------------------------------------------------------
@@ -1686,6 +1825,9 @@ cd $WRKDIR/$PACK
 save_configure_help
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes
 patch_libtool
+
+sed -i.bak -e "s/\(allow_undefined=\)yes/\1no/" libtool
+
 xxrun make
 xxrun make install
 install_bats
@@ -1697,7 +1839,7 @@ cd $WRKDIR/$PACK
 ./autogen.sh
 save_configure_help
 xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking --enable-static=no --enable-shared=yes \
-                  CFLAGS="-Wno-int-conversion"
+                  CFLAGS="-Wno-int-conversion -Wno-incompatible-pointer-types"
 patch_libtool
 xxrun make
 xxrun make install
@@ -1759,7 +1901,12 @@ xxrun make install
 termcap-*)
 cd $WRKDIR/$PACK
 save_configure_help
-xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
+
+#  we will be using gcc if ccache is in use
+localcc=$CC
+echo $localcc | grep -q gcc || localcc="gcc"
+
+CC="$localcc -std=gnu89" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
 patch_libtool
 xxrun make
 
@@ -1828,8 +1975,9 @@ cd $WRKDIR/$PACK
 autoreconf -fi
 save_configure_help
 
-xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking \
+CFLAGS="-std=gnu17" xxrun ./configure $HOSTBUILD --prefix=$OUT --disable-dependency-tracking \
                              --without-qt --without-latex --without-cairo \
+                             --without-wx --disable-wxwidgets \
                              --without-lua --with-bitmap-terminals --disable-raise-console \
                              --with-readline=gnu
 
@@ -1843,6 +1991,26 @@ xxrun make install
 ;;
 
 # ----------------------------------------------------------------------------
+glfw-3*)
+cd $WRKDIR/$PACK
+#  zip file has on extra dir
+cd $PACK
+sed -i "s/set(GLFW_LIB_NAME glfw3)/set(GLFW_LIB_NAME glfw3${DLLSUFFIX})/" src/CMakeLists.txt
+
+mkdir _build
+cd _build
+
+xxrun cmake -G 'MSYS Makefiles' \
+            -DBUILD_SHARED_LIBS=ON \
+            -DGLFW_BUILD_DOCS=OFF \
+            -DCMAKE_INSTALL_PREFIX=$OUT \
+            ..
+xxrun make
+xxrun make install
+
+;;
+
+# ----------------------------------------------------------------------------
 cfitsio-*)
 cd $WRKDIR/$PACK
 xxrun cmake -G "MinGW Makefiles" -DWITH_ZLIB=system -DWITH_SSL=bundled -DCMAKE_INSTALL_PREFIX=$OUT -DCMAKE_MAKE_PROGRAM=gmake
@@ -1853,12 +2021,18 @@ xxrun make DLLSUFFIX=$DLLSUFFIX PREFIX=$OUT install
 gdb-*)
 cd $WRKDIR/$PACK
 
+#  build needs texinfo package installed to get makeinfo
+
 autoreconf -fi
 save_configure_help
+
+sed -i "/ac_cpp=/s/\$CPPFLAGS/\$CPPFLAGS -O2/" libiberty/configure
+
 xxrun ./configure $HOSTBUILDTARGET --prefix=$OUT \
     --disable-werror \
     --disable-staticlib \
     --disable-gdbserver \
+    --disable-win32-registry \
     --without-tcl \
     --without-tk \
     --without-guile \
@@ -1866,6 +2040,8 @@ xxrun ./configure $HOSTBUILDTARGET --prefix=$OUT \
     --without-zstd \
     --without-python \
     --disable-source-highlight \
+    --disable-tui \
+    --with-{expat,gmp,mpfr,lzma}=${OUT} \
     --with-libgmp-prefix=$OUT \
     --with-libexpat-prefix=$OUT \
     --with-lzma-prefix=$OUT \
@@ -1876,7 +2052,6 @@ xxrun ./configure $HOSTBUILDTARGET --prefix=$OUT \
     #--enable-64-bit-bfd \
     #--with-system-zlib
     #--with-lzma \
-    #--enable-64-bit-bfd \
     #--with-system-gdbinit=/etc/gdbinit \
     #--with-system-readline \
     #--with-libiconv-prefix=/usr \

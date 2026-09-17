@@ -450,7 +450,11 @@ freetype-*)
 cd $WRKDIR/$PACK
 save_configure_help
 
-CC=gcc xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
+#  we will be using gcc if ccache is in use
+localcc=$CC
+echo $localcc | grep -q gcc || localcc="gcc"
+
+CC=$localcc xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes \
             --with-harfbuzz=$with_harfbuzz \
             CFLAGS="-O2 -I$OUTINC -mms-bitfields" LDFLAGS="-L$OUTLIB"
 patch_libtool
@@ -692,7 +696,10 @@ cd $WRKDIR/$PACK
 save_configure_help
 #do not use any CFLAGS here!!
 if [ $IS64BIT ] ; then
-CC="gcc -D__USE_MINGW_ANSI_STDIO" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=yes --enable-shared=no
+#  we will be using gcc if ccache is in use
+localcc=$CC
+echo $localcc | grep -q gcc || localcc="gcc"
+CC="$localcc -D__USE_MINGW_ANSI_STDIO" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=yes --enable-shared=no
 else
 xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-fat --enable-static=yes --enable-shared=no
 fi
@@ -1685,7 +1692,11 @@ sed -i "s/-\$(LIBMAJOR)\.\$(SOEXTENSION)/-\$(LIBMAJOR)${DLLSUFFIX}.\$(SOEXTENSIO
 sed -i "s/\$(MAKE) -C doc/#\$(MAKE) -C doc/g" Makefile
 sed -i "s/diff -u/diff -wu/g" tests/makefile
 
-xxrun make CC=gcc
+#  we will be using gcc if ccache is in use
+localcc=$CC
+echo $localcc | grep -q gcc || localcc="gcc"
+
+xxrun make CC=$localcc
 #  Skip make check - tests fail due to line ending differences.
 #  MSYS2 also skip this.  
 #xxrun make check
@@ -1890,7 +1901,12 @@ xxrun make install
 termcap-*)
 cd $WRKDIR/$PACK
 save_configure_help
-CC="gcc -std=gnu89" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
+
+#  we will be using gcc if ccache is in use
+localcc=$CC
+echo $localcc | grep -q gcc || localcc="gcc"
+
+CC="$localcc -std=gnu89" xxrun ./configure $HOSTBUILD --prefix=$OUT --enable-static=no --enable-shared=yes
 patch_libtool
 xxrun make
 

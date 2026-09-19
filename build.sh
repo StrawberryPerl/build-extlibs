@@ -120,10 +120,12 @@ function install_bats ()
   done
 }
 
+#  this makes it easy to see which files belong to the most recent build process
 function reset_timestamps ()
 {
   touch $OUT/_timestamp_
   find $OUT/ -type f | xargs touch -t '7707070707.07'
+  find $OUT/ -type l | xargs -r touch -h -t '7707070707.07'
 }
 
 ### start ###

@@ -1478,6 +1478,14 @@ echo "ENDIF ()" >> CMakeLists.txt
 szlib=$OUTLIB/libsz.dll.a
 [ -e $OUTLIB/libsz.a ] && szlib=$OUTLIB/libsz.a
 
+aeclib=$OUTLIB/libaec.dll.a
+[ -e $OUTLIB/libaec.a ] && aeclib=$OUTLIB/libaec.a
+## WARNING: hdf4 needs the libaec .../lib/cmake dir 
+##  This is not packed by default so it may need to be rebuilt as part of the HDF4 compilation
+
+zlib=$OUTLIB/libz.dll.a
+[ -e $OUTLIB/libz.a ] && zlib=$OUTLIB/libz.a
+
 mkdir MY_BUILD
 cd MY_BUILD
 cp ../COPYING.txt ./
@@ -1495,6 +1503,9 @@ xxrun cmake -G 'Unix Makefiles' -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$O
                                                        -DHDF4_ENABLE_NETCDF=OFF \
                                                        -DSZIP_INCLUDE_DIR=$OUT/include \
                                                        -DSZIP_LIBRARY=$szlib \
+                                                       -DZLIB_INCLUDE_DIR=$OUTINC \
+                                                       -DZLIB_LIBRARY_RELEASE=$zlib \
+                                                       -Dlibaec_DIR=$OUT \
                                                        ..
 xxrun gmake
 xxrun gmake install

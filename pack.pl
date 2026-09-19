@@ -21,7 +21,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\fribidi',
+    'licdir' => 'licenses/fribidi',
     'urls' => [
       ['Homepage', 'http://fribidi.org'],
     ],
@@ -35,7 +35,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\libwebp',
+    'licdir' => 'licenses/libwebp',
     'urls' => [
       ['Homepage', 'https://developers.google.com/speed/webp'],
     ],
@@ -46,7 +46,7 @@ my $desc = {
     ],
     'trees' => [],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\patch',
+    'licdir' => 'licenses/patch',
     'urls' => [
       ['Homepage', 'http://savannah.gnu.org/projects/patch/'],
     ],
@@ -57,7 +57,7 @@ my $desc = {
     ],
     'trees' => [],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\pexports',
+    'licdir' => 'licenses/pexports',
     'urls' => [
       ['Homepage', 'https://sourceforge.net/projects/mingw/files/MinGW/Extension/pexports/'],
     ],
@@ -70,7 +70,7 @@ my $desc = {
       ['bin\startup', 'c\bin\startup', '.*'],
     ],
     'licenses' => ['COPYING','AUTHORS'],
-    'licdir' => 'licenses\dmake',
+    'licdir' => 'licenses/dmake',
     'urls' => [
       ['Homepage', 'http://code.google.com/a/apache-extras.org/p/dmake/'],
     ],
@@ -85,7 +85,7 @@ my $desc = {
       ['bin', 'c\bin', 'libdb-\d+\.\d+_*.dll$'], # e.g. libdb-6.2__.dll
     ],
     'licenses' => ['LICENSE'],
-    'licdir' => 'licenses\libdb-BerkeleyDB',
+    'licdir' => 'licenses/libdb-BerkeleyDB',
     'urls' => [
       ['Homepage', 'http://www.oracle.com/technetwork/database/berkeleydb/downloads/index.html'],
     ],
@@ -100,7 +100,7 @@ my $desc = {
       ['bin', 'c\bin', '\.dll$'],
     ],
     'licenses' => ['COPYRIGHT'],
-    'licdir' => 'licenses\netfdf',
+    'licdir' => 'licenses/netfdf',
     'urls' => [
       ['Homepage', 'http://www.unidata.ucar.edu/software/netcdf/'],
     ],
@@ -115,7 +115,7 @@ my $desc = {
       ['bin', 'c\bin', '\.dll$'],
     ],
     'licenses' => ['COPYRIGHT'],
-    'licdir' => 'licenses\netfdf',
+    'licdir' => 'licenses/netfdf',
     'urls' => [
       ['Homepage', 'http://www.unidata.ucar.edu/software/netcdf/'],
     ],
@@ -132,7 +132,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
     ],
     'licenses' => ['README', 'COPYING'],
-    'licdir' => 'licenses\curl',
+    'licdir' => 'licenses/curl',
     'urls' => [
       ['Homepage', 'http://curl.haxx.se'],
     ],
@@ -148,7 +148,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
     ],
     'licenses' => ['AUTHORS', 'LICENSE'],
-    'licdir' => 'licenses\libuv',
+    'licdir' => 'licenses/libuv',
     'urls' => [
       ['Homepage', 'http://www.libuv.org'],
     ],
@@ -164,7 +164,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
     ],
     'licenses' => ['AUTHORS'],
-    'licdir' => 'licenses\ncurses',
+    'licdir' => 'licenses/ncurses',
     'urls' => [
       ['Homepage', 'http://www.gnu.org/software/ncurses/'],
     ],
@@ -182,7 +182,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['README'],
-    'licdir' => 'licenses\libtidyp',
+    'licdir' => 'licenses/libtidyp',
     'urls' => [
       ['Homepage', 'http://tidyp.com'],
     ],
@@ -197,7 +197,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\libmpfr',
+    'licdir' => 'licenses/libmpfr',
     'urls' => [
       ['Homepage', 'http://www.mpfr.org/'],
     ],
@@ -212,7 +212,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING.LESSER','AUTHORS','README'],
-    'licdir' => 'licenses\libmpc',
+    'licdir' => 'licenses/libmpc',
     'urls' => [
       ['Homepage', 'http://www.multiprecision.org/'],
     ],
@@ -226,7 +226,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['LICENSE'],
-    'licdir' => 'licenses\libffi',
+    'licdir' => 'licenses/libffi',
     'urls' => [
       ['Homepage', 'http://sourceware.org/libffi/'],
     ],
@@ -241,7 +241,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['bsd.txt'],
-    'licdir' => 'licenses\ta-lib',
+    'licdir' => 'licenses/ta-lib',
     'urls' => [
       ['Homepage', 'http://ta-lib.org/'],
     ],
@@ -256,7 +256,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS'],
-    'licdir' => 'licenses\libfreeglut',
+    'licdir' => 'licenses/libfreeglut',
     'urls' => [
       ['Homepage', 'http://freeglut.sourceforge.net/'],
     ],
@@ -272,7 +272,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['docs\LICENSE.TXT', 'docs\GPLv2.TXT', 'docs\FTL.TXT'],
-    'licdir' => 'licenses\libfreetype',
+    'licdir' => 'licenses/libfreetype',
     'urls' => [
       ['Homepage', 'http://www.freetype.org/'],
     ],
@@ -288,7 +288,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING'],
-    'licdir' => 'licenses\libgd',
+    'licdir' => 'licenses/libgd',
     'urls' => [
       ['Homepage', 'http://www.libgd.org/'],
     ],
@@ -304,7 +304,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING'],
-    'licdir' => 'licenses\libgd',
+    'licdir' => 'licenses/libgd',
     'urls' => [
       ['Homepage', 'http://www.libgd.org/'],
     ],
@@ -319,7 +319,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING'],
-    'licdir' => 'licenses\libgdbm',
+    'licdir' => 'licenses/libgdbm',
     'urls' => [
       ['Homepage', 'http://www.gnu.org/software/gdbm/'],
     ],
@@ -333,7 +333,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['LICENSE','LGPL'],
-    'licdir' => 'licenses\libt1',
+    'licdir' => 'licenses/libt1',
     'urls' => [
       ['Homepage', 'http://www.t1lib.org/'],
     ],
@@ -348,7 +348,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','README'],
-    'licdir' => 'licenses\libgif',
+    'licdir' => 'licenses/libgif',
     'urls' => [
       ['Homepage', 'http://giflib.sourceforge.net/'],
     ],
@@ -362,7 +362,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS'],
-    'licdir' => 'licenses\libunistring',
+    'licdir' => 'licenses/libunistring',
     'urls' => [
       ['Homepage', 'https://www.gnu.org/software/libunistring/'],
     ],
@@ -376,7 +376,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS'],
-    'licdir' => 'licenses\libidn2',
+    'licdir' => 'licenses/libidn2',
     'urls' => [
       ['Homepage', 'http://www.gnu.org/software/libidn/'],
     ],
@@ -393,7 +393,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS'],
-    'licdir' => 'licenses\libidn',
+    'licdir' => 'licenses/libidn',
     'urls' => [
       ['Homepage', 'http://www.gnu.org/software/libidn/'],
     ],
@@ -410,7 +410,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS'],
-    'licdir' => 'licenses\libiconv',
+    'licdir' => 'licenses/libiconv',
     'urls' => [
       ['Homepage', 'http://www.gnu.org/software/libiconv/'],
     ],
@@ -425,7 +425,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['README'],
-    'licdir' => 'licenses\libjpeg',
+    'licdir' => 'licenses/libjpeg',
     'urls' => [
       ['Homepage', 'http://www.ijg.org/'],
     ],
@@ -440,7 +440,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['README'],
-    'licdir' => 'licenses\libjpeg',
+    'licdir' => 'licenses/libjpeg',
     'urls' => [
       ['Homepage', 'http://www.ijg.org/'],
     ],
@@ -458,7 +458,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['LICENSE.txt'],
-    'licdir' => 'licenses\openssl',
+    'licdir' => 'licenses/openssl',
     'urls' => [
       ['Homepage', 'http://www.openssl.org/'],
     ],
@@ -476,7 +476,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['LICENSE'],
-    'licdir' => 'licenses\openssl',
+    'licdir' => 'licenses/openssl',
     'urls' => [
       ['Homepage', 'http://www.openssl.org/'],
     ],
@@ -493,7 +493,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['LICENSE'],
-    'licdir' => 'licenses\openssl',
+    'licdir' => 'licenses/openssl',
     'urls' => [
       ['Homepage', 'http://www.openssl.org/'],
     ],
@@ -513,7 +513,7 @@ my $desc = {
       ['ssl', 'c\ssl'],
     ],
     'licenses' => ['LICENSE'],
-    'licdir' => 'licenses\openssl',
+    'licdir' => 'licenses/openssl',
     'urls' => [
       ['Homepage', 'http://www.openssl.org/'],
     ],
@@ -526,7 +526,7 @@ my $desc = {
     ],
     'trees' => [],
     'licenses' => ['README', 'Copyright'],
-    'licdir' => 'licenses\gnuplot',
+    'licdir' => 'licenses/gnuplot',
     'urls' => [
       ['Homepage', 'http://gnuplot.sourceforge.net/'],
     ],
@@ -541,7 +541,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['LICENSE'],
-    'licdir' => 'licenses\libpng',
+    'licdir' => 'licenses/libpng',
     'urls' => [
       ['Homepage', 'http://www.libpng.org/pub/png/libpng.html'],
     ],
@@ -555,7 +555,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => [qw/LICENSE AUTHORS/],
-    'licdir' => 'licenses\libsodium',
+    'licdir' => 'licenses/libsodium',
     'urls' => [
       ['Homepage', 'https://github.com/jedisct1/libsodium'],
     ],
@@ -569,7 +569,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => [qw/COPYING AUTHORS/],
-    'licdir' => 'licenses\harfbuzz',
+    'licdir' => 'licenses/harfbuzz',
     'urls' => [
       ['Homepage', 'http://harfbuzz.org'],
     ],
@@ -583,7 +583,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => [qw/COPYING LICENSE/],
-    'licdir' => 'licenses\graphite2',
+    'licdir' => 'licenses/graphite2',
     'urls' => [
       ['Homepage', 'https://graphite.sil.org/'],
     ],
@@ -596,7 +596,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => [qw/COPYING/],
-    'licdir' => 'licenses\termcap',
+    'licdir' => 'licenses/termcap',
     'urls' => [
       ['Homepage', 'https://www.gnu.org/software/termutils/manual/termcap-1.3/termcap.html'],
     ],
@@ -610,7 +610,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => [qw/COPYING/],
-    'licdir' => 'licenses\readline',
+    'licdir' => 'licenses/readline',
     'urls' => [
       ['Homepage', 'https://tiswww.case.edu/php/chet/readline/rltop.html'],
     ],
@@ -625,7 +625,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => [qw/COPYING/],
-    'licdir' => 'licenses\libssh2',
+    'licdir' => 'licenses/libssh2',
     'urls' => [
       ['Homepage', 'http://www.libssh2.org'],
     ],
@@ -640,7 +640,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => [qw/AUTHORS COPYING THANKS COPYING.LGPLv2.1 COPYING.GPLv2 COPYING.GPLv3/],
-    'licdir' => 'licenses\libxz',
+    'licdir' => 'licenses/libxz',
     'urls' => [
       ['Homepage', 'http://tukaani.org/xz/'],
     ],
@@ -657,7 +657,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYRIGHT'],
-    'licdir' => 'licenses\postgresql',
+    'licdir' => 'licenses/postgresql',
     'urls' => [
       ['Homepage', 'http://www.postgresql.org/'],
     ],
@@ -672,7 +672,7 @@ my $desc = {
       ['include', 'c\include', '\.(h|hxx)$'],
     ],
     'licenses' => ['LICENSE.md'],
-    'licdir' => 'licenses\libtiff',
+    'licdir' => 'licenses/libtiff',
     'urls' => [
       ['Homepage', 'http://remotesensing.org/libtiff/'],
     ],
@@ -690,7 +690,7 @@ my $desc = {
       ['lib\pkgconfig', 'c\lib\pkgconfig', '\.pc$'],
     ],
     'licenses' => ['COPYING','AUTHORS'],
-    'licdir' => 'licenses\libxml2',
+    'licdir' => 'licenses/libxml2',
     'urls' => [
       ['Homepage', 'http://xmlsoft.org/'],
     ],
@@ -707,7 +707,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS'],
-    'licdir' => 'licenses\libxslt',
+    'licdir' => 'licenses/libxslt',
     'urls' => [
       ['Homepage', 'http://xmlsoft.org/XSLT/'],
     ],
@@ -725,7 +725,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['README'],
-    'licdir' => 'licenses\libzlib',
+    'licdir' => 'licenses/libzlib',
     'urls' => [
       ['Homepage', 'http://www.zlib.net/'],
     ],
@@ -740,7 +740,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['LICENSE','README'],
-    'licdir' => 'licenses\libbzip2',
+    'licdir' => 'licenses/libbzip2',
     'urls' => [
       ['Homepage', 'http://bzip.org/'],
     ],
@@ -755,7 +755,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['AUTHORS','COPYING'],
-    'licdir' => 'licenses\liblzo',
+    'licdir' => 'licenses/liblzo',
     'urls' => [
       ['Homepage', 'http://www.oberhumer.com/opensource/lzo/'],
     ],
@@ -771,7 +771,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS'],
-    'licdir' => 'licenses\libxpm',
+    'licdir' => 'licenses/libxpm',
     'urls' => [
       ['Homepage', 'http://www.freedesktop.org/wiki/Software/xlibs'],
     ],
@@ -786,7 +786,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\libgmp',
+    'licdir' => 'licenses/libgmp',
     'urls' => [
       ['Homepage', 'http://gmplib.org/'],
     ],
@@ -801,7 +801,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\libgsl',
+    'licdir' => 'licenses/libgsl',
     'urls' => [
       ['Homepage', 'http://www.gnu.org/software/gsl/'],
     ],
@@ -816,7 +816,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\libglpk',
+    'licdir' => 'licenses/libglpk',
     'urls' => [
       ['Homepage', 'http://www.gnu.org/software/glpk/'],
     ],
@@ -831,7 +831,7 @@ my $desc = {
       ['include', 'c\include', '\.(h|f.*)$'],
     ],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\libfftw',
+    'licdir' => 'licenses/libfftw',
     'urls' => [
       ['Homepage', 'http://www.fftw.org/'],
     ],
@@ -846,7 +846,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\libfftw2',
+    'licdir' => 'licenses/libfftw2',
     'urls' => [
       ['Homepage', 'http://www.fftw.org/'],
     ],
@@ -861,7 +861,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['LICENSE'],
-    'licdir' => 'licenses\liblapack',
+    'licdir' => 'licenses/liblapack',
     'urls' => [
       ['Homepage', 'http://www.netlib.org/lapack/'],
     ],
@@ -876,7 +876,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','README'],
-    'licdir' => 'licenses\libszip',
+    'licdir' => 'licenses/libszip',
     'urls' => [
       ['Homepage', 'http://www.hdfgroup.org/doc_resource/SZIP/'],
     ],
@@ -891,7 +891,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','README.txt'],
-    'licdir' => 'licenses\libhdf5',
+    'licdir' => 'licenses/libhdf5',
     'urls' => [
       ['Homepage', 'http://www.hdfgroup.org/HDF5/'],
     ],
@@ -906,7 +906,7 @@ my $desc = {
       ['include', 'c\include', '\.(h|inc)$'],
     ],
     'licenses' => ['COPYING','README.txt'],
-    'licdir' => 'licenses\libhdf',
+    'licdir' => 'licenses/libhdf',
     'urls' => [
       ['Homepage', 'http://www.hdfgroup.org/products/hdf4/'],
     ],
@@ -924,7 +924,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING.LIB','AUTHORS','README'],
-    'licdir' => 'licenses\libplplot',
+    'licdir' => 'licenses/libplplot',
     'urls' => [
       ['Homepage', 'http://plplot.sourceforge.net/'],
     ],
@@ -940,7 +940,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS','README'],
-    'licdir' => 'licenses\libproj',
+    'licdir' => 'licenses/libproj',
     'urls' => [
       ['Homepage', 'http://trac.osgeo.org/proj/'],
     ],
@@ -955,7 +955,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','AUTHORS'],
-    'licdir' => 'licenses\libfontconfig',
+    'licdir' => 'licenses/libfontconfig',
     'urls' => [
       ['Homepage', 'http://www.fontconfig.org/'],
     ],
@@ -970,7 +970,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING','README'],
-    'licdir' => 'licenses\libqrencode',
+    'licdir' => 'licenses/libqrencode',
     'urls' => [
       ['Homepage', 'http://megaui.net/fukuchi/works/qrencode/index.en.html'],
     ],
@@ -985,7 +985,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['COPYING'],
-    'licdir' => 'licenses\libexpat',
+    'licdir' => 'licenses/libexpat',
     'urls' => [
       ['Homepage', 'http://expat.sourceforge.net/'],
     ],
@@ -1000,7 +1000,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => ['LICENSE','AUTHORS'],
-    'licdir' => 'licenses\libuv',
+    'licdir' => 'licenses/libuv',
     'urls' => [
       ['Homepage', 'https://github.com/joyent/libuv'],
     ],
@@ -1015,7 +1015,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => [qw/COPYING.GPLv2 COPYING.GPLv3 COPYING.LGPLv3 COPYING.LGPLv2.1 CREDITS LICENSE.md README.md /],
-    'licdir' => 'licenses\libffmpeg',
+    'licdir' => 'licenses/libffmpeg',
     'urls' => [
       ['Homepage', 'https://www.ffmpeg.org'],
     ],
@@ -1030,7 +1030,7 @@ my $desc = {
       ['include', 'c\include', '\.h$'],
     ],
     'licenses' => [qw(License.txt README)],
-    'licdir' => 'licenses\libcfitsio',
+    'licdir' => 'licenses/libcfitsio',
     'urls' => [
       ['Homepage', 'http://heasarc.gsfc.nasa.gov/fitsio/'],
     ],
@@ -1045,7 +1045,7 @@ my $desc = {
       ['include', 'c\include', '\.(h|hxx|inc)$'],
     ],
     'licenses' => [qw/AUTHORS COPYING COPYING.GPL COPYING.ISC COPYING.LGPL/],
-    'licdir' => 'licenses\libcaca',
+    'licdir' => 'licenses/libcaca',
     'urls' => [
       ['Homepage', 'http://caca.zoy.org/wiki/libcaca'],
     ],
@@ -1058,7 +1058,7 @@ my $desc = {
       ['include', 'c\include', '\.(h|hxx|inc)$'],
     ],
     'licenses' => [qw/COPYING README/],
-    'licdir' => 'licenses\libcerf',
+    'licdir' => 'licenses/libcerf',
     'urls' => [
       ['Homepage', 'http://apps.jcns.fz-juelich.de/libcerf'],
     ],
